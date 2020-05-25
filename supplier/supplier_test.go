@@ -27,10 +27,10 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 		return testResult, nil
 	}
 
-	ms := s.ToSilentSupplier()
-	assert.NotNil(t, ms)
+	ss := s.ToSilentSupplier()
+	assert.NotNil(t, ss)
 
-	v := ms()
+	v := ss()
 	assert.Equal(t, testResult, v)
 }
 
@@ -61,10 +61,10 @@ func TestSupplier_ToSilentSupplierWithError(t *testing.T) {
 		return nil, testError
 	}
 
-	ms := s.ToSilentSupplier()
-	assert.NotNil(t, ms)
+	ss := s.ToSilentSupplier()
+	assert.NotNil(t, ss)
 
-	v := ms()
+	v := ss()
 	assert.Nil(t, v)
 }
 
@@ -82,19 +82,19 @@ func TestSupplier_ToMustSupplierWithError(t *testing.T) {
 }
 
 func TestSilentSupplier(t *testing.T) {
-	var s SilentSupplier = func() interface{} {
+	var ss SilentSupplier = func() interface{} {
 		return testResult
 	}
-	v := s()
+	v := ss()
 	assert.Equal(t, testResult, v)
 }
 
 func TestMustSupplier(t *testing.T) {
-	var s SilentSupplier = func() interface{} {
+	var ms MustSupplier = func() interface{} {
 		return testResult
 	}
 
-	v := s()
+	v := ms()
 	assert.Equal(t, testResult, v)
 }
 
