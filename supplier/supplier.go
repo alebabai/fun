@@ -22,3 +22,24 @@ func (s Supplier) ToMustSupplier() MustSupplier {
 		return v
 	}
 }
+
+func (s MustSupplier) ToSupplier() Supplier {
+	return func() (v interface{}, err error) {
+		defer func() {
+			if re := recover(); re != nil {
+				err = re.(error)
+			}
+		}()
+		v = s()
+		return
+	}
+}
+
+func (s MustSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		defer func() {
+			recover()
+		}()
+		return s()
+	}
+}
