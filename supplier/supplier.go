@@ -43,7 +43,7 @@ func (ms MustSupplier) ToSupplier() Supplier {
 	}
 }
 
-// MustSupplier transforms MustSupplier into SilentSupplier
+// ToSilentSupplier transforms MustSupplier into SilentSupplier
 func (ms MustSupplier) ToSilentSupplier() SilentSupplier {
 	s := ms.ToSupplier()
 	return s.ToSilentSupplier()
