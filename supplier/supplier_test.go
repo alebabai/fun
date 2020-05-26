@@ -12,73 +12,104 @@ var (
 	testError  = errors.New("error")
 )
 
-func TestSupplier(t *testing.T) {
-	var s Supplier = func() (interface{}, error) {
-		return testResult, nil
-	}
+func supplier() (interface{}, error) {
+	return testResult, nil
+}
 
-	v, err := s()
-	assert.NoError(t, err)
-	assert.Equal(t, testResult, v)
+func supplierWithError() (interface{}, error) {
+	return nil, testError
+}
+
+func TestSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Supplier
+	}{
+		{
+			name: "ok",
+			s:    supplier,
+		},
+		{
+			name: "with_error",
+			s:    supplierWithError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v, err := tt.s()
+			if err != nil {
+				assert.EqualError(t, err, testError.Error())
+			} else {
+				assert.Equal(t, testResult, v)
+			}
+		})
+	}
 }
 
 func TestSupplier_ToSilentSupplier(t *testing.T) {
-	var s Supplier = func() (interface{}, error) {
-		return testResult, nil
+	tests := []struct {
+		name string
+		s    Supplier
+		v    interface{}
+	}{
+		{
+			name: "ok",
+			s:    supplier,
+			v:    testResult,
+		},
+		{
+			name: "with_error",
+			s:    supplierWithError,
+			v:    nil,
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ss := tt.s.ToSilentSupplier()
+			assert.NotNil(t, ss)
 
-	ss := s.ToSilentSupplier()
-	assert.NotNil(t, ss)
-
-	v := ss()
-	assert.Equal(t, testResult, v)
+			v := ss()
+			assert.Equal(t, tt.v, v)
+		})
+	}
 }
 
 func TestSupplier_ToMustSupplier(t *testing.T) {
-	var s Supplier = func() (interface{}, error) {
-		return testResult, nil
+	tests := []struct {
+		name string
+		s    Supplier
+		v    interface{}
+		err  error
+	}{
+		{
+			name: "ok",
+			s:    supplier,
+			v:    testResult,
+			err:  nil,
+		},
+		{
+			name: "with_error",
+			s:    supplierWithError,
+			v:    nil,
+			err:  testError,
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ms := tt.s.ToMustSupplier()
+			assert.NotNil(t, ms)
 
-	ms := s.ToMustSupplier()
-	assert.NotNil(t, ms)
-
-	v := ms()
-	assert.Equal(t, testResult, v)
-}
-
-func TestSupplierWithError(t *testing.T) {
-	var s Supplier = func() (interface{}, error) {
-		return nil, testError
+			if tt.err != nil {
+				assert.PanicsWithError(t, testError.Error(), func() {
+					v := ms()
+					assert.Equal(t, tt.v, v)
+				})
+			} else {
+				v := ms()
+				assert.Equal(t, tt.v, v)
+			}
+		})
 	}
-
-	v, err := s()
-	assert.Error(t, err, testError)
-	assert.Nil(t, v)
-}
-
-func TestSupplier_ToSilentSupplierWithError(t *testing.T) {
-	var s Supplier = func() (interface{}, error) {
-		return nil, testError
-	}
-
-	ss := s.ToSilentSupplier()
-	assert.NotNil(t, ss)
-
-	v := ss()
-	assert.Nil(t, v)
-}
-
-func TestSupplier_ToMustSupplierWithError(t *testing.T) {
-	var s Supplier = func() (interface{}, error) {
-		return nil, testError
-	}
-
-	ms := s.ToMustSupplier()
-	assert.NotNil(t, ms)
-
-	assert.PanicsWithError(t, testError.Error(), func() {
-		ms()
-	})
 }
 
 func TestSilentSupplier(t *testing.T) {
@@ -99,32 +130,64 @@ func TestMustSupplier(t *testing.T) {
 }
 
 func TestMustSupplier_ToSilentSupplier(t *testing.T) {
-	var s Supplier = func() (interface{}, error) {
-		return nil, testError
+	tests := []struct {
+		name string
+		s    Supplier
+		v    interface{}
+	}{
+		{
+			name: "ok",
+			s:    supplier,
+			v:    testResult,
+		},
+		{
+			name: "with_error",
+			s:    supplierWithError,
+			v:    nil,
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ms := tt.s.ToMustSupplier()
+			assert.NotNil(t, ms)
 
-	ms := s.ToMustSupplier()
-	assert.NotNil(t, ms)
+			ss := ms.ToSilentSupplier()
+			assert.NotNil(t, ss)
 
-	ss := ms.ToSilentSupplier()
-	assert.NotNil(t, ss)
-
-	v := ss()
-	assert.Nil(t, v)
+			v := ss()
+			assert.Equal(t, tt.v, v)
+		})
+	}
 }
 
 func TestMustSupplier_ToSupplier(t *testing.T) {
-	var s Supplier = func() (interface{}, error) {
-		return nil, testError
+	tests := []struct {
+		name string
+		s    Supplier
+	}{
+		{
+			name: "ok",
+			s:    supplier,
+		},
+		{
+			name: "with_error",
+			s:    supplierWithError,
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ms := tt.s.ToMustSupplier()
+			assert.NotNil(t, ms)
 
-	ms := s.ToMustSupplier()
-	assert.NotNil(t, ms)
+			s := ms.ToSupplier()
+			assert.NotNil(t, s)
 
-	s = ms.ToSupplier()
-	assert.NotNil(t, s)
-
-	v, err := s()
-	assert.Nil(t, v)
-	assert.Error(t, err, testError)
+			v, err := s()
+			if err != nil {
+				assert.EqualError(t, err, testError.Error())
+			} else {
+				assert.Equal(t, testResult, v)
+			}
+		})
+	}
 }
