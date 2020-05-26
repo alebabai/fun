@@ -52,7 +52,7 @@ func TestSupplierWithError(t *testing.T) {
 	}
 
 	v, err := s()
-	assert.Errorf(t, err, testError.Error())
+	assert.Error(t, err, testError)
 	assert.Nil(t, v)
 }
 
@@ -126,5 +126,5 @@ func TestMustSupplier_ToSupplier(t *testing.T) {
 
 	v, err := s()
 	assert.Nil(t, v)
-	assert.Errorf(t, err, testError.Error())
+	assert.Error(t, err, testError)
 }

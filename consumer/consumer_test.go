@@ -22,6 +22,27 @@ func TestConsumer(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestConsumer_AndThen(t *testing.T) {
+	var calls int
+	var c1 Consumer = func(v interface{}) error {
+		calls++
+		assert.Equal(t, testValue, v)
+		assert.Equal(t, calls, 1, "should be called first and only once")
+		return nil
+	}
+	var c2 Consumer = func(v interface{}) error {
+		calls++
+		assert.Equal(t, testValue, v)
+		assert.Equal(t, calls, 2, "should be called second and only once")
+		return nil
+	}
+	cc := c1.AndThen(c2)
+
+	err := cc(testValue)
+	assert.NoError(t, err)
+	assert.Equal(t, 2, calls)
+}
+
 func TestConsumer_ToSilentConsumer(t *testing.T) {
 	var c Consumer = func(v interface{}) error {
 		assert.Equal(t, testValue, v)
@@ -53,7 +74,30 @@ func TestConsumerWithError(t *testing.T) {
 	}
 
 	err := c(testValue)
-	assert.Errorf(t, err, testError.Error())
+	assert.Error(t, err, testError)
+}
+
+func TestConsumer_AndThenWithError(t *testing.T) {
+	var calls int
+	// c1 returns an error
+	var c1 Consumer = func(v interface{}) error {
+		calls++
+		assert.Equal(t, testValue, v)
+		assert.Equal(t, calls, 1, "should be called first and only once")
+		return testError
+	}
+	// c2 just basic consumer
+	var c2 Consumer = func(v interface{}) error {
+		calls++
+		assert.Equal(t, testValue, v)
+		assert.Equal(t, calls, 2, "should be called second and only once")
+		return nil
+	}
+	cc := c1.AndThen(c2)
+
+	err := cc(testValue)
+	assert.Error(t, err, testError)
+	assert.Equal(t, 1, calls)
 }
 
 func TestConsumer_ToSilentConsumerWithError(t *testing.T) {
@@ -126,5 +170,5 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 	assert.NotNil(t, c)
 
 	err := c(testValue)
-	assert.Errorf(t, err, testError.Error())
+	assert.Error(t, err, testError)
 }
