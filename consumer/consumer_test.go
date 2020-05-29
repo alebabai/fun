@@ -164,7 +164,7 @@ func TestConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   ConsumerFactory
-		err  error
+		err  bool
 	}{
 		{
 			name: "ok",
@@ -174,7 +174,6 @@ func TestConsumer_ToMustConsumer(t *testing.T) {
 					return nil
 				}
 			},
-			err: nil,
 		},
 		{
 			name: "with_error",
@@ -184,7 +183,7 @@ func TestConsumer_ToMustConsumer(t *testing.T) {
 					return testError
 				}
 			},
-			err: testError,
+			err: true,
 		},
 	}
 	for _, tt := range tests {
@@ -195,7 +194,7 @@ func TestConsumer_ToMustConsumer(t *testing.T) {
 			mc := c.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err != nil {
+			if tt.err {
 				r.PanicsWithError(testError.Error(), func() {
 					mc(testValue)
 				})
@@ -298,7 +297,7 @@ func TestMustConsumer_AndThen(t *testing.T) {
 		cf1   ConsumerFactory
 		cf2   ConsumerFactory
 		calls int
-		err   error
+		err   bool
 	}{
 		{
 			name: "ok",
@@ -339,7 +338,7 @@ func TestMustConsumer_AndThen(t *testing.T) {
 				}
 			},
 			calls: 1,
-			err:   testError,
+			err:   true,
 		},
 	}
 	for _, tt := range tests {
@@ -358,7 +357,7 @@ func TestMustConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			var calls int
-			if tt.err != nil {
+			if tt.err {
 				r.PanicsWithError(testError.Error(), func() {
 					cmc(&calls)
 				})
@@ -415,7 +414,7 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   ConsumerFactory
-		err  error
+		err  bool
 	}{
 		{
 			name: "ok",
@@ -425,7 +424,6 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 					return nil
 				}
 			},
-			err: testError,
 		},
 		{
 			name: "with_error",
@@ -435,7 +433,7 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 					return testError
 				}
 			},
-			err: testError,
+			err: true,
 		},
 	}
 	for _, tt := range tests {
@@ -451,7 +449,7 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(testValue)
-			if err != nil {
+			if tt.err {
 				r.EqualError(err, testError.Error())
 			}
 		})
