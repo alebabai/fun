@@ -40,6 +40,7 @@ func TestSupplier(t *testing.T) {
 
 			v, err := tt.s()
 			if err != nil {
+				r.Empty(v)
 				r.EqualError(err, testError.Error())
 			} else {
 				r.Equal(testResult, v)
@@ -52,17 +53,16 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
 		name string
 		s    Supplier
-		v    interface{}
+		err  bool
 	}{
 		{
 			name: "ok",
 			s:    supplier,
-			v:    testResult,
 		},
 		{
 			name: "with_error",
 			s:    supplierWithError,
-			v:    nil,
+			err:  true,
 		},
 	}
 	for _, tt := range tests {
@@ -73,7 +73,11 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			r.Equal(tt.v, v)
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testResult, v)
+			}
 		})
 	}
 }
@@ -82,20 +86,16 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
 		name string
 		s    Supplier
-		v    interface{}
-		err  error
+		err  bool
 	}{
 		{
 			name: "ok",
 			s:    supplier,
-			v:    testResult,
-			err:  nil,
 		},
 		{
 			name: "with_error",
 			s:    supplierWithError,
-			v:    nil,
-			err:  testError,
+			err:  true,
 		},
 	}
 	for _, tt := range tests {
@@ -105,14 +105,14 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 			ms := tt.s.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err != nil {
+			if tt.err {
 				r.PanicsWithError(testError.Error(), func() {
 					v := ms()
-					r.Equal(tt.v, v)
+					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(tt.v, v)
+				r.Equal(testResult, v)
 			}
 		})
 	}
@@ -139,17 +139,16 @@ func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
 		name string
 		s    Supplier
-		v    interface{}
+		err  bool
 	}{
 		{
 			name: "ok",
 			s:    supplier,
-			v:    testResult,
 		},
 		{
 			name: "with_error",
 			s:    supplierWithError,
-			v:    nil,
+			err:  true,
 		},
 	}
 	for _, tt := range tests {
@@ -163,7 +162,11 @@ func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			r.Equal(tt.v, v)
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testResult, v)
+			}
 		})
 	}
 }
@@ -194,6 +197,7 @@ func TestMustSupplier_ToSupplier(t *testing.T) {
 
 			v, err := s()
 			if err != nil {
+				r.Empty(v)
 				r.EqualError(err, testError.Error())
 			} else {
 				r.Equal(testResult, v)
