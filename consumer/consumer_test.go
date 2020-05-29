@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var (
@@ -12,163 +12,448 @@ var (
 	testError = errors.New("error")
 )
 
-func TestConsumer(t *testing.T) {
-	var c Consumer = func(v interface{}) error {
-		assert.Equal(t, testValue, v)
-		return nil
-	}
+type ConsumerFactory func(t *testing.T) Consumer
 
-	err := c(testValue)
-	assert.NoError(t, err)
+func TestConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   ConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return testError
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			c := tt.cf(t)
+			err := c(testValue)
+			if err != nil {
+				r.EqualError(err, testError.Error())
+			} else {
+				r.NoError(err)
+			}
+		})
+	}
 }
 
 func TestConsumer_AndThen(t *testing.T) {
-	var calls int
-	var c1 Consumer = func(v interface{}) error {
-		calls++
-		assert.Equal(t, testValue, v)
-		assert.Equal(t, calls, 1, "should be called first and only once")
-		return nil
+	tests := []struct {
+		name  string
+		cf1   ConsumerFactory
+		cf2   ConsumerFactory
+		calls int
+	}{
+		{
+			name: "ok",
+			cf1: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 1, "should be called first and only once")
+					return nil
+				}
+			},
+			cf2: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 2, "should be called second and only once")
+					return nil
+				}
+			},
+			calls: 2,
+		},
+		{
+			name: "with_error",
+			cf1: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 1, "should be called first and only once")
+					return testError
+				}
+			},
+			cf2: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 2, "should be called second and only once")
+					return nil
+				}
+			},
+			calls: 1,
+		},
 	}
-	var c2 Consumer = func(v interface{}) error {
-		calls++
-		assert.Equal(t, testValue, v)
-		assert.Equal(t, calls, 2, "should be called second and only once")
-		return nil
-	}
-	cc := c1.AndThen(c2)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
 
-	err := cc(testValue)
-	assert.NoError(t, err)
-	assert.Equal(t, 2, calls)
+			c1 := tt.cf1(t)
+			c2 := tt.cf2(t)
+
+			cc := c1.AndThen(c2)
+			r.NotNil(cc)
+
+			var calls int
+			err := cc(&calls)
+			if err != nil {
+				r.EqualError(err, testError.Error())
+			} else {
+				r.NoError(err)
+			}
+			r.Equal(tt.calls, calls)
+		})
+	}
 }
 
 func TestConsumer_ToSilentConsumer(t *testing.T) {
-	var c Consumer = func(v interface{}) error {
-		assert.Equal(t, testValue, v)
-		return nil
+	tests := []struct {
+		name string
+		cf   ConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return testError
+				}
+			},
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
 
-	sc := c.ToSilentConsumer()
-	assert.NotNil(t, sc)
+			c := tt.cf(t)
+			sc := c.ToSilentConsumer()
+			r.NotNil(sc)
 
-	sc(testValue)
+			sc(testValue)
+		})
+	}
 }
 
 func TestConsumer_ToMustConsumer(t *testing.T) {
-	var c Consumer = func(v interface{}) error {
-		assert.Equal(t, testValue, v)
-		return nil
+	tests := []struct {
+		name string
+		cf   ConsumerFactory
+		err  error
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return nil
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return testError
+				}
+			},
+			err: testError,
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
 
-	mc := c.ToMustConsumer()
-	assert.NotNil(t, mc)
+			c := tt.cf(t)
+			mc := c.ToMustConsumer()
+			r.NotNil(mc)
 
-	mc(testValue)
-}
-
-func TestConsumerWithError(t *testing.T) {
-	var c Consumer = func(v interface{}) error {
-		assert.Equal(t, testValue, v)
-		return testError
+			if tt.err != nil {
+				r.PanicsWithError(testError.Error(), func() {
+					mc(testValue)
+				})
+			} else {
+				mc(testValue)
+			}
+		})
 	}
-
-	err := c(testValue)
-	assert.Error(t, err, testError)
-}
-
-func TestConsumer_AndThenWithError(t *testing.T) {
-	var calls int
-	// c1 returns an error
-	var c1 Consumer = func(v interface{}) error {
-		calls++
-		assert.Equal(t, testValue, v)
-		assert.Equal(t, calls, 1, "should be called first and only once")
-		return testError
-	}
-	// c2 just basic consumer
-	var c2 Consumer = func(v interface{}) error {
-		calls++
-		assert.Equal(t, testValue, v)
-		assert.Equal(t, calls, 2, "should be called second and only once")
-		return nil
-	}
-	cc := c1.AndThen(c2)
-
-	err := cc(testValue)
-	assert.Error(t, err, testError)
-	assert.Equal(t, 1, calls)
-}
-
-func TestConsumer_ToSilentConsumerWithError(t *testing.T) {
-	var c Consumer = func(v interface{}) error {
-		assert.Equal(t, testValue, v)
-		return testError
-	}
-
-	sc := c.ToSilentConsumer()
-	assert.NotNil(t, sc)
-
-	sc(testValue)
-}
-
-func TestConsumer_ToMustConsumerWithError(t *testing.T) {
-	var c Consumer = func(v interface{}) error {
-		assert.Equal(t, testValue, v)
-		return testError
-	}
-
-	mc := c.ToMustConsumer()
-	assert.NotNil(t, mc)
-
-	assert.PanicsWithError(t, testError.Error(), func() {
-		mc(testValue)
-	})
 }
 
 func TestSilentConsumer(t *testing.T) {
 	var sc SilentConsumer = func(v interface{}) {
-		assert.Equal(t, testValue, v)
+		require.Equal(t, testValue, v)
 		return
 	}
 	sc(testValue)
+}
+
+func TestSilentConsumer_AndThen(t *testing.T) {
+	tests := []struct {
+		name  string
+		cf1   ConsumerFactory
+		cf2   ConsumerFactory
+		calls int
+	}{
+		{
+			name: "ok",
+			cf1: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 1, "should be called first and only once")
+					return nil
+				}
+			},
+			cf2: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 2, "should be called second and only once")
+					return nil
+				}
+			},
+			calls: 2,
+		},
+		{
+			name: "with_error",
+			cf1: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 1, "should be called first and only once")
+					return testError
+				}
+			},
+			cf2: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 2, "should be called second and only once")
+					return nil
+				}
+			},
+			calls: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			c1 := tt.cf1(t)
+			sc1 := c1.ToSilentConsumer()
+			r.NotNil(sc1)
+
+			c2 := tt.cf2(t)
+			sc2 := c2.ToSilentConsumer()
+			r.NotNil(sc2)
+
+			csc := sc1.AndThen(sc2)
+			r.NotNil(csc)
+
+			var calls int
+			csc(&calls)
+			r.Equal(tt.calls, calls)
+		})
+	}
 }
 
 func TestMustConsumer(t *testing.T) {
 	var sc SilentConsumer = func(v interface{}) {
-		assert.Equal(t, testValue, v)
+		require.Equal(t, testValue, v)
 		return
 	}
 	sc(testValue)
 }
 
-func TestMustConsumer_ToSilentConsumer(t *testing.T) {
-	var c Consumer = func(v interface{}) error {
-		assert.Equal(t, testValue, v)
-		return testError
+func TestMustConsumer_AndThen(t *testing.T) {
+	tests := []struct {
+		name  string
+		cf1   ConsumerFactory
+		cf2   ConsumerFactory
+		calls int
+		err   error
+	}{
+		{
+			name: "ok",
+			cf1: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 1, "should be called first and only once")
+					return nil
+				}
+			},
+			cf2: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 2, "should be called second and only once")
+					return nil
+				}
+			},
+			calls: 2,
+		},
+		{
+			name: "with_error",
+			cf1: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 1, "should be called first and only once")
+					return testError
+				}
+			},
+			cf2: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 2, "should be called second and only once")
+					return nil
+				}
+			},
+			calls: 1,
+			err:   testError,
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
 
-	mc := c.ToMustConsumer()
-	assert.NotNil(t, mc)
+			c1 := tt.cf1(t)
+			mc1 := c1.ToMustConsumer()
+			r.NotNil(mc1)
 
-	sc := mc.ToSilentConsumer()
-	assert.NotNil(t, sc)
+			c2 := tt.cf2(t)
+			mc2 := c2.ToMustConsumer()
+			r.NotNil(mc2)
 
-	sc(testValue)
+			cmc := mc1.AndThen(mc2)
+			r.NotNil(cmc)
+
+			var calls int
+			if tt.err != nil {
+				r.PanicsWithError(testError.Error(), func() {
+					cmc(&calls)
+				})
+			} else {
+				cmc(&calls)
+			}
+			r.Equal(tt.calls, calls)
+		})
+	}
+}
+
+func TestMustConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   ConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return testError
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			c := tt.cf(t)
+
+			mc := c.ToMustConsumer()
+			r.NotNil(mc)
+
+			sc := mc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(testValue)
+		})
+	}
 }
 
 func TestMustConsumer_ToConsumer(t *testing.T) {
-	var c Consumer = func(v interface{}) error {
-		assert.Equal(t, testValue, v)
-		return testError
+	tests := []struct {
+		name string
+		cf   ConsumerFactory
+		err  error
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return nil
+				}
+			},
+			err: testError,
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					require.Equal(t, testValue, v)
+					return testError
+				}
+			},
+			err: testError,
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
 
-	mc := c.ToMustConsumer()
-	assert.NotNil(t, mc)
+			c := tt.cf(t)
 
-	c = mc.ToConsumer()
-	assert.NotNil(t, c)
+			mc := c.ToMustConsumer()
+			r.NotNil(mc)
 
-	err := c(testValue)
-	assert.Error(t, err, testError)
+			c = mc.ToConsumer()
+			r.NotNil(c)
+
+			err := c(testValue)
+			if err != nil {
+				r.EqualError(err, testError.Error())
+			}
+		})
+	}
 }
