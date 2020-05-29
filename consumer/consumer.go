@@ -13,11 +13,7 @@ func (c Consumer) AndThen(after Consumer) Consumer {
 			if err != nil {
 				return err
 			}
-			err = after(v)
-			if err != nil {
-				return err
-			}
-			return nil
+			return after(v)
 		}
 	}
 	return c

@@ -100,6 +100,21 @@ func TestConsumer_AndThen(t *testing.T) {
 			},
 			calls: 1,
 		},
+		{
+			name: "nil after",
+			cf1: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 1, "should be called first and only once")
+					return nil
+				}
+			},
+			cf2: func(t *testing.T) Consumer {
+				return nil
+			},
+			calls: 1,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -260,6 +275,21 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 			},
 			calls: 2,
 		},
+		{
+			name: "nil after",
+			cf1: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 1, "should be called first and only once")
+					return nil
+				}
+			},
+			cf2: func(t *testing.T) Consumer {
+				return nil
+			},
+			calls: 1,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -270,8 +300,11 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 			r.NotNil(sc1)
 
 			c2 := tt.cf2(t)
-			sc2 := c2.ToSilentConsumer()
-			r.NotNil(sc2)
+			var sc2 SilentConsumer = nil
+			if c2 != nil {
+				sc2 = c2.ToSilentConsumer()
+				r.NotNil(sc2)
+			}
 
 			csc := sc1.AndThen(sc2)
 			r.NotNil(csc)
@@ -340,6 +373,21 @@ func TestMustConsumer_AndThen(t *testing.T) {
 			calls: 1,
 			err:   true,
 		},
+		{
+			name: "nil after",
+			cf1: func(t *testing.T) Consumer {
+				return func(v interface{}) error {
+					calls := v.(*int)
+					*calls++
+					require.Equal(t, *calls, 1, "should be called first and only once")
+					return nil
+				}
+			},
+			cf2: func(t *testing.T) Consumer {
+				return nil
+			},
+			calls: 1,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -350,8 +398,11 @@ func TestMustConsumer_AndThen(t *testing.T) {
 			r.NotNil(mc1)
 
 			c2 := tt.cf2(t)
-			mc2 := c2.ToMustConsumer()
-			r.NotNil(mc2)
+			var mc2 MustConsumer = nil
+			if c2 != nil {
+				mc2 = c2.ToMustConsumer()
+				r.NotNil(mc2)
+			}
 
 			cmc := mc1.AndThen(mc2)
 			r.NotNil(cmc)
