@@ -7,7 +7,7 @@
 - [ ] Basic functional types
   - [ ] For `interface{}` type  
     - [x] Supplier
-    - [ ] Consumer
+    - [x] Consumer
     - [ ] BiConsumer
     - [ ] Runnable
     - [ ] Predicate
