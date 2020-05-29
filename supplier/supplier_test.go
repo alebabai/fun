@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var (
@@ -36,11 +36,13 @@ func TestSupplier(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
 			v, err := tt.s()
 			if err != nil {
-				assert.EqualError(t, err, testError.Error())
+				r.EqualError(err, testError.Error())
 			} else {
-				assert.Equal(t, testResult, v)
+				r.Equal(testResult, v)
 			}
 		})
 	}
@@ -65,11 +67,13 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
 			ss := tt.s.ToSilentSupplier()
-			assert.NotNil(t, ss)
+			r.NotNil(ss)
 
 			v := ss()
-			assert.Equal(t, tt.v, v)
+			r.Equal(tt.v, v)
 		})
 	}
 }
@@ -96,17 +100,19 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
 			ms := tt.s.ToMustSupplier()
-			assert.NotNil(t, ms)
+			r.NotNil(ms)
 
 			if tt.err != nil {
-				assert.PanicsWithError(t, testError.Error(), func() {
+				r.PanicsWithError(testError.Error(), func() {
 					v := ms()
-					assert.Equal(t, tt.v, v)
+					r.Equal(tt.v, v)
 				})
 			} else {
 				v := ms()
-				assert.Equal(t, tt.v, v)
+				r.Equal(tt.v, v)
 			}
 		})
 	}
@@ -117,7 +123,7 @@ func TestSilentSupplier(t *testing.T) {
 		return testResult
 	}
 	v := ss()
-	assert.Equal(t, testResult, v)
+	require.Equal(t, testResult, v)
 }
 
 func TestMustSupplier(t *testing.T) {
@@ -126,7 +132,7 @@ func TestMustSupplier(t *testing.T) {
 	}
 
 	v := ms()
-	assert.Equal(t, testResult, v)
+	require.Equal(t, testResult, v)
 }
 
 func TestMustSupplier_ToSilentSupplier(t *testing.T) {
@@ -148,14 +154,16 @@ func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
 			ms := tt.s.ToMustSupplier()
-			assert.NotNil(t, ms)
+			r.NotNil(ms)
 
 			ss := ms.ToSilentSupplier()
-			assert.NotNil(t, ss)
+			r.NotNil(ss)
 
 			v := ss()
-			assert.Equal(t, tt.v, v)
+			r.Equal(tt.v, v)
 		})
 	}
 }
@@ -176,17 +184,19 @@ func TestMustSupplier_ToSupplier(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
 			ms := tt.s.ToMustSupplier()
-			assert.NotNil(t, ms)
+			r.NotNil(ms)
 
 			s := ms.ToSupplier()
-			assert.NotNil(t, s)
+			r.NotNil(s)
 
 			v, err := s()
 			if err != nil {
-				assert.EqualError(t, err, testError.Error())
+				r.EqualError(err, testError.Error())
 			} else {
-				assert.Equal(t, testResult, v)
+				r.Equal(testResult, v)
 			}
 		})
 	}
