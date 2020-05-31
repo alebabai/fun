@@ -30,7 +30,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	paths, err := filepath.Glob("./[^_codegen]**/*.go.tmpl")
+	paths, err := filepath.Glob("./[^_]**/[^_]*.go.tmpl")
 	if err != nil {
 		log.Fatal(err)
 	}
