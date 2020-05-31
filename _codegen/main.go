@@ -25,7 +25,7 @@ func main() {
 		"Int", "String", "Bool",
 	}
 
-	ht, err := template.ParseFiles("./_codegen/header.go.tmpl")
+	headerTmpl, err := template.ParseFiles("./_codegen/header.go.tmpl")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,44 +36,44 @@ func main() {
 	}
 
 	for _, p := range paths {
-		hb := new(bytes.Buffer)
-		hd := &HeaderData{
+		headerBuff := new(bytes.Buffer)
+		headerData := &HeaderData{
 			Source: filepath.Base(p),
 		}
-		err := ht.Execute(hb, hd)
+		err := headerTmpl.Execute(headerBuff, headerData)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		ct, err := template.ParseFiles(p)
+		codeTmpl, err := template.ParseFiles(p)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		for _, t := range types {
-			cb := new(bytes.Buffer)
-			cb.WriteString(hb.String())
+			codeBuff := new(bytes.Buffer)
+			codeBuff.WriteString(headerBuff.String())
 
-			cd := &CodeData{
+			codeData := &CodeData{
 				Type:   t,
 				GoType: strings.ToLower(t),
 			}
-			err = ct.Execute(cb, cd)
+			err = codeTmpl.Execute(codeBuff, codeData)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			fn := fmt.Sprintf(
+			filename := fmt.Sprintf(
 				"%s/%s_%s.go",
 				filepath.Dir(p),
 				strings.ToLower(t),
 				strings.TrimSuffix(filepath.Base(p), ".go.tmpl"),
 			)
-			fcb, err := format.Source(cb.Bytes())
+			formattedBytes, err := format.Source(codeBuff.Bytes())
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = ioutil.WriteFile(fn, fcb, 0644)
+			err = ioutil.WriteFile(filename, formattedBytes, 0644)
 			if err != nil {
 				log.Fatal(err)
 			}
