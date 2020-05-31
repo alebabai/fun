@@ -1,0 +1,7 @@
+types:
+  - name: Int
+    builtin: int
+  - name: String
+    builtin: string
+  - name: Int
+    builtin: int

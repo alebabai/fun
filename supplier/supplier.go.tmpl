@@ -7,6 +7,15 @@ type {{.Type}}Supplier func() ({{.GoType}}, error)
 // In case of an error it should just return the default value of the type.
 type Silent{{.Type}}Supplier func() {{.GoType}}
 
+{{if ne .GoType "interface{}" }}
+// ToSupplier transforms {{.Type}}Supplier into Supplier
+func (s {{.Type}}Supplier) ToSupplier() Supplier {
+	return func() (interface{}, error) {
+		return s()
+	}
+}
+{{end}}
+
 // ToSilent{{.Type}}Supplier transforms {{.Type}}Supplier into Silent{{.Type}}Supplier
 func (s {{.Type}}Supplier) ToSilent{{.Type}}Supplier() Silent{{.Type}}Supplier {
 	return func() {{.GoType}} {
