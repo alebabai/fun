@@ -11,6 +11,11 @@ import (
 	"text/template"
 )
 
+const HeaderTemplate = `// CODE GENERATED AUTOMATICALLY
+// SOURCE: {{.Source}}
+// DO NOT EDIT
+`
+
 type HeaderData struct {
 	Source string
 }
@@ -21,11 +26,11 @@ type CodeData struct {
 }
 
 func main() {
-	types := []string{
-		"Int", "String", "Bool",
+	types := [...]string{
+		"int", "string", "bool",
 	}
 
-	headerTmpl, err := template.ParseFiles("./_codegen/header.go.tmpl")
+	headerTmpl, err := template.New("header.go.tmpl").Parse(HeaderTemplate)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,8 +60,8 @@ func main() {
 			codeBuff.WriteString(headerBuff.String())
 
 			codeData := &CodeData{
-				Type:   t,
-				GoType: strings.ToLower(t),
+				Type:   strings.ToTitle(t),
+				GoType: t,
 			}
 			err = codeTmpl.Execute(codeBuff, codeData)
 			if err != nil {
