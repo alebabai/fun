@@ -1,36 +1,36 @@
 package supplier
 
-// {{.Type}}Supplier represents a supplier of results or an error.
-type {{.Type}}Supplier func() ({{.GoType}}, error)
+// {{.Type.Title}}Supplier represents a supplier of results or an error.
+type {{.Type.Title}}Supplier func() ({{.Type.Name}}, error)
 
-// Silent{{.Type}}Supplier represents a supplier of results without returning an error.
+// Silent{{.Type.Title}}Supplier represents a supplier of results without returning an error.
 // In case of an error it should just return the default value of the type.
-type Silent{{.Type}}Supplier func() {{.GoType}}
+type Silent{{.Type.Title}}Supplier func() {{.Type.Name}}
 
-{{if ne .GoType "interface{}" }}
-// ToSupplier transforms {{.Type}}Supplier into Supplier
-func (s {{.Type}}Supplier) ToSupplier() Supplier {
+{{if ne .Type.Name "interface{}" }}
+// ToSupplier transforms {{.Type.Title}}Supplier into Supplier
+func (s {{.Type.Title}}Supplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
 		return s()
 	}
 }
 {{end}}
 
-// ToSilent{{.Type}}Supplier transforms {{.Type}}Supplier into Silent{{.Type}}Supplier
-func (s {{.Type}}Supplier) ToSilent{{.Type}}Supplier() Silent{{.Type}}Supplier {
-	return func() {{.GoType}} {
+// ToSilent{{.Type.Title}}Supplier transforms {{.Type.Title}}Supplier into Silent{{.Type.Title}}Supplier
+func (s {{.Type.Title}}Supplier) ToSilent{{.Type.Title}}Supplier() Silent{{.Type.Title}}Supplier {
+	return func() {{.Type.Name}} {
 		v, _ := s()
 		return v
 	}
 }
 
-// Must{{.Type}}Supplier represents a supplier of results without returning an error.
+// Must{{.Type.Title}}Supplier represents a supplier of results without returning an error.
 // In case of an error it should panic with error value.
-type Must{{.Type}}Supplier func() {{.GoType}}
+type Must{{.Type.Title}}Supplier func() {{.Type.Name}}
 
-// ToMust{{.Type}}Supplier transforms {{.Type}}Supplier into Must{{.Type}}Supplier
-func (s {{.Type}}Supplier) ToMust{{.Type}}Supplier() Must{{.Type}}Supplier {
-	return func() {{.GoType}} {
+// ToMust{{.Type.Title}}Supplier transforms {{.Type.Title}}Supplier into Must{{.Type.Title}}Supplier
+func (s {{.Type.Title}}Supplier) ToMust{{.Type.Title}}Supplier() Must{{.Type.Title}}Supplier {
+	return func() {{.Type.Name}} {
 		v, err := s()
 		if err != nil {
 			panic(err)
@@ -39,9 +39,9 @@ func (s {{.Type}}Supplier) ToMust{{.Type}}Supplier() Must{{.Type}}Supplier {
 	}
 }
 
-// To{{.Type}}Supplier transforms Must{{.Type}}Supplier into {{.Type}}Supplier
-func (ms Must{{.Type}}Supplier) To{{.Type}}Supplier() {{.Type}}Supplier {
-	return func() (v {{.GoType}}, err error) {
+// To{{.Type.Title}}Supplier transforms Must{{.Type.Title}}Supplier into {{.Type.Title}}Supplier
+func (ms Must{{.Type.Title}}Supplier) To{{.Type.Title}}Supplier() {{.Type.Title}}Supplier {
+	return func() (v {{.Type.Name}}, err error) {
 		defer func() {
 			if r := recover(); r != nil {
 				err = r.(error)
@@ -52,8 +52,8 @@ func (ms Must{{.Type}}Supplier) To{{.Type}}Supplier() {{.Type}}Supplier {
 	}
 }
 
-// ToSilent{{.Type}}Supplier transforms Must{{.Type}}Supplier into Silent{{.Type}}Supplier
-func (ms Must{{.Type}}Supplier) ToSilent{{.Type}}Supplier() Silent{{.Type}}Supplier {
-	s := ms.To{{.Type}}Supplier()
-	return s.ToSilent{{.Type}}Supplier()
+// ToSilent{{.Type.Title}}Supplier transforms Must{{.Type.Title}}Supplier into Silent{{.Type.Title}}Supplier
+func (ms Must{{.Type.Title}}Supplier) ToSilent{{.Type.Title}}Supplier() Silent{{.Type.Title}}Supplier {
+	s := ms.To{{.Type.Title}}Supplier()
+	return s.ToSilent{{.Type.Title}}Supplier()
 }
