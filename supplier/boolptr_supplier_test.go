@@ -1,0 +1,245 @@
+// CODE GENERATED AUTOMATICALLY
+// SOURCE: supplier_test.go.tmpl
+// DO NOT EDIT
+
+package supplier
+
+import (
+	"errors"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
+
+var (
+	testBoolPtrSupplierResult *bool
+	testBoolPtrSupplierError  = errors.New("error")
+)
+
+func testBoolPtrSupplier() (*bool, error) {
+	return testBoolPtrSupplierResult, nil
+}
+
+func testBoolPtrSupplierWithError() (*bool, error) {
+	return testBoolPtrSupplierResult, testBoolPtrSupplierError
+}
+
+func TestBoolPtrSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolPtrSupplier
+	}{
+		{
+			name: "ok",
+			s:    testBoolPtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolPtrSupplierWithError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			v, err := tt.s()
+			if err != nil {
+				r.Empty(v)
+				r.EqualError(err, testBoolPtrSupplierError.Error())
+			} else {
+				r.Equal(testBoolPtrSupplierResult, v)
+			}
+		})
+	}
+}
+
+func TestBoolPtrSupplier_ToSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolPtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testBoolPtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolPtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			s := tt.s.ToSupplier()
+			r.NotNil(s)
+
+			v, err := s()
+			if err != nil {
+				r.Empty(v)
+				r.EqualError(err, testBoolPtrSupplierError.Error())
+			} else {
+				r.Equal(testBoolPtrSupplierResult, v)
+			}
+		})
+	}
+}
+
+func TestBoolPtrSupplier_ToSilentBoolPtrSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolPtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testBoolPtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolPtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			ss := tt.s.ToSilentBoolPtrSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testBoolPtrSupplierResult, v)
+			}
+		})
+	}
+}
+
+func TestBoolPtrSupplier_ToMustBoolPtrSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolPtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testBoolPtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolPtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			ms := tt.s.ToMustBoolPtrSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testBoolPtrSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testBoolPtrSupplierResult, v)
+			}
+		})
+	}
+}
+
+func TestSilentBoolPtrSupplier(t *testing.T) {
+	var ss SilentBoolPtrSupplier = func() *bool {
+		return testBoolPtrSupplierResult
+	}
+	v := ss()
+	require.Equal(t, testBoolPtrSupplierResult, v)
+}
+
+func TestMustBoolPtrSupplier(t *testing.T) {
+	var ms MustBoolPtrSupplier = func() *bool {
+		return testBoolPtrSupplierResult
+	}
+
+	v := ms()
+	require.Equal(t, testBoolPtrSupplierResult, v)
+}
+
+func TestMustBoolPtrSupplier_ToSilentBoolPtrSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolPtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testBoolPtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolPtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			ms := tt.s.ToMustBoolPtrSupplier()
+			r.NotNil(ms)
+
+			ss := ms.ToSilentBoolPtrSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testBoolPtrSupplierResult, v)
+			}
+		})
+	}
+}
+
+func TestMustBoolPtrSupplier_ToBoolPtrSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolPtrSupplier
+	}{
+		{
+			name: "ok",
+			s:    testBoolPtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolPtrSupplierWithError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			ms := tt.s.ToMustBoolPtrSupplier()
+			r.NotNil(ms)
+
+			s := ms.ToBoolPtrSupplier()
+			r.NotNil(s)
+
+			v, err := s()
+			if err != nil {
+				r.Empty(v)
+				r.EqualError(err, testBoolPtrSupplierError.Error())
+			} else {
+				r.Equal(testBoolPtrSupplierResult, v)
+			}
+		})
+	}
+}
