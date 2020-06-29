@@ -18,11 +18,6 @@ const HeaderTemplate = `// CODE GENERATED AUTOMATICALLY
 // DO NOT EDIT
 `
 
-type Type struct {
-	Name  string
-	Title string
-}
-
 type Data struct {
 	Type   *Type
 	Source string

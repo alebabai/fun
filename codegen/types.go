@@ -6,20 +6,24 @@ import (
 )
 
 var (
-	BuiltinTypes = [...]string{
+	BuiltinTypes = []string{
 		"interface{}",
 		"string",
 		"rune",
 		"bool",
 		"byte",
-		"uintptr",
 		"uint", "uint8", "uint16", "uint32", "uint64",
 		"int", "int8", "int16", "int32", "int64",
 		"float32", "float64",
 	}
 )
 
-func GenerateComplexTypes(builtinType string) []string {
+type Type struct {
+	Name  string
+	Title string
+}
+
+func generateComplexTypes(builtinType string) []string {
 	return []string{
 		fmt.Sprintf("*%s", builtinType),
 		fmt.Sprintf("[]%s", builtinType),
@@ -27,34 +31,41 @@ func GenerateComplexTypes(builtinType string) []string {
 	}
 }
 
+func getComplexTypeTitle(builtinType, complexType string) string {
+	title := strings.Title(builtinType)
+	if strings.HasPrefix(complexType, "*") {
+		title = fmt.Sprintf("%sPtr", title)
+	} else if strings.HasPrefix(complexType, "[]*") {
+		title = fmt.Sprintf("%sPtrSlice", title)
+	} else if strings.HasPrefix(complexType, "[]") {
+		title = fmt.Sprintf("%sSlice", title)
+	}
+	return title
+}
+
 func GetTypes() []*Type {
 	types := make([]*Type, 0)
 	for _, bt := range BuiltinTypes {
-		var btTitle string
 		if bt != "interface{}" {
-			btTitle = strings.Title(bt)
-			complexTypes := GenerateComplexTypes(bt)
-			for _, ct := range complexTypes {
-				ctTitle := btTitle
-				if strings.HasPrefix(ct, "*") {
-					ctTitle = fmt.Sprintf("%sPtr", btTitle)
-				} else if strings.HasPrefix(ct, "[]*") {
-					ctTitle = fmt.Sprintf("%sPtrSlice", btTitle)
-				} else if strings.HasPrefix(ct, "[]") {
-					ctTitle = fmt.Sprintf("%sSlice", btTitle)
-				}
+			t := &Type{
+				Name:  bt,
+				Title: strings.Title(bt),
+			}
+			types = append(types, t)
+
+			for _, ct := range generateComplexTypes(bt) {
 				t := &Type{
 					Name:  ct,
-					Title: ctTitle,
+					Title: getComplexTypeTitle(bt, ct),
 				}
 				types = append(types, t)
 			}
+		} else {
+			t := &Type{
+				Name: bt,
+			}
+			types = append(types, t)
 		}
-		t := &Type{
-			Name:  bt,
-			Title: btTitle,
-		}
-		types = append(types, t)
 	}
 	return types
 }
