@@ -13,12 +13,6 @@ import (
 	"text/template"
 )
 
-var (
-	DefaultTypes = []string{
-		"interface{}", "string", "rune", "bool", "byte", "uint", "int", "int8", "int16", "int32", "int64", "float32", "float64",
-	}
-)
-
 const HeaderTemplate = `// CODE GENERATED AUTOMATICALLY
 // SOURCE: {{.Source}}
 // DO NOT EDIT
@@ -32,22 +26,6 @@ type Type struct {
 type Data struct {
 	Type   *Type
 	Source string
-}
-
-func GetTypes(names []string) []*Type {
-	types := make([]*Type, 0)
-	for _, name := range names {
-		var title string
-		if name != "interface{}" {
-			title = strings.Title(name)
-		}
-		t := &Type{
-			Name:  name,
-			Title: title,
-		}
-		types = append(types, t)
-	}
-	return types
 }
 
 func main() {
@@ -68,31 +46,32 @@ func main() {
 		log.Fatal(err)
 	}
 
-	types := GetTypes(DefaultTypes)
+	types := GetTypes()
 	for _, p := range paths {
-		fileBytes, err := ioutil.ReadFile(p)
+		tmplBytes, err := ioutil.ReadFile(p)
 		if err != nil {
 			log.Fatal(err)
 		}
-		tmplBuff := bytes.NewBuffer(nil)
-		tmplBuff.WriteString(HeaderTemplate)
-		tmplBuff.WriteString("\n")
-		tmplBuff.Write(fileBytes)
+		tsb := new(strings.Builder)
+		tsb.WriteString(HeaderTemplate)
+		tsb.WriteString("\n")
+		tsb.Write(tmplBytes)
 
 		source := filepath.Base(p)
 		funcMap := template.FuncMap{
 			"ToLower": strings.ToLower,
+			"ToUpper": strings.ToUpper,
 		}
 		tmpl, err := template.
 			New(source).
 			Funcs(funcMap).
-			Parse(tmplBuff.String())
+			Parse(tsb.String())
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		for _, t := range types {
-			resBuff := bytes.NewBuffer(nil)
+			resBuff := new(bytes.Buffer)
 			data := &Data{
 				Type:   t,
 				Source: source,
@@ -102,12 +81,13 @@ func main() {
 				log.Fatal(err)
 			}
 
-			typePrefix := fmt.Sprintf(
-				"%s_",
-				strings.ToLower(t.Title),
-			)
-			if t.Name == "interface{}" {
-				typePrefix = ""
+			var typePrefix string
+			if t.Name != "interface{}" {
+				lt := strings.ToLower(t.Title)
+				typePrefix = fmt.Sprintf(
+					"%s_",
+					lt,
+				)
 			}
 
 			filename := fmt.Sprintf(
