@@ -1,3 +1,7 @@
+// CODE GENERATED AUTOMATICALLY
+// SOURCE: consumer.go.tmpl
+// DO NOT EDIT
+
 package consumer
 
 // Consumer represents an operation that accepts a single input argument or returns an error.
