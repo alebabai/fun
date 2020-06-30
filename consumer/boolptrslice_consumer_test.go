@@ -57,7 +57,7 @@ func TestBoolPtrSliceConsumer(t *testing.T) {
 	}
 }
 
-func TestBoolPtrSliceSupplier_ToSupplier(t *testing.T) {
+func TestBoolPtrSliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testBoolPtrSliceConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentBoolPtrSliceConsumer(t *testing.T) {
 	sc(valTestBoolPtrSliceConsumer)
 }
 
+func TestSilentBoolPtrSliceConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testBoolPtrSliceConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) BoolPtrSliceConsumer {
+				return func(v []*bool) error {
+					require.Equal(t, valTestBoolPtrSliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) BoolPtrSliceConsumer {
+				return func(v []*bool) error {
+					require.Equal(t, valTestBoolPtrSliceConsumer, v)
+					return errTestBoolPtrSliceConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentBoolPtrSliceConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestBoolPtrSliceConsumer)
+		})
+	}
+}
+
 func TestSilentBoolPtrSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentBoolPtrSliceConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustBoolPtrSliceConsumer(t *testing.T) {
-	var sc SilentBoolPtrSliceConsumer = func(v []*bool) {
+	var mc MustBoolPtrSliceConsumer = func(v []*bool) {
 		require.Equal(t, valTestBoolPtrSliceConsumer, v)
 		return
 	}
-	sc(valTestBoolPtrSliceConsumer)
+	mc(valTestBoolPtrSliceConsumer)
+}
+
+func TestMustBoolPtrSliceConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testBoolPtrSliceConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) BoolPtrSliceConsumer {
+				return func(v []*bool) error {
+					require.Equal(t, valTestBoolPtrSliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) BoolPtrSliceConsumer {
+				return func(v []*bool) error {
+					require.Equal(t, valTestBoolPtrSliceConsumer, v)
+					return errTestBoolPtrSliceConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustBoolPtrSliceConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestBoolPtrSliceConsumer.Error(), func() {
+					mc(valTestBoolPtrSliceConsumer)
+				})
+			} else {
+				mc(valTestBoolPtrSliceConsumer)
+			}
+		})
+	}
 }
 
 func TestMustBoolPtrSliceConsumer_AndThen(t *testing.T) {

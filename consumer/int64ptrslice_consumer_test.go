@@ -57,7 +57,7 @@ func TestInt64PtrSliceConsumer(t *testing.T) {
 	}
 }
 
-func TestInt64PtrSliceSupplier_ToSupplier(t *testing.T) {
+func TestInt64PtrSliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testInt64PtrSliceConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentInt64PtrSliceConsumer(t *testing.T) {
 	sc(valTestInt64PtrSliceConsumer)
 }
 
+func TestSilentInt64PtrSliceConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt64PtrSliceConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int64PtrSliceConsumer {
+				return func(v []*int64) error {
+					require.Equal(t, valTestInt64PtrSliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int64PtrSliceConsumer {
+				return func(v []*int64) error {
+					require.Equal(t, valTestInt64PtrSliceConsumer, v)
+					return errTestInt64PtrSliceConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentInt64PtrSliceConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestInt64PtrSliceConsumer)
+		})
+	}
+}
+
 func TestSilentInt64PtrSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentInt64PtrSliceConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustInt64PtrSliceConsumer(t *testing.T) {
-	var sc SilentInt64PtrSliceConsumer = func(v []*int64) {
+	var mc MustInt64PtrSliceConsumer = func(v []*int64) {
 		require.Equal(t, valTestInt64PtrSliceConsumer, v)
 		return
 	}
-	sc(valTestInt64PtrSliceConsumer)
+	mc(valTestInt64PtrSliceConsumer)
+}
+
+func TestMustInt64PtrSliceConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt64PtrSliceConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int64PtrSliceConsumer {
+				return func(v []*int64) error {
+					require.Equal(t, valTestInt64PtrSliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int64PtrSliceConsumer {
+				return func(v []*int64) error {
+					require.Equal(t, valTestInt64PtrSliceConsumer, v)
+					return errTestInt64PtrSliceConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustInt64PtrSliceConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestInt64PtrSliceConsumer.Error(), func() {
+					mc(valTestInt64PtrSliceConsumer)
+				})
+			} else {
+				mc(valTestInt64PtrSliceConsumer)
+			}
+		})
+	}
 }
 
 func TestMustInt64PtrSliceConsumer_AndThen(t *testing.T) {

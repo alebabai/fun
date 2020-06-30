@@ -57,7 +57,7 @@ func TestIntPtrConsumer(t *testing.T) {
 	}
 }
 
-func TestIntPtrSupplier_ToSupplier(t *testing.T) {
+func TestIntPtrConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testIntPtrConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentIntPtrConsumer(t *testing.T) {
 	sc(valTestIntPtrConsumer)
 }
 
+func TestSilentIntPtrConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testIntPtrConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) IntPtrConsumer {
+				return func(v *int) error {
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) IntPtrConsumer {
+				return func(v *int) error {
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return errTestIntPtrConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentIntPtrConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestIntPtrConsumer)
+		})
+	}
+}
+
 func TestSilentIntPtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentIntPtrConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustIntPtrConsumer(t *testing.T) {
-	var sc SilentIntPtrConsumer = func(v *int) {
+	var mc MustIntPtrConsumer = func(v *int) {
 		require.Equal(t, valTestIntPtrConsumer, v)
 		return
 	}
-	sc(valTestIntPtrConsumer)
+	mc(valTestIntPtrConsumer)
+}
+
+func TestMustIntPtrConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testIntPtrConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) IntPtrConsumer {
+				return func(v *int) error {
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) IntPtrConsumer {
+				return func(v *int) error {
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return errTestIntPtrConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustIntPtrConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestIntPtrConsumer.Error(), func() {
+					mc(valTestIntPtrConsumer)
+				})
+			} else {
+				mc(valTestIntPtrConsumer)
+			}
+		})
+	}
 }
 
 func TestMustIntPtrConsumer_AndThen(t *testing.T) {

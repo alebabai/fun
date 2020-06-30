@@ -41,6 +41,13 @@ func (c Float32PtrConsumer) ToSilentFloat32PtrConsumer() SilentFloat32PtrConsume
 	}
 }
 
+// ToSilentConsumer transforms SilentFloat32PtrConsumer into SilentConsumer
+func (sc SilentFloat32PtrConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.(*float32))
+	}
+}
+
 // AndThen returns a composed SilentFloat32PtrConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentFloat32PtrConsumer) AndThen(after SilentFloat32PtrConsumer) SilentFloat32PtrConsumer {
@@ -65,6 +72,13 @@ func (c Float32PtrConsumer) ToMustFloat32PtrConsumer() MustFloat32PtrConsumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustFloat32PtrConsumer into MustConsumer
+func (mc MustFloat32PtrConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.(*float32))
 	}
 }
 

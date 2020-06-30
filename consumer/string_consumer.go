@@ -41,6 +41,13 @@ func (c StringConsumer) ToSilentStringConsumer() SilentStringConsumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentStringConsumer into SilentConsumer
+func (sc SilentStringConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.(string))
+	}
+}
+
 // AndThen returns a composed SilentStringConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentStringConsumer) AndThen(after SilentStringConsumer) SilentStringConsumer {
@@ -65,6 +72,13 @@ func (c StringConsumer) ToMustStringConsumer() MustStringConsumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustStringConsumer into MustConsumer
+func (mc MustStringConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.(string))
 	}
 }
 

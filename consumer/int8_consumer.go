@@ -41,6 +41,13 @@ func (c Int8Consumer) ToSilentInt8Consumer() SilentInt8Consumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentInt8Consumer into SilentConsumer
+func (sc SilentInt8Consumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.(int8))
+	}
+}
+
 // AndThen returns a composed SilentInt8Consumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentInt8Consumer) AndThen(after SilentInt8Consumer) SilentInt8Consumer {
@@ -65,6 +72,13 @@ func (c Int8Consumer) ToMustInt8Consumer() MustInt8Consumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustInt8Consumer into MustConsumer
+func (mc MustInt8Consumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.(int8))
 	}
 }
 

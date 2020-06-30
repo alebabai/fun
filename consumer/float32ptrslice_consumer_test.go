@@ -57,7 +57,7 @@ func TestFloat32PtrSliceConsumer(t *testing.T) {
 	}
 }
 
-func TestFloat32PtrSliceSupplier_ToSupplier(t *testing.T) {
+func TestFloat32PtrSliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testFloat32PtrSliceConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentFloat32PtrSliceConsumer(t *testing.T) {
 	sc(valTestFloat32PtrSliceConsumer)
 }
 
+func TestSilentFloat32PtrSliceConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testFloat32PtrSliceConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Float32PtrSliceConsumer {
+				return func(v []*float32) error {
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Float32PtrSliceConsumer {
+				return func(v []*float32) error {
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return errTestFloat32PtrSliceConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentFloat32PtrSliceConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestFloat32PtrSliceConsumer)
+		})
+	}
+}
+
 func TestSilentFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustFloat32PtrSliceConsumer(t *testing.T) {
-	var sc SilentFloat32PtrSliceConsumer = func(v []*float32) {
+	var mc MustFloat32PtrSliceConsumer = func(v []*float32) {
 		require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 		return
 	}
-	sc(valTestFloat32PtrSliceConsumer)
+	mc(valTestFloat32PtrSliceConsumer)
+}
+
+func TestMustFloat32PtrSliceConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testFloat32PtrSliceConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Float32PtrSliceConsumer {
+				return func(v []*float32) error {
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Float32PtrSliceConsumer {
+				return func(v []*float32) error {
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return errTestFloat32PtrSliceConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustFloat32PtrSliceConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestFloat32PtrSliceConsumer.Error(), func() {
+					mc(valTestFloat32PtrSliceConsumer)
+				})
+			} else {
+				mc(valTestFloat32PtrSliceConsumer)
+			}
+		})
+	}
 }
 
 func TestMustFloat32PtrSliceConsumer_AndThen(t *testing.T) {

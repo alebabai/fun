@@ -57,7 +57,7 @@ func TestInt16SliceConsumer(t *testing.T) {
 	}
 }
 
-func TestInt16SliceSupplier_ToSupplier(t *testing.T) {
+func TestInt16SliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testInt16SliceConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentInt16SliceConsumer(t *testing.T) {
 	sc(valTestInt16SliceConsumer)
 }
 
+func TestSilentInt16SliceConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt16SliceConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int16SliceConsumer {
+				return func(v []int16) error {
+					require.Equal(t, valTestInt16SliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int16SliceConsumer {
+				return func(v []int16) error {
+					require.Equal(t, valTestInt16SliceConsumer, v)
+					return errTestInt16SliceConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentInt16SliceConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestInt16SliceConsumer)
+		})
+	}
+}
+
 func TestSilentInt16SliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentInt16SliceConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustInt16SliceConsumer(t *testing.T) {
-	var sc SilentInt16SliceConsumer = func(v []int16) {
+	var mc MustInt16SliceConsumer = func(v []int16) {
 		require.Equal(t, valTestInt16SliceConsumer, v)
 		return
 	}
-	sc(valTestInt16SliceConsumer)
+	mc(valTestInt16SliceConsumer)
+}
+
+func TestMustInt16SliceConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt16SliceConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int16SliceConsumer {
+				return func(v []int16) error {
+					require.Equal(t, valTestInt16SliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int16SliceConsumer {
+				return func(v []int16) error {
+					require.Equal(t, valTestInt16SliceConsumer, v)
+					return errTestInt16SliceConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustInt16SliceConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestInt16SliceConsumer.Error(), func() {
+					mc(valTestInt16SliceConsumer)
+				})
+			} else {
+				mc(valTestInt16SliceConsumer)
+			}
+		})
+	}
 }
 
 func TestMustInt16SliceConsumer_AndThen(t *testing.T) {

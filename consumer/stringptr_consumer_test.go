@@ -57,7 +57,7 @@ func TestStringPtrConsumer(t *testing.T) {
 	}
 }
 
-func TestStringPtrSupplier_ToSupplier(t *testing.T) {
+func TestStringPtrConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testStringPtrConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentStringPtrConsumer(t *testing.T) {
 	sc(valTestStringPtrConsumer)
 }
 
+func TestSilentStringPtrConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testStringPtrConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) StringPtrConsumer {
+				return func(v *string) error {
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) StringPtrConsumer {
+				return func(v *string) error {
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return errTestStringPtrConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentStringPtrConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestStringPtrConsumer)
+		})
+	}
+}
+
 func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustStringPtrConsumer(t *testing.T) {
-	var sc SilentStringPtrConsumer = func(v *string) {
+	var mc MustStringPtrConsumer = func(v *string) {
 		require.Equal(t, valTestStringPtrConsumer, v)
 		return
 	}
-	sc(valTestStringPtrConsumer)
+	mc(valTestStringPtrConsumer)
+}
+
+func TestMustStringPtrConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testStringPtrConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) StringPtrConsumer {
+				return func(v *string) error {
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) StringPtrConsumer {
+				return func(v *string) error {
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return errTestStringPtrConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustStringPtrConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestStringPtrConsumer.Error(), func() {
+					mc(valTestStringPtrConsumer)
+				})
+			} else {
+				mc(valTestStringPtrConsumer)
+			}
+		})
+	}
 }
 
 func TestMustStringPtrConsumer_AndThen(t *testing.T) {

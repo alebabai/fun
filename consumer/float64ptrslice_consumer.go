@@ -41,6 +41,13 @@ func (c Float64PtrSliceConsumer) ToSilentFloat64PtrSliceConsumer() SilentFloat64
 	}
 }
 
+// ToSilentConsumer transforms SilentFloat64PtrSliceConsumer into SilentConsumer
+func (sc SilentFloat64PtrSliceConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.([]*float64))
+	}
+}
+
 // AndThen returns a composed SilentFloat64PtrSliceConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentFloat64PtrSliceConsumer) AndThen(after SilentFloat64PtrSliceConsumer) SilentFloat64PtrSliceConsumer {
@@ -65,6 +72,13 @@ func (c Float64PtrSliceConsumer) ToMustFloat64PtrSliceConsumer() MustFloat64PtrS
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustFloat64PtrSliceConsumer into MustConsumer
+func (mc MustFloat64PtrSliceConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.([]*float64))
 	}
 }
 

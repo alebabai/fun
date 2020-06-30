@@ -57,7 +57,7 @@ func TestByteSliceConsumer(t *testing.T) {
 	}
 }
 
-func TestByteSliceSupplier_ToSupplier(t *testing.T) {
+func TestByteSliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testByteSliceConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentByteSliceConsumer(t *testing.T) {
 	sc(valTestByteSliceConsumer)
 }
 
+func TestSilentByteSliceConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testByteSliceConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) ByteSliceConsumer {
+				return func(v []byte) error {
+					require.Equal(t, valTestByteSliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) ByteSliceConsumer {
+				return func(v []byte) error {
+					require.Equal(t, valTestByteSliceConsumer, v)
+					return errTestByteSliceConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentByteSliceConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestByteSliceConsumer)
+		})
+	}
+}
+
 func TestSilentByteSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentByteSliceConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustByteSliceConsumer(t *testing.T) {
-	var sc SilentByteSliceConsumer = func(v []byte) {
+	var mc MustByteSliceConsumer = func(v []byte) {
 		require.Equal(t, valTestByteSliceConsumer, v)
 		return
 	}
-	sc(valTestByteSliceConsumer)
+	mc(valTestByteSliceConsumer)
+}
+
+func TestMustByteSliceConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testByteSliceConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) ByteSliceConsumer {
+				return func(v []byte) error {
+					require.Equal(t, valTestByteSliceConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) ByteSliceConsumer {
+				return func(v []byte) error {
+					require.Equal(t, valTestByteSliceConsumer, v)
+					return errTestByteSliceConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustByteSliceConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestByteSliceConsumer.Error(), func() {
+					mc(valTestByteSliceConsumer)
+				})
+			} else {
+				mc(valTestByteSliceConsumer)
+			}
+		})
+	}
 }
 
 func TestMustByteSliceConsumer_AndThen(t *testing.T) {

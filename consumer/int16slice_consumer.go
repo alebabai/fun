@@ -41,6 +41,13 @@ func (c Int16SliceConsumer) ToSilentInt16SliceConsumer() SilentInt16SliceConsume
 	}
 }
 
+// ToSilentConsumer transforms SilentInt16SliceConsumer into SilentConsumer
+func (sc SilentInt16SliceConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.([]int16))
+	}
+}
+
 // AndThen returns a composed SilentInt16SliceConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentInt16SliceConsumer) AndThen(after SilentInt16SliceConsumer) SilentInt16SliceConsumer {
@@ -65,6 +72,13 @@ func (c Int16SliceConsumer) ToMustInt16SliceConsumer() MustInt16SliceConsumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustInt16SliceConsumer into MustConsumer
+func (mc MustInt16SliceConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.([]int16))
 	}
 }
 

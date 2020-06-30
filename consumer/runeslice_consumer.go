@@ -41,6 +41,13 @@ func (c RuneSliceConsumer) ToSilentRuneSliceConsumer() SilentRuneSliceConsumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentRuneSliceConsumer into SilentConsumer
+func (sc SilentRuneSliceConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.([]rune))
+	}
+}
+
 // AndThen returns a composed SilentRuneSliceConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentRuneSliceConsumer) AndThen(after SilentRuneSliceConsumer) SilentRuneSliceConsumer {
@@ -65,6 +72,13 @@ func (c RuneSliceConsumer) ToMustRuneSliceConsumer() MustRuneSliceConsumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustRuneSliceConsumer into MustConsumer
+func (mc MustRuneSliceConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.([]rune))
 	}
 }
 

@@ -57,7 +57,7 @@ func TestInt8Consumer(t *testing.T) {
 	}
 }
 
-func TestInt8Supplier_ToSupplier(t *testing.T) {
+func TestInt8Consumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testInt8ConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentInt8Consumer(t *testing.T) {
 	sc(valTestInt8Consumer)
 }
 
+func TestSilentInt8Consumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt8ConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int8Consumer {
+				return func(v int8) error {
+					require.Equal(t, valTestInt8Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int8Consumer {
+				return func(v int8) error {
+					require.Equal(t, valTestInt8Consumer, v)
+					return errTestInt8Consumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentInt8Consumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestInt8Consumer)
+		})
+	}
+}
+
 func TestSilentInt8Consumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentInt8Consumer_AndThen(t *testing.T) {
 }
 
 func TestMustInt8Consumer(t *testing.T) {
-	var sc SilentInt8Consumer = func(v int8) {
+	var mc MustInt8Consumer = func(v int8) {
 		require.Equal(t, valTestInt8Consumer, v)
 		return
 	}
-	sc(valTestInt8Consumer)
+	mc(valTestInt8Consumer)
+}
+
+func TestMustInt8Consumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt8ConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int8Consumer {
+				return func(v int8) error {
+					require.Equal(t, valTestInt8Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int8Consumer {
+				return func(v int8) error {
+					require.Equal(t, valTestInt8Consumer, v)
+					return errTestInt8Consumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustInt8Consumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestInt8Consumer.Error(), func() {
+					mc(valTestInt8Consumer)
+				})
+			} else {
+				mc(valTestInt8Consumer)
+			}
+		})
+	}
 }
 
 func TestMustInt8Consumer_AndThen(t *testing.T) {

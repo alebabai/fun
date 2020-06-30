@@ -57,7 +57,7 @@ func TestFloat64PtrConsumer(t *testing.T) {
 	}
 }
 
-func TestFloat64PtrSupplier_ToSupplier(t *testing.T) {
+func TestFloat64PtrConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testFloat64PtrConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentFloat64PtrConsumer(t *testing.T) {
 	sc(valTestFloat64PtrConsumer)
 }
 
+func TestSilentFloat64PtrConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testFloat64PtrConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Float64PtrConsumer {
+				return func(v *float64) error {
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Float64PtrConsumer {
+				return func(v *float64) error {
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return errTestFloat64PtrConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentFloat64PtrConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestFloat64PtrConsumer)
+		})
+	}
+}
+
 func TestSilentFloat64PtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentFloat64PtrConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustFloat64PtrConsumer(t *testing.T) {
-	var sc SilentFloat64PtrConsumer = func(v *float64) {
+	var mc MustFloat64PtrConsumer = func(v *float64) {
 		require.Equal(t, valTestFloat64PtrConsumer, v)
 		return
 	}
-	sc(valTestFloat64PtrConsumer)
+	mc(valTestFloat64PtrConsumer)
+}
+
+func TestMustFloat64PtrConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testFloat64PtrConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Float64PtrConsumer {
+				return func(v *float64) error {
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Float64PtrConsumer {
+				return func(v *float64) error {
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return errTestFloat64PtrConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustFloat64PtrConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestFloat64PtrConsumer.Error(), func() {
+					mc(valTestFloat64PtrConsumer)
+				})
+			} else {
+				mc(valTestFloat64PtrConsumer)
+			}
+		})
+	}
 }
 
 func TestMustFloat64PtrConsumer_AndThen(t *testing.T) {

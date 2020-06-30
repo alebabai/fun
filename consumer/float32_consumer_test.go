@@ -57,7 +57,7 @@ func TestFloat32Consumer(t *testing.T) {
 	}
 }
 
-func TestFloat32Supplier_ToSupplier(t *testing.T) {
+func TestFloat32Consumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testFloat32ConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentFloat32Consumer(t *testing.T) {
 	sc(valTestFloat32Consumer)
 }
 
+func TestSilentFloat32Consumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testFloat32ConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Float32Consumer {
+				return func(v float32) error {
+					require.Equal(t, valTestFloat32Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Float32Consumer {
+				return func(v float32) error {
+					require.Equal(t, valTestFloat32Consumer, v)
+					return errTestFloat32Consumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentFloat32Consumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestFloat32Consumer)
+		})
+	}
+}
+
 func TestSilentFloat32Consumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentFloat32Consumer_AndThen(t *testing.T) {
 }
 
 func TestMustFloat32Consumer(t *testing.T) {
-	var sc SilentFloat32Consumer = func(v float32) {
+	var mc MustFloat32Consumer = func(v float32) {
 		require.Equal(t, valTestFloat32Consumer, v)
 		return
 	}
-	sc(valTestFloat32Consumer)
+	mc(valTestFloat32Consumer)
+}
+
+func TestMustFloat32Consumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testFloat32ConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Float32Consumer {
+				return func(v float32) error {
+					require.Equal(t, valTestFloat32Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Float32Consumer {
+				return func(v float32) error {
+					require.Equal(t, valTestFloat32Consumer, v)
+					return errTestFloat32Consumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustFloat32Consumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestFloat32Consumer.Error(), func() {
+					mc(valTestFloat32Consumer)
+				})
+			} else {
+				mc(valTestFloat32Consumer)
+			}
+		})
+	}
 }
 
 func TestMustFloat32Consumer_AndThen(t *testing.T) {

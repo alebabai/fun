@@ -57,7 +57,7 @@ func TestInt16Consumer(t *testing.T) {
 	}
 }
 
-func TestInt16Supplier_ToSupplier(t *testing.T) {
+func TestInt16Consumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testInt16ConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentInt16Consumer(t *testing.T) {
 	sc(valTestInt16Consumer)
 }
 
+func TestSilentInt16Consumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt16ConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int16Consumer {
+				return func(v int16) error {
+					require.Equal(t, valTestInt16Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int16Consumer {
+				return func(v int16) error {
+					require.Equal(t, valTestInt16Consumer, v)
+					return errTestInt16Consumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentInt16Consumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestInt16Consumer)
+		})
+	}
+}
+
 func TestSilentInt16Consumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentInt16Consumer_AndThen(t *testing.T) {
 }
 
 func TestMustInt16Consumer(t *testing.T) {
-	var sc SilentInt16Consumer = func(v int16) {
+	var mc MustInt16Consumer = func(v int16) {
 		require.Equal(t, valTestInt16Consumer, v)
 		return
 	}
-	sc(valTestInt16Consumer)
+	mc(valTestInt16Consumer)
+}
+
+func TestMustInt16Consumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt16ConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int16Consumer {
+				return func(v int16) error {
+					require.Equal(t, valTestInt16Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int16Consumer {
+				return func(v int16) error {
+					require.Equal(t, valTestInt16Consumer, v)
+					return errTestInt16Consumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustInt16Consumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestInt16Consumer.Error(), func() {
+					mc(valTestInt16Consumer)
+				})
+			} else {
+				mc(valTestInt16Consumer)
+			}
+		})
+	}
 }
 
 func TestMustInt16Consumer_AndThen(t *testing.T) {

@@ -57,7 +57,7 @@ func TestRuneConsumer(t *testing.T) {
 	}
 }
 
-func TestRuneSupplier_ToSupplier(t *testing.T) {
+func TestRuneConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testRuneConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentRuneConsumer(t *testing.T) {
 	sc(valTestRuneConsumer)
 }
 
+func TestSilentRuneConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testRuneConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) RuneConsumer {
+				return func(v rune) error {
+					require.Equal(t, valTestRuneConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) RuneConsumer {
+				return func(v rune) error {
+					require.Equal(t, valTestRuneConsumer, v)
+					return errTestRuneConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentRuneConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestRuneConsumer)
+		})
+	}
+}
+
 func TestSilentRuneConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentRuneConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustRuneConsumer(t *testing.T) {
-	var sc SilentRuneConsumer = func(v rune) {
+	var mc MustRuneConsumer = func(v rune) {
 		require.Equal(t, valTestRuneConsumer, v)
 		return
 	}
-	sc(valTestRuneConsumer)
+	mc(valTestRuneConsumer)
+}
+
+func TestMustRuneConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testRuneConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) RuneConsumer {
+				return func(v rune) error {
+					require.Equal(t, valTestRuneConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) RuneConsumer {
+				return func(v rune) error {
+					require.Equal(t, valTestRuneConsumer, v)
+					return errTestRuneConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustRuneConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestRuneConsumer.Error(), func() {
+					mc(valTestRuneConsumer)
+				})
+			} else {
+				mc(valTestRuneConsumer)
+			}
+		})
+	}
 }
 
 func TestMustRuneConsumer_AndThen(t *testing.T) {

@@ -57,7 +57,7 @@ func TestInt32PtrConsumer(t *testing.T) {
 	}
 }
 
-func TestInt32PtrSupplier_ToSupplier(t *testing.T) {
+func TestInt32PtrConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testInt32PtrConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentInt32PtrConsumer(t *testing.T) {
 	sc(valTestInt32PtrConsumer)
 }
 
+func TestSilentInt32PtrConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt32PtrConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int32PtrConsumer {
+				return func(v *int32) error {
+					require.Equal(t, valTestInt32PtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int32PtrConsumer {
+				return func(v *int32) error {
+					require.Equal(t, valTestInt32PtrConsumer, v)
+					return errTestInt32PtrConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentInt32PtrConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestInt32PtrConsumer)
+		})
+	}
+}
+
 func TestSilentInt32PtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentInt32PtrConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustInt32PtrConsumer(t *testing.T) {
-	var sc SilentInt32PtrConsumer = func(v *int32) {
+	var mc MustInt32PtrConsumer = func(v *int32) {
 		require.Equal(t, valTestInt32PtrConsumer, v)
 		return
 	}
-	sc(valTestInt32PtrConsumer)
+	mc(valTestInt32PtrConsumer)
+}
+
+func TestMustInt32PtrConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testInt32PtrConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Int32PtrConsumer {
+				return func(v *int32) error {
+					require.Equal(t, valTestInt32PtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Int32PtrConsumer {
+				return func(v *int32) error {
+					require.Equal(t, valTestInt32PtrConsumer, v)
+					return errTestInt32PtrConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustInt32PtrConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestInt32PtrConsumer.Error(), func() {
+					mc(valTestInt32PtrConsumer)
+				})
+			} else {
+				mc(valTestInt32PtrConsumer)
+			}
+		})
+	}
 }
 
 func TestMustInt32PtrConsumer_AndThen(t *testing.T) {

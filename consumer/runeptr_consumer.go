@@ -41,6 +41,13 @@ func (c RunePtrConsumer) ToSilentRunePtrConsumer() SilentRunePtrConsumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentRunePtrConsumer into SilentConsumer
+func (sc SilentRunePtrConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.(*rune))
+	}
+}
+
 // AndThen returns a composed SilentRunePtrConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentRunePtrConsumer) AndThen(after SilentRunePtrConsumer) SilentRunePtrConsumer {
@@ -65,6 +72,13 @@ func (c RunePtrConsumer) ToMustRunePtrConsumer() MustRunePtrConsumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustRunePtrConsumer into MustConsumer
+func (mc MustRunePtrConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.(*rune))
 	}
 }
 

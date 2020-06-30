@@ -41,6 +41,13 @@ func (c IntPtrSliceConsumer) ToSilentIntPtrSliceConsumer() SilentIntPtrSliceCons
 	}
 }
 
+// ToSilentConsumer transforms SilentIntPtrSliceConsumer into SilentConsumer
+func (sc SilentIntPtrSliceConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.([]*int))
+	}
+}
+
 // AndThen returns a composed SilentIntPtrSliceConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentIntPtrSliceConsumer) AndThen(after SilentIntPtrSliceConsumer) SilentIntPtrSliceConsumer {
@@ -65,6 +72,13 @@ func (c IntPtrSliceConsumer) ToMustIntPtrSliceConsumer() MustIntPtrSliceConsumer
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustIntPtrSliceConsumer into MustConsumer
+func (mc MustIntPtrSliceConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.([]*int))
 	}
 }
 

@@ -41,6 +41,13 @@ func (c Uint32SliceConsumer) ToSilentUint32SliceConsumer() SilentUint32SliceCons
 	}
 }
 
+// ToSilentConsumer transforms SilentUint32SliceConsumer into SilentConsumer
+func (sc SilentUint32SliceConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.([]uint32))
+	}
+}
+
 // AndThen returns a composed SilentUint32SliceConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentUint32SliceConsumer) AndThen(after SilentUint32SliceConsumer) SilentUint32SliceConsumer {
@@ -65,6 +72,13 @@ func (c Uint32SliceConsumer) ToMustUint32SliceConsumer() MustUint32SliceConsumer
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustUint32SliceConsumer into MustConsumer
+func (mc MustUint32SliceConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.([]uint32))
 	}
 }
 

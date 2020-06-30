@@ -41,6 +41,13 @@ func (c Float32SliceConsumer) ToSilentFloat32SliceConsumer() SilentFloat32SliceC
 	}
 }
 
+// ToSilentConsumer transforms SilentFloat32SliceConsumer into SilentConsumer
+func (sc SilentFloat32SliceConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.([]float32))
+	}
+}
+
 // AndThen returns a composed SilentFloat32SliceConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentFloat32SliceConsumer) AndThen(after SilentFloat32SliceConsumer) SilentFloat32SliceConsumer {
@@ -65,6 +72,13 @@ func (c Float32SliceConsumer) ToMustFloat32SliceConsumer() MustFloat32SliceConsu
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustFloat32SliceConsumer into MustConsumer
+func (mc MustFloat32SliceConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.([]float32))
 	}
 }
 

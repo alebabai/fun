@@ -41,6 +41,13 @@ func (c Int64Consumer) ToSilentInt64Consumer() SilentInt64Consumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentInt64Consumer into SilentConsumer
+func (sc SilentInt64Consumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.(int64))
+	}
+}
+
 // AndThen returns a composed SilentInt64Consumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentInt64Consumer) AndThen(after SilentInt64Consumer) SilentInt64Consumer {
@@ -65,6 +72,13 @@ func (c Int64Consumer) ToMustInt64Consumer() MustInt64Consumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustInt64Consumer into MustConsumer
+func (mc MustInt64Consumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.(int64))
 	}
 }
 

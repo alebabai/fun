@@ -323,11 +323,11 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustConsumer(t *testing.T) {
-	var sc SilentConsumer = func(v interface{}) {
+	var mc MustConsumer = func(v interface{}) {
 		require.Equal(t, valTestConsumer, v)
 		return
 	}
-	sc(valTestConsumer)
+	mc(valTestConsumer)
 }
 
 func TestMustConsumer_AndThen(t *testing.T) {

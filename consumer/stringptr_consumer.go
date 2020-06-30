@@ -41,6 +41,13 @@ func (c StringPtrConsumer) ToSilentStringPtrConsumer() SilentStringPtrConsumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentStringPtrConsumer into SilentConsumer
+func (sc SilentStringPtrConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.(*string))
+	}
+}
+
 // AndThen returns a composed SilentStringPtrConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentStringPtrConsumer) AndThen(after SilentStringPtrConsumer) SilentStringPtrConsumer {
@@ -65,6 +72,13 @@ func (c StringPtrConsumer) ToMustStringPtrConsumer() MustStringPtrConsumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustStringPtrConsumer into MustConsumer
+func (mc MustStringPtrConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.(*string))
 	}
 }
 

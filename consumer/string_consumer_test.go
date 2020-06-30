@@ -57,7 +57,7 @@ func TestStringConsumer(t *testing.T) {
 	}
 }
 
-func TestStringSupplier_ToSupplier(t *testing.T) {
+func TestStringConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testStringConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentStringConsumer(t *testing.T) {
 	sc(valTestStringConsumer)
 }
 
+func TestSilentStringConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testStringConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) StringConsumer {
+				return func(v string) error {
+					require.Equal(t, valTestStringConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) StringConsumer {
+				return func(v string) error {
+					require.Equal(t, valTestStringConsumer, v)
+					return errTestStringConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentStringConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestStringConsumer)
+		})
+	}
+}
+
 func TestSilentStringConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentStringConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustStringConsumer(t *testing.T) {
-	var sc SilentStringConsumer = func(v string) {
+	var mc MustStringConsumer = func(v string) {
 		require.Equal(t, valTestStringConsumer, v)
 		return
 	}
-	sc(valTestStringConsumer)
+	mc(valTestStringConsumer)
+}
+
+func TestMustStringConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testStringConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) StringConsumer {
+				return func(v string) error {
+					require.Equal(t, valTestStringConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) StringConsumer {
+				return func(v string) error {
+					require.Equal(t, valTestStringConsumer, v)
+					return errTestStringConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustStringConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestStringConsumer.Error(), func() {
+					mc(valTestStringConsumer)
+				})
+			} else {
+				mc(valTestStringConsumer)
+			}
+		})
+	}
 }
 
 func TestMustStringConsumer_AndThen(t *testing.T) {

@@ -57,7 +57,7 @@ func TestUint32Consumer(t *testing.T) {
 	}
 }
 
-func TestUint32Supplier_ToSupplier(t *testing.T) {
+func TestUint32Consumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testUint32ConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentUint32Consumer(t *testing.T) {
 	sc(valTestUint32Consumer)
 }
 
+func TestSilentUint32Consumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testUint32ConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Uint32Consumer {
+				return func(v uint32) error {
+					require.Equal(t, valTestUint32Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Uint32Consumer {
+				return func(v uint32) error {
+					require.Equal(t, valTestUint32Consumer, v)
+					return errTestUint32Consumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentUint32Consumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestUint32Consumer)
+		})
+	}
+}
+
 func TestSilentUint32Consumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentUint32Consumer_AndThen(t *testing.T) {
 }
 
 func TestMustUint32Consumer(t *testing.T) {
-	var sc SilentUint32Consumer = func(v uint32) {
+	var mc MustUint32Consumer = func(v uint32) {
 		require.Equal(t, valTestUint32Consumer, v)
 		return
 	}
-	sc(valTestUint32Consumer)
+	mc(valTestUint32Consumer)
+}
+
+func TestMustUint32Consumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testUint32ConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) Uint32Consumer {
+				return func(v uint32) error {
+					require.Equal(t, valTestUint32Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) Uint32Consumer {
+				return func(v uint32) error {
+					require.Equal(t, valTestUint32Consumer, v)
+					return errTestUint32Consumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustUint32Consumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestUint32Consumer.Error(), func() {
+					mc(valTestUint32Consumer)
+				})
+			} else {
+				mc(valTestUint32Consumer)
+			}
+		})
+	}
 }
 
 func TestMustUint32Consumer_AndThen(t *testing.T) {

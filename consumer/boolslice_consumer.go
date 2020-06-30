@@ -41,6 +41,13 @@ func (c BoolSliceConsumer) ToSilentBoolSliceConsumer() SilentBoolSliceConsumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentBoolSliceConsumer into SilentConsumer
+func (sc SilentBoolSliceConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.([]bool))
+	}
+}
+
 // AndThen returns a composed SilentBoolSliceConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentBoolSliceConsumer) AndThen(after SilentBoolSliceConsumer) SilentBoolSliceConsumer {
@@ -65,6 +72,13 @@ func (c BoolSliceConsumer) ToMustBoolSliceConsumer() MustBoolSliceConsumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustBoolSliceConsumer into MustConsumer
+func (mc MustBoolSliceConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.([]bool))
 	}
 }
 

@@ -41,6 +41,13 @@ func (c Int32Consumer) ToSilentInt32Consumer() SilentInt32Consumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentInt32Consumer into SilentConsumer
+func (sc SilentInt32Consumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.(int32))
+	}
+}
+
 // AndThen returns a composed SilentInt32Consumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentInt32Consumer) AndThen(after SilentInt32Consumer) SilentInt32Consumer {
@@ -65,6 +72,13 @@ func (c Int32Consumer) ToMustInt32Consumer() MustInt32Consumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustInt32Consumer into MustConsumer
+func (mc MustInt32Consumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.(int32))
 	}
 }
 

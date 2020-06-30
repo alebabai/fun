@@ -41,6 +41,13 @@ func (c Float64Consumer) ToSilentFloat64Consumer() SilentFloat64Consumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentFloat64Consumer into SilentConsumer
+func (sc SilentFloat64Consumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.(float64))
+	}
+}
+
 // AndThen returns a composed SilentFloat64Consumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentFloat64Consumer) AndThen(after SilentFloat64Consumer) SilentFloat64Consumer {
@@ -65,6 +72,13 @@ func (c Float64Consumer) ToMustFloat64Consumer() MustFloat64Consumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustFloat64Consumer into MustConsumer
+func (mc MustFloat64Consumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.(float64))
 	}
 }
 

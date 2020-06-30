@@ -41,6 +41,13 @@ func (c ByteSliceConsumer) ToSilentByteSliceConsumer() SilentByteSliceConsumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentByteSliceConsumer into SilentConsumer
+func (sc SilentByteSliceConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.([]byte))
+	}
+}
+
 // AndThen returns a composed SilentByteSliceConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentByteSliceConsumer) AndThen(after SilentByteSliceConsumer) SilentByteSliceConsumer {
@@ -65,6 +72,13 @@ func (c ByteSliceConsumer) ToMustByteSliceConsumer() MustByteSliceConsumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustByteSliceConsumer into MustConsumer
+func (mc MustByteSliceConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.([]byte))
 	}
 }
 

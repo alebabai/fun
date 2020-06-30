@@ -57,7 +57,7 @@ func TestBytePtrConsumer(t *testing.T) {
 	}
 }
 
-func TestBytePtrSupplier_ToSupplier(t *testing.T) {
+func TestBytePtrConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   testBytePtrConsumerFactory
@@ -275,6 +275,46 @@ func TestSilentBytePtrConsumer(t *testing.T) {
 	sc(valTestBytePtrConsumer)
 }
 
+func TestSilentBytePtrConsumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testBytePtrConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) BytePtrConsumer {
+				return func(v *byte) error {
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) BytePtrConsumer {
+				return func(v *byte) error {
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return errTestBytePtrConsumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilentBytePtrConsumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTestBytePtrConsumer)
+		})
+	}
+}
+
 func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -365,11 +405,59 @@ func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
 }
 
 func TestMustBytePtrConsumer(t *testing.T) {
-	var sc SilentBytePtrConsumer = func(v *byte) {
+	var mc MustBytePtrConsumer = func(v *byte) {
 		require.Equal(t, valTestBytePtrConsumer, v)
 		return
 	}
-	sc(valTestBytePtrConsumer)
+	mc(valTestBytePtrConsumer)
+}
+
+func TestMustBytePtrConsumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   testBytePtrConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) BytePtrConsumer {
+				return func(v *byte) error {
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) BytePtrConsumer {
+				return func(v *byte) error {
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return errTestBytePtrConsumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMustBytePtrConsumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTestBytePtrConsumer.Error(), func() {
+					mc(valTestBytePtrConsumer)
+				})
+			} else {
+				mc(valTestBytePtrConsumer)
+			}
+		})
+	}
 }
 
 func TestMustBytePtrConsumer_AndThen(t *testing.T) {

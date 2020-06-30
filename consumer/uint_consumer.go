@@ -41,6 +41,13 @@ func (c UintConsumer) ToSilentUintConsumer() SilentUintConsumer {
 	}
 }
 
+// ToSilentConsumer transforms SilentUintConsumer into SilentConsumer
+func (sc SilentUintConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.(uint))
+	}
+}
+
 // AndThen returns a composed SilentUintConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentUintConsumer) AndThen(after SilentUintConsumer) SilentUintConsumer {
@@ -65,6 +72,13 @@ func (c UintConsumer) ToMustUintConsumer() MustUintConsumer {
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustUintConsumer into MustConsumer
+func (mc MustUintConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.(uint))
 	}
 }
 

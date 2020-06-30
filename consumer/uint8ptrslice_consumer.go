@@ -41,6 +41,13 @@ func (c Uint8PtrSliceConsumer) ToSilentUint8PtrSliceConsumer() SilentUint8PtrSli
 	}
 }
 
+// ToSilentConsumer transforms SilentUint8PtrSliceConsumer into SilentConsumer
+func (sc SilentUint8PtrSliceConsumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.([]*uint8))
+	}
+}
+
 // AndThen returns a composed SilentUint8PtrSliceConsumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc SilentUint8PtrSliceConsumer) AndThen(after SilentUint8PtrSliceConsumer) SilentUint8PtrSliceConsumer {
@@ -65,6 +72,13 @@ func (c Uint8PtrSliceConsumer) ToMustUint8PtrSliceConsumer() MustUint8PtrSliceCo
 			panic(err)
 		}
 		return
+	}
+}
+
+// ToMustConsumer transforms MustUint8PtrSliceConsumer into MustConsumer
+func (mc MustUint8PtrSliceConsumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.([]*uint8))
 	}
 }
 
