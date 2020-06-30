@@ -49,7 +49,7 @@ func getComplexTypeTitle(complexType string) string {
 	return title
 }
 
-func GetTypes() []*Type {
+func getTypes() []*Type {
 	types := make([]*Type, 0)
 	for _, bt := range BuiltinTypes {
 		if bt != "interface{}" {
