@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testInt32SliceSupplierResult []int32
-	testInt32SliceSupplierError  = errors.New("error")
+	resTestInt32SliceSupplier []int32
+	errTestInt32SliceSupplier = errors.New("error")
 )
 
 func testInt32SliceSupplier() ([]int32, error) {
-	return testInt32SliceSupplierResult, nil
+	return resTestInt32SliceSupplier, nil
 }
 
 func testInt32SliceSupplierWithError() ([]int32, error) {
-	return testInt32SliceSupplierResult, testInt32SliceSupplierError
+	return resTestInt32SliceSupplier, errTestInt32SliceSupplier
 }
 
 func TestInt32SliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestInt32SliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt32SliceSupplierError.Error())
+				r.EqualError(err, errTestInt32SliceSupplier.Error())
 			} else {
-				r.Equal(testInt32SliceSupplierResult, v)
+				r.Equal(resTestInt32SliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestInt32SliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt32SliceSupplierError.Error())
+				r.EqualError(err, errTestInt32SliceSupplier.Error())
 			} else {
-				r.Equal(testInt32SliceSupplierResult, v)
+				r.Equal(resTestInt32SliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestInt32SliceSupplier_ToSilentInt32SliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt32SliceSupplierResult, v)
+				r.Equal(resTestInt32SliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestInt32SliceSupplier_ToMustInt32SliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt32SliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt32SliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt32SliceSupplierResult, v)
+				r.Equal(resTestInt32SliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestInt32SliceSupplier_ToMustInt32SliceSupplier(t *testing.T) {
 
 func TestSilentInt32SliceSupplier(t *testing.T) {
 	var ss SilentInt32SliceSupplier = func() []int32 {
-		return testInt32SliceSupplierResult
+		return resTestInt32SliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testInt32SliceSupplierResult, v)
+	require.Equal(t, resTestInt32SliceSupplier, v)
 }
 
 func TestSilentInt32SliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentInt32SliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt32SliceSupplierResult, v)
+				r.Equal(resTestInt32SliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentInt32SliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustInt32SliceSupplier(t *testing.T) {
 	var ms MustInt32SliceSupplier = func() []int32 {
-		return testInt32SliceSupplierResult
+		return resTestInt32SliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testInt32SliceSupplierResult, v)
+	require.Equal(t, resTestInt32SliceSupplier, v)
 }
 
 func TestMustInt32SliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustInt32SliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt32SliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt32SliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt32SliceSupplierResult, v)
+				r.Equal(resTestInt32SliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustInt32SliceSupplier_ToSilentInt32SliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt32SliceSupplierResult, v)
+				r.Equal(resTestInt32SliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustInt32SliceSupplier_ToInt32SliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt32SliceSupplierError.Error())
+				r.EqualError(err, errTestInt32SliceSupplier.Error())
 			} else {
-				r.Equal(testInt32SliceSupplierResult, v)
+				r.Equal(resTestInt32SliceSupplier, v)
 			}
 		})
 	}

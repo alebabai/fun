@@ -94,7 +94,7 @@ func (mc MustFloat64PtrSliceConsumer) ToFloat64PtrSliceConsumer() Float64PtrSlic
 	}
 }
 
-// SilentFloat64PtrSliceConsumer transforms MustFloat64PtrSliceConsumer into SilentFloat64PtrSliceConsumer
+// ToSilentFloat64PtrSliceConsumer transforms MustFloat64PtrSliceConsumer into SilentFloat64PtrSliceConsumer
 func (mc MustFloat64PtrSliceConsumer) ToSilentFloat64PtrSliceConsumer() SilentFloat64PtrSliceConsumer {
 	c := mc.ToFloat64PtrSliceConsumer()
 	return c.ToSilentFloat64PtrSliceConsumer()

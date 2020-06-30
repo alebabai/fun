@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testRuneSupplierResult rune
-	testRuneSupplierError  = errors.New("error")
+	resTestRuneSupplier rune
+	errTestRuneSupplier = errors.New("error")
 )
 
 func testRuneSupplier() (rune, error) {
-	return testRuneSupplierResult, nil
+	return resTestRuneSupplier, nil
 }
 
 func testRuneSupplierWithError() (rune, error) {
-	return testRuneSupplierResult, testRuneSupplierError
+	return resTestRuneSupplier, errTestRuneSupplier
 }
 
 func TestRuneSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestRuneSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRuneSupplierError.Error())
+				r.EqualError(err, errTestRuneSupplier.Error())
 			} else {
-				r.Equal(testRuneSupplierResult, v)
+				r.Equal(resTestRuneSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestRuneSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRuneSupplierError.Error())
+				r.EqualError(err, errTestRuneSupplier.Error())
 			} else {
-				r.Equal(testRuneSupplierResult, v)
+				r.Equal(resTestRuneSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestRuneSupplier_ToSilentRuneSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRuneSupplierResult, v)
+				r.Equal(resTestRuneSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestRuneSupplier_ToMustRuneSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testRuneSupplierError.Error(), func() {
+				r.PanicsWithError(errTestRuneSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testRuneSupplierResult, v)
+				r.Equal(resTestRuneSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestRuneSupplier_ToMustRuneSupplier(t *testing.T) {
 
 func TestSilentRuneSupplier(t *testing.T) {
 	var ss SilentRuneSupplier = func() rune {
-		return testRuneSupplierResult
+		return resTestRuneSupplier
 	}
 	v := ss()
-	require.Equal(t, testRuneSupplierResult, v)
+	require.Equal(t, resTestRuneSupplier, v)
 }
 
 func TestSilentRuneSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentRuneSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRuneSupplierResult, v)
+				r.Equal(resTestRuneSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentRuneSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustRuneSupplier(t *testing.T) {
 	var ms MustRuneSupplier = func() rune {
-		return testRuneSupplierResult
+		return resTestRuneSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testRuneSupplierResult, v)
+	require.Equal(t, resTestRuneSupplier, v)
 }
 
 func TestMustRuneSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustRuneSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testRuneSupplierError.Error(), func() {
+				r.PanicsWithError(errTestRuneSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testRuneSupplierResult, v)
+				r.Equal(resTestRuneSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustRuneSupplier_ToSilentRuneSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRuneSupplierResult, v)
+				r.Equal(resTestRuneSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustRuneSupplier_ToRuneSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRuneSupplierError.Error())
+				r.EqualError(err, errTestRuneSupplier.Error())
 			} else {
-				r.Equal(testRuneSupplierResult, v)
+				r.Equal(resTestRuneSupplier, v)
 			}
 		})
 	}

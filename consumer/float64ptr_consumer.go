@@ -94,7 +94,7 @@ func (mc MustFloat64PtrConsumer) ToFloat64PtrConsumer() Float64PtrConsumer {
 	}
 }
 
-// SilentFloat64PtrConsumer transforms MustFloat64PtrConsumer into SilentFloat64PtrConsumer
+// ToSilentFloat64PtrConsumer transforms MustFloat64PtrConsumer into SilentFloat64PtrConsumer
 func (mc MustFloat64PtrConsumer) ToSilentFloat64PtrConsumer() SilentFloat64PtrConsumer {
 	c := mc.ToFloat64PtrConsumer()
 	return c.ToSilentFloat64PtrConsumer()

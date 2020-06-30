@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testUint32PtrConsumerValue *uint32
-	testUint32PtrConsumerError = errors.New("error")
+	valTestUint32PtrConsumer *uint32
+	errTestUint32PtrConsumer = errors.New("error")
 )
 
 type testUint32PtrConsumerFactory func(t *testing.T) Uint32PtrConsumer
@@ -27,7 +27,7 @@ func TestUint32PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestUint32PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
-					return testUint32PtrConsumerError
+					require.Equal(t, valTestUint32PtrConsumer, v)
+					return errTestUint32PtrConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestUint32PtrConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testUint32PtrConsumerValue)
+			err := c(valTestUint32PtrConsumer)
 			if err != nil {
-				r.EqualError(err, testUint32PtrConsumerError.Error())
+				r.EqualError(err, errTestUint32PtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestUint32PtrSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestUint32PtrSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
-					return testUint32PtrConsumerError
+					require.Equal(t, valTestUint32PtrConsumer, v)
+					return errTestUint32PtrConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestUint32PtrSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testUint32PtrConsumerValue)
+			err := c(valTestUint32PtrConsumer)
 			if err != nil {
-				r.EqualError(err, testUint32PtrConsumerError.Error())
+				r.EqualError(err, errTestUint32PtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestUint32PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestUint32PtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestUint32PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testUint32PtrConsumerError
+					return errTestUint32PtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestUint32PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestUint32PtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testUint32PtrConsumerValue)
+			err := cc(valTestUint32PtrConsumer)
 			if err != nil {
-				r.EqualError(err, testUint32PtrConsumerError.Error())
+				r.EqualError(err, errTestUint32PtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestUint32PtrConsumer_ToSilentUint32PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestUint32PtrConsumer_ToSilentUint32PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
-					return testUint32PtrConsumerError
+					require.Equal(t, valTestUint32PtrConsumer, v)
+					return errTestUint32PtrConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestUint32PtrConsumer_ToSilentUint32PtrConsumer(t *testing.T) {
 			sc := c.ToSilentUint32PtrConsumer()
 			r.NotNil(sc)
 
-			sc(testUint32PtrConsumerValue)
+			sc(valTestUint32PtrConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestUint32PtrConsumer_ToMustUint32PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestUint32PtrConsumer_ToMustUint32PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
-					return testUint32PtrConsumerError
+					require.Equal(t, valTestUint32PtrConsumer, v)
+					return errTestUint32PtrConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestUint32PtrConsumer_ToMustUint32PtrConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testUint32PtrConsumerError.Error(), func() {
-					mc(testUint32PtrConsumerValue)
+				r.PanicsWithError(errTestUint32PtrConsumer.Error(), func() {
+					mc(valTestUint32PtrConsumer)
 				})
 			} else {
-				mc(testUint32PtrConsumerValue)
+				mc(valTestUint32PtrConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestUint32PtrConsumer_ToMustUint32PtrConsumer(t *testing.T) {
 
 func TestSilentUint32PtrConsumer(t *testing.T) {
 	var sc SilentUint32PtrConsumer = func(v *uint32) {
-		require.Equal(t, testUint32PtrConsumerValue, v)
+		require.Equal(t, valTestUint32PtrConsumer, v)
 		return
 	}
-	sc(testUint32PtrConsumerValue)
+	sc(valTestUint32PtrConsumer)
 }
 
 func TestSilentUint32PtrConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentUint32PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentUint32PtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentUint32PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testUint32PtrConsumerError
+					return errTestUint32PtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentUint32PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentUint32PtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testUint32PtrConsumerValue)
+			csc(valTestUint32PtrConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentUint32PtrConsumer_AndThen(t *testing.T) {
 
 func TestMustUint32PtrConsumer(t *testing.T) {
 	var sc SilentUint32PtrConsumer = func(v *uint32) {
-		require.Equal(t, testUint32PtrConsumerValue, v)
+		require.Equal(t, valTestUint32PtrConsumer, v)
 		return
 	}
-	sc(testUint32PtrConsumerValue)
+	sc(valTestUint32PtrConsumer)
 }
 
 func TestMustUint32PtrConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustUint32PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustUint32PtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustUint32PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testUint32PtrConsumerError
+					return errTestUint32PtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustUint32PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
 					calls++
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustUint32PtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testUint32PtrConsumerError.Error(), func() {
-					cmc(testUint32PtrConsumerValue)
+				r.PanicsWithError(errTestUint32PtrConsumer.Error(), func() {
+					cmc(valTestUint32PtrConsumer)
 				})
 			} else {
-				cmc(testUint32PtrConsumerValue)
+				cmc(valTestUint32PtrConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustUint32PtrConsumer_ToSilentUint32PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustUint32PtrConsumer_ToSilentUint32PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
-					return testUint32PtrConsumerError
+					require.Equal(t, valTestUint32PtrConsumer, v)
+					return errTestUint32PtrConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustUint32PtrConsumer_ToSilentUint32PtrConsumer(t *testing.T) {
 			sc := mc.ToSilentUint32PtrConsumer()
 			r.NotNil(sc)
 
-			sc(testUint32PtrConsumerValue)
+			sc(valTestUint32PtrConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustUint32PtrConsumer_ToUint32PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
+					require.Equal(t, valTestUint32PtrConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustUint32PtrConsumer_ToUint32PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint32PtrConsumer {
 				return func(v *uint32) error {
-					require.Equal(t, testUint32PtrConsumerValue, v)
-					return testUint32PtrConsumerError
+					require.Equal(t, valTestUint32PtrConsumer, v)
+					return errTestUint32PtrConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustUint32PtrConsumer_ToUint32PtrConsumer(t *testing.T) {
 			c = mc.ToUint32PtrConsumer()
 			r.NotNil(c)
 
-			err := c(testUint32PtrConsumerValue)
+			err := c(valTestUint32PtrConsumer)
 			if tt.err {
-				r.EqualError(err, testUint32PtrConsumerError.Error())
+				r.EqualError(err, errTestUint32PtrConsumer.Error())
 			}
 		})
 	}

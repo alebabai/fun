@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testIntSliceSupplierResult []int
-	testIntSliceSupplierError  = errors.New("error")
+	resTestIntSliceSupplier []int
+	errTestIntSliceSupplier = errors.New("error")
 )
 
 func testIntSliceSupplier() ([]int, error) {
-	return testIntSliceSupplierResult, nil
+	return resTestIntSliceSupplier, nil
 }
 
 func testIntSliceSupplierWithError() ([]int, error) {
-	return testIntSliceSupplierResult, testIntSliceSupplierError
+	return resTestIntSliceSupplier, errTestIntSliceSupplier
 }
 
 func TestIntSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestIntSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testIntSliceSupplierError.Error())
+				r.EqualError(err, errTestIntSliceSupplier.Error())
 			} else {
-				r.Equal(testIntSliceSupplierResult, v)
+				r.Equal(resTestIntSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestIntSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testIntSliceSupplierError.Error())
+				r.EqualError(err, errTestIntSliceSupplier.Error())
 			} else {
-				r.Equal(testIntSliceSupplierResult, v)
+				r.Equal(resTestIntSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestIntSliceSupplier_ToSilentIntSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testIntSliceSupplierResult, v)
+				r.Equal(resTestIntSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestIntSliceSupplier_ToMustIntSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testIntSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestIntSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testIntSliceSupplierResult, v)
+				r.Equal(resTestIntSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestIntSliceSupplier_ToMustIntSliceSupplier(t *testing.T) {
 
 func TestSilentIntSliceSupplier(t *testing.T) {
 	var ss SilentIntSliceSupplier = func() []int {
-		return testIntSliceSupplierResult
+		return resTestIntSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testIntSliceSupplierResult, v)
+	require.Equal(t, resTestIntSliceSupplier, v)
 }
 
 func TestSilentIntSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentIntSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testIntSliceSupplierResult, v)
+				r.Equal(resTestIntSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentIntSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustIntSliceSupplier(t *testing.T) {
 	var ms MustIntSliceSupplier = func() []int {
-		return testIntSliceSupplierResult
+		return resTestIntSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testIntSliceSupplierResult, v)
+	require.Equal(t, resTestIntSliceSupplier, v)
 }
 
 func TestMustIntSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustIntSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testIntSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestIntSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testIntSliceSupplierResult, v)
+				r.Equal(resTestIntSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustIntSliceSupplier_ToSilentIntSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testIntSliceSupplierResult, v)
+				r.Equal(resTestIntSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustIntSliceSupplier_ToIntSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testIntSliceSupplierError.Error())
+				r.EqualError(err, errTestIntSliceSupplier.Error())
 			} else {
-				r.Equal(testIntSliceSupplierResult, v)
+				r.Equal(resTestIntSliceSupplier, v)
 			}
 		})
 	}

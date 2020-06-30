@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testStringPtrSupplierResult *string
-	testStringPtrSupplierError  = errors.New("error")
+	resTestStringPtrSupplier *string
+	errTestStringPtrSupplier = errors.New("error")
 )
 
 func testStringPtrSupplier() (*string, error) {
-	return testStringPtrSupplierResult, nil
+	return resTestStringPtrSupplier, nil
 }
 
 func testStringPtrSupplierWithError() (*string, error) {
-	return testStringPtrSupplierResult, testStringPtrSupplierError
+	return resTestStringPtrSupplier, errTestStringPtrSupplier
 }
 
 func TestStringPtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestStringPtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringPtrSupplierError.Error())
+				r.EqualError(err, errTestStringPtrSupplier.Error())
 			} else {
-				r.Equal(testStringPtrSupplierResult, v)
+				r.Equal(resTestStringPtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestStringPtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringPtrSupplierError.Error())
+				r.EqualError(err, errTestStringPtrSupplier.Error())
 			} else {
-				r.Equal(testStringPtrSupplierResult, v)
+				r.Equal(resTestStringPtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestStringPtrSupplier_ToSilentStringPtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringPtrSupplierResult, v)
+				r.Equal(resTestStringPtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestStringPtrSupplier_ToMustStringPtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testStringPtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestStringPtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testStringPtrSupplierResult, v)
+				r.Equal(resTestStringPtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestStringPtrSupplier_ToMustStringPtrSupplier(t *testing.T) {
 
 func TestSilentStringPtrSupplier(t *testing.T) {
 	var ss SilentStringPtrSupplier = func() *string {
-		return testStringPtrSupplierResult
+		return resTestStringPtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testStringPtrSupplierResult, v)
+	require.Equal(t, resTestStringPtrSupplier, v)
 }
 
 func TestSilentStringPtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentStringPtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringPtrSupplierResult, v)
+				r.Equal(resTestStringPtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentStringPtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustStringPtrSupplier(t *testing.T) {
 	var ms MustStringPtrSupplier = func() *string {
-		return testStringPtrSupplierResult
+		return resTestStringPtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testStringPtrSupplierResult, v)
+	require.Equal(t, resTestStringPtrSupplier, v)
 }
 
 func TestMustStringPtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustStringPtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testStringPtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestStringPtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testStringPtrSupplierResult, v)
+				r.Equal(resTestStringPtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustStringPtrSupplier_ToSilentStringPtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringPtrSupplierResult, v)
+				r.Equal(resTestStringPtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustStringPtrSupplier_ToStringPtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringPtrSupplierError.Error())
+				r.EqualError(err, errTestStringPtrSupplier.Error())
 			} else {
-				r.Equal(testStringPtrSupplierResult, v)
+				r.Equal(resTestStringPtrSupplier, v)
 			}
 		})
 	}

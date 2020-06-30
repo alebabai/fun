@@ -94,7 +94,7 @@ func (mc MustUint32SliceConsumer) ToUint32SliceConsumer() Uint32SliceConsumer {
 	}
 }
 
-// SilentUint32SliceConsumer transforms MustUint32SliceConsumer into SilentUint32SliceConsumer
+// ToSilentUint32SliceConsumer transforms MustUint32SliceConsumer into SilentUint32SliceConsumer
 func (mc MustUint32SliceConsumer) ToSilentUint32SliceConsumer() SilentUint32SliceConsumer {
 	c := mc.ToUint32SliceConsumer()
 	return c.ToSilentUint32SliceConsumer()

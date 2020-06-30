@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testFloat32PtrSupplierResult *float32
-	testFloat32PtrSupplierError  = errors.New("error")
+	resTestFloat32PtrSupplier *float32
+	errTestFloat32PtrSupplier = errors.New("error")
 )
 
 func testFloat32PtrSupplier() (*float32, error) {
-	return testFloat32PtrSupplierResult, nil
+	return resTestFloat32PtrSupplier, nil
 }
 
 func testFloat32PtrSupplierWithError() (*float32, error) {
-	return testFloat32PtrSupplierResult, testFloat32PtrSupplierError
+	return resTestFloat32PtrSupplier, errTestFloat32PtrSupplier
 }
 
 func TestFloat32PtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestFloat32PtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat32PtrSupplierError.Error())
+				r.EqualError(err, errTestFloat32PtrSupplier.Error())
 			} else {
-				r.Equal(testFloat32PtrSupplierResult, v)
+				r.Equal(resTestFloat32PtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestFloat32PtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat32PtrSupplierError.Error())
+				r.EqualError(err, errTestFloat32PtrSupplier.Error())
 			} else {
-				r.Equal(testFloat32PtrSupplierResult, v)
+				r.Equal(resTestFloat32PtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestFloat32PtrSupplier_ToSilentFloat32PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat32PtrSupplierResult, v)
+				r.Equal(resTestFloat32PtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestFloat32PtrSupplier_ToMustFloat32PtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat32PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat32PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat32PtrSupplierResult, v)
+				r.Equal(resTestFloat32PtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestFloat32PtrSupplier_ToMustFloat32PtrSupplier(t *testing.T) {
 
 func TestSilentFloat32PtrSupplier(t *testing.T) {
 	var ss SilentFloat32PtrSupplier = func() *float32 {
-		return testFloat32PtrSupplierResult
+		return resTestFloat32PtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testFloat32PtrSupplierResult, v)
+	require.Equal(t, resTestFloat32PtrSupplier, v)
 }
 
 func TestSilentFloat32PtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentFloat32PtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat32PtrSupplierResult, v)
+				r.Equal(resTestFloat32PtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentFloat32PtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustFloat32PtrSupplier(t *testing.T) {
 	var ms MustFloat32PtrSupplier = func() *float32 {
-		return testFloat32PtrSupplierResult
+		return resTestFloat32PtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testFloat32PtrSupplierResult, v)
+	require.Equal(t, resTestFloat32PtrSupplier, v)
 }
 
 func TestMustFloat32PtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustFloat32PtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat32PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat32PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat32PtrSupplierResult, v)
+				r.Equal(resTestFloat32PtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustFloat32PtrSupplier_ToSilentFloat32PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat32PtrSupplierResult, v)
+				r.Equal(resTestFloat32PtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustFloat32PtrSupplier_ToFloat32PtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat32PtrSupplierError.Error())
+				r.EqualError(err, errTestFloat32PtrSupplier.Error())
 			} else {
-				r.Equal(testFloat32PtrSupplierResult, v)
+				r.Equal(resTestFloat32PtrSupplier, v)
 			}
 		})
 	}

@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testIntPtrConsumerValue *int
-	testIntPtrConsumerError = errors.New("error")
+	valTestIntPtrConsumer *int
+	errTestIntPtrConsumer = errors.New("error")
 )
 
 type testIntPtrConsumerFactory func(t *testing.T) IntPtrConsumer
@@ -27,7 +27,7 @@ func TestIntPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestIntPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
-					return testIntPtrConsumerError
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return errTestIntPtrConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestIntPtrConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testIntPtrConsumerValue)
+			err := c(valTestIntPtrConsumer)
 			if err != nil {
-				r.EqualError(err, testIntPtrConsumerError.Error())
+				r.EqualError(err, errTestIntPtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestIntPtrSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestIntPtrSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
-					return testIntPtrConsumerError
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return errTestIntPtrConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestIntPtrSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testIntPtrConsumerValue)
+			err := c(valTestIntPtrConsumer)
 			if err != nil {
-				r.EqualError(err, testIntPtrConsumerError.Error())
+				r.EqualError(err, errTestIntPtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestIntPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestIntPtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestIntPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testIntPtrConsumerError
+					return errTestIntPtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestIntPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestIntPtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testIntPtrConsumerValue)
+			err := cc(valTestIntPtrConsumer)
 			if err != nil {
-				r.EqualError(err, testIntPtrConsumerError.Error())
+				r.EqualError(err, errTestIntPtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestIntPtrConsumer_ToSilentIntPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestIntPtrConsumer_ToSilentIntPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
-					return testIntPtrConsumerError
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return errTestIntPtrConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestIntPtrConsumer_ToSilentIntPtrConsumer(t *testing.T) {
 			sc := c.ToSilentIntPtrConsumer()
 			r.NotNil(sc)
 
-			sc(testIntPtrConsumerValue)
+			sc(valTestIntPtrConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestIntPtrConsumer_ToMustIntPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestIntPtrConsumer_ToMustIntPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
-					return testIntPtrConsumerError
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return errTestIntPtrConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestIntPtrConsumer_ToMustIntPtrConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testIntPtrConsumerError.Error(), func() {
-					mc(testIntPtrConsumerValue)
+				r.PanicsWithError(errTestIntPtrConsumer.Error(), func() {
+					mc(valTestIntPtrConsumer)
 				})
 			} else {
-				mc(testIntPtrConsumerValue)
+				mc(valTestIntPtrConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestIntPtrConsumer_ToMustIntPtrConsumer(t *testing.T) {
 
 func TestSilentIntPtrConsumer(t *testing.T) {
 	var sc SilentIntPtrConsumer = func(v *int) {
-		require.Equal(t, testIntPtrConsumerValue, v)
+		require.Equal(t, valTestIntPtrConsumer, v)
 		return
 	}
-	sc(testIntPtrConsumerValue)
+	sc(valTestIntPtrConsumer)
 }
 
 func TestSilentIntPtrConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentIntPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentIntPtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentIntPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testIntPtrConsumerError
+					return errTestIntPtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentIntPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentIntPtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testIntPtrConsumerValue)
+			csc(valTestIntPtrConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentIntPtrConsumer_AndThen(t *testing.T) {
 
 func TestMustIntPtrConsumer(t *testing.T) {
 	var sc SilentIntPtrConsumer = func(v *int) {
-		require.Equal(t, testIntPtrConsumerValue, v)
+		require.Equal(t, valTestIntPtrConsumer, v)
 		return
 	}
-	sc(testIntPtrConsumerValue)
+	sc(valTestIntPtrConsumer)
 }
 
 func TestMustIntPtrConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustIntPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustIntPtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustIntPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testIntPtrConsumerError
+					return errTestIntPtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustIntPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
 					calls++
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustIntPtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testIntPtrConsumerError.Error(), func() {
-					cmc(testIntPtrConsumerValue)
+				r.PanicsWithError(errTestIntPtrConsumer.Error(), func() {
+					cmc(valTestIntPtrConsumer)
 				})
 			} else {
-				cmc(testIntPtrConsumerValue)
+				cmc(valTestIntPtrConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustIntPtrConsumer_ToSilentIntPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustIntPtrConsumer_ToSilentIntPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
-					return testIntPtrConsumerError
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return errTestIntPtrConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustIntPtrConsumer_ToSilentIntPtrConsumer(t *testing.T) {
 			sc := mc.ToSilentIntPtrConsumer()
 			r.NotNil(sc)
 
-			sc(testIntPtrConsumerValue)
+			sc(valTestIntPtrConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustIntPtrConsumer_ToIntPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
+					require.Equal(t, valTestIntPtrConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustIntPtrConsumer_ToIntPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) IntPtrConsumer {
 				return func(v *int) error {
-					require.Equal(t, testIntPtrConsumerValue, v)
-					return testIntPtrConsumerError
+					require.Equal(t, valTestIntPtrConsumer, v)
+					return errTestIntPtrConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustIntPtrConsumer_ToIntPtrConsumer(t *testing.T) {
 			c = mc.ToIntPtrConsumer()
 			r.NotNil(c)
 
-			err := c(testIntPtrConsumerValue)
+			err := c(valTestIntPtrConsumer)
 			if tt.err {
-				r.EqualError(err, testIntPtrConsumerError.Error())
+				r.EqualError(err, errTestIntPtrConsumer.Error())
 			}
 		})
 	}

@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testStringConsumerValue string
-	testStringConsumerError = errors.New("error")
+	valTestStringConsumer string
+	errTestStringConsumer = errors.New("error")
 )
 
 type testStringConsumerFactory func(t *testing.T) StringConsumer
@@ -27,7 +27,7 @@ func TestStringConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestStringConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
-					return testStringConsumerError
+					require.Equal(t, valTestStringConsumer, v)
+					return errTestStringConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestStringConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testStringConsumerValue)
+			err := c(valTestStringConsumer)
 			if err != nil {
-				r.EqualError(err, testStringConsumerError.Error())
+				r.EqualError(err, errTestStringConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestStringSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestStringSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
-					return testStringConsumerError
+					require.Equal(t, valTestStringConsumer, v)
+					return errTestStringConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestStringSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testStringConsumerValue)
+			err := c(valTestStringConsumer)
 			if err != nil {
-				r.EqualError(err, testStringConsumerError.Error())
+				r.EqualError(err, errTestStringConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestStringConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestStringConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestStringConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testStringConsumerError
+					return errTestStringConsumer
 				}
 			},
 			cf2: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestStringConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestStringConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testStringConsumerValue)
+			err := cc(valTestStringConsumer)
 			if err != nil {
-				r.EqualError(err, testStringConsumerError.Error())
+				r.EqualError(err, errTestStringConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestStringConsumer_ToSilentStringConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestStringConsumer_ToSilentStringConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
-					return testStringConsumerError
+					require.Equal(t, valTestStringConsumer, v)
+					return errTestStringConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestStringConsumer_ToSilentStringConsumer(t *testing.T) {
 			sc := c.ToSilentStringConsumer()
 			r.NotNil(sc)
 
-			sc(testStringConsumerValue)
+			sc(valTestStringConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestStringConsumer_ToMustStringConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestStringConsumer_ToMustStringConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
-					return testStringConsumerError
+					require.Equal(t, valTestStringConsumer, v)
+					return errTestStringConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestStringConsumer_ToMustStringConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testStringConsumerError.Error(), func() {
-					mc(testStringConsumerValue)
+				r.PanicsWithError(errTestStringConsumer.Error(), func() {
+					mc(valTestStringConsumer)
 				})
 			} else {
-				mc(testStringConsumerValue)
+				mc(valTestStringConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestStringConsumer_ToMustStringConsumer(t *testing.T) {
 
 func TestSilentStringConsumer(t *testing.T) {
 	var sc SilentStringConsumer = func(v string) {
-		require.Equal(t, testStringConsumerValue, v)
+		require.Equal(t, valTestStringConsumer, v)
 		return
 	}
-	sc(testStringConsumerValue)
+	sc(valTestStringConsumer)
 }
 
 func TestSilentStringConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentStringConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentStringConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentStringConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testStringConsumerError
+					return errTestStringConsumer
 				}
 			},
 			cf2: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentStringConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentStringConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testStringConsumerValue)
+			csc(valTestStringConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentStringConsumer_AndThen(t *testing.T) {
 
 func TestMustStringConsumer(t *testing.T) {
 	var sc SilentStringConsumer = func(v string) {
-		require.Equal(t, testStringConsumerValue, v)
+		require.Equal(t, valTestStringConsumer, v)
 		return
 	}
-	sc(testStringConsumerValue)
+	sc(valTestStringConsumer)
 }
 
 func TestMustStringConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustStringConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustStringConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustStringConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testStringConsumerError
+					return errTestStringConsumer
 				}
 			},
 			cf2: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustStringConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringConsumer {
 				return func(v string) error {
 					calls++
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustStringConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testStringConsumerError.Error(), func() {
-					cmc(testStringConsumerValue)
+				r.PanicsWithError(errTestStringConsumer.Error(), func() {
+					cmc(valTestStringConsumer)
 				})
 			} else {
-				cmc(testStringConsumerValue)
+				cmc(valTestStringConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustStringConsumer_ToSilentStringConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustStringConsumer_ToSilentStringConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
-					return testStringConsumerError
+					require.Equal(t, valTestStringConsumer, v)
+					return errTestStringConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustStringConsumer_ToSilentStringConsumer(t *testing.T) {
 			sc := mc.ToSilentStringConsumer()
 			r.NotNil(sc)
 
-			sc(testStringConsumerValue)
+			sc(valTestStringConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustStringConsumer_ToStringConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
+					require.Equal(t, valTestStringConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustStringConsumer_ToStringConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringConsumer {
 				return func(v string) error {
-					require.Equal(t, testStringConsumerValue, v)
-					return testStringConsumerError
+					require.Equal(t, valTestStringConsumer, v)
+					return errTestStringConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustStringConsumer_ToStringConsumer(t *testing.T) {
 			c = mc.ToStringConsumer()
 			r.NotNil(c)
 
-			err := c(testStringConsumerValue)
+			err := c(valTestStringConsumer)
 			if tt.err {
-				r.EqualError(err, testStringConsumerError.Error())
+				r.EqualError(err, errTestStringConsumer.Error())
 			}
 		})
 	}

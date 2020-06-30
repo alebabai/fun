@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testStringPtrSliceSupplierResult []*string
-	testStringPtrSliceSupplierError  = errors.New("error")
+	resTestStringPtrSliceSupplier []*string
+	errTestStringPtrSliceSupplier = errors.New("error")
 )
 
 func testStringPtrSliceSupplier() ([]*string, error) {
-	return testStringPtrSliceSupplierResult, nil
+	return resTestStringPtrSliceSupplier, nil
 }
 
 func testStringPtrSliceSupplierWithError() ([]*string, error) {
-	return testStringPtrSliceSupplierResult, testStringPtrSliceSupplierError
+	return resTestStringPtrSliceSupplier, errTestStringPtrSliceSupplier
 }
 
 func TestStringPtrSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestStringPtrSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringPtrSliceSupplierError.Error())
+				r.EqualError(err, errTestStringPtrSliceSupplier.Error())
 			} else {
-				r.Equal(testStringPtrSliceSupplierResult, v)
+				r.Equal(resTestStringPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestStringPtrSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringPtrSliceSupplierError.Error())
+				r.EqualError(err, errTestStringPtrSliceSupplier.Error())
 			} else {
-				r.Equal(testStringPtrSliceSupplierResult, v)
+				r.Equal(resTestStringPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestStringPtrSliceSupplier_ToSilentStringPtrSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringPtrSliceSupplierResult, v)
+				r.Equal(resTestStringPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestStringPtrSliceSupplier_ToMustStringPtrSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testStringPtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestStringPtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testStringPtrSliceSupplierResult, v)
+				r.Equal(resTestStringPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestStringPtrSliceSupplier_ToMustStringPtrSliceSupplier(t *testing.T) {
 
 func TestSilentStringPtrSliceSupplier(t *testing.T) {
 	var ss SilentStringPtrSliceSupplier = func() []*string {
-		return testStringPtrSliceSupplierResult
+		return resTestStringPtrSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testStringPtrSliceSupplierResult, v)
+	require.Equal(t, resTestStringPtrSliceSupplier, v)
 }
 
 func TestSilentStringPtrSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentStringPtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringPtrSliceSupplierResult, v)
+				r.Equal(resTestStringPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentStringPtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustStringPtrSliceSupplier(t *testing.T) {
 	var ms MustStringPtrSliceSupplier = func() []*string {
-		return testStringPtrSliceSupplierResult
+		return resTestStringPtrSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testStringPtrSliceSupplierResult, v)
+	require.Equal(t, resTestStringPtrSliceSupplier, v)
 }
 
 func TestMustStringPtrSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustStringPtrSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testStringPtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestStringPtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testStringPtrSliceSupplierResult, v)
+				r.Equal(resTestStringPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustStringPtrSliceSupplier_ToSilentStringPtrSliceSupplier(t *testing.T)
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringPtrSliceSupplierResult, v)
+				r.Equal(resTestStringPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustStringPtrSliceSupplier_ToStringPtrSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringPtrSliceSupplierError.Error())
+				r.EqualError(err, errTestStringPtrSliceSupplier.Error())
 			} else {
-				r.Equal(testStringPtrSliceSupplierResult, v)
+				r.Equal(resTestStringPtrSliceSupplier, v)
 			}
 		})
 	}

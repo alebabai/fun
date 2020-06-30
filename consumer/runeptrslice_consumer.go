@@ -94,7 +94,7 @@ func (mc MustRunePtrSliceConsumer) ToRunePtrSliceConsumer() RunePtrSliceConsumer
 	}
 }
 
-// SilentRunePtrSliceConsumer transforms MustRunePtrSliceConsumer into SilentRunePtrSliceConsumer
+// ToSilentRunePtrSliceConsumer transforms MustRunePtrSliceConsumer into SilentRunePtrSliceConsumer
 func (mc MustRunePtrSliceConsumer) ToSilentRunePtrSliceConsumer() SilentRunePtrSliceConsumer {
 	c := mc.ToRunePtrSliceConsumer()
 	return c.ToSilentRunePtrSliceConsumer()

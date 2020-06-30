@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testStringPtrConsumerValue *string
-	testStringPtrConsumerError = errors.New("error")
+	valTestStringPtrConsumer *string
+	errTestStringPtrConsumer = errors.New("error")
 )
 
 type testStringPtrConsumerFactory func(t *testing.T) StringPtrConsumer
@@ -27,7 +27,7 @@ func TestStringPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestStringPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
-					return testStringPtrConsumerError
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return errTestStringPtrConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestStringPtrConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testStringPtrConsumerValue)
+			err := c(valTestStringPtrConsumer)
 			if err != nil {
-				r.EqualError(err, testStringPtrConsumerError.Error())
+				r.EqualError(err, errTestStringPtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestStringPtrSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestStringPtrSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
-					return testStringPtrConsumerError
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return errTestStringPtrConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestStringPtrSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testStringPtrConsumerValue)
+			err := c(valTestStringPtrConsumer)
 			if err != nil {
-				r.EqualError(err, testStringPtrConsumerError.Error())
+				r.EqualError(err, errTestStringPtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestStringPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestStringPtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestStringPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testStringPtrConsumerError
+					return errTestStringPtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestStringPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestStringPtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testStringPtrConsumerValue)
+			err := cc(valTestStringPtrConsumer)
 			if err != nil {
-				r.EqualError(err, testStringPtrConsumerError.Error())
+				r.EqualError(err, errTestStringPtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestStringPtrConsumer_ToSilentStringPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestStringPtrConsumer_ToSilentStringPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
-					return testStringPtrConsumerError
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return errTestStringPtrConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestStringPtrConsumer_ToSilentStringPtrConsumer(t *testing.T) {
 			sc := c.ToSilentStringPtrConsumer()
 			r.NotNil(sc)
 
-			sc(testStringPtrConsumerValue)
+			sc(valTestStringPtrConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestStringPtrConsumer_ToMustStringPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestStringPtrConsumer_ToMustStringPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
-					return testStringPtrConsumerError
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return errTestStringPtrConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestStringPtrConsumer_ToMustStringPtrConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testStringPtrConsumerError.Error(), func() {
-					mc(testStringPtrConsumerValue)
+				r.PanicsWithError(errTestStringPtrConsumer.Error(), func() {
+					mc(valTestStringPtrConsumer)
 				})
 			} else {
-				mc(testStringPtrConsumerValue)
+				mc(valTestStringPtrConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestStringPtrConsumer_ToMustStringPtrConsumer(t *testing.T) {
 
 func TestSilentStringPtrConsumer(t *testing.T) {
 	var sc SilentStringPtrConsumer = func(v *string) {
-		require.Equal(t, testStringPtrConsumerValue, v)
+		require.Equal(t, valTestStringPtrConsumer, v)
 		return
 	}
-	sc(testStringPtrConsumerValue)
+	sc(valTestStringPtrConsumer)
 }
 
 func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testStringPtrConsumerError
+					return errTestStringPtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testStringPtrConsumerValue)
+			csc(valTestStringPtrConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
 
 func TestMustStringPtrConsumer(t *testing.T) {
 	var sc SilentStringPtrConsumer = func(v *string) {
-		require.Equal(t, testStringPtrConsumerValue, v)
+		require.Equal(t, valTestStringPtrConsumer, v)
 		return
 	}
-	sc(testStringPtrConsumerValue)
+	sc(valTestStringPtrConsumer)
 }
 
 func TestMustStringPtrConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustStringPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustStringPtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustStringPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testStringPtrConsumerError
+					return errTestStringPtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustStringPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustStringPtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testStringPtrConsumerError.Error(), func() {
-					cmc(testStringPtrConsumerValue)
+				r.PanicsWithError(errTestStringPtrConsumer.Error(), func() {
+					cmc(valTestStringPtrConsumer)
 				})
 			} else {
-				cmc(testStringPtrConsumerValue)
+				cmc(valTestStringPtrConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustStringPtrConsumer_ToSilentStringPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustStringPtrConsumer_ToSilentStringPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
-					return testStringPtrConsumerError
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return errTestStringPtrConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustStringPtrConsumer_ToSilentStringPtrConsumer(t *testing.T) {
 			sc := mc.ToSilentStringPtrConsumer()
 			r.NotNil(sc)
 
-			sc(testStringPtrConsumerValue)
+			sc(valTestStringPtrConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustStringPtrConsumer_ToStringPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
+					require.Equal(t, valTestStringPtrConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustStringPtrConsumer_ToStringPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
-					require.Equal(t, testStringPtrConsumerValue, v)
-					return testStringPtrConsumerError
+					require.Equal(t, valTestStringPtrConsumer, v)
+					return errTestStringPtrConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustStringPtrConsumer_ToStringPtrConsumer(t *testing.T) {
 			c = mc.ToStringPtrConsumer()
 			r.NotNil(c)
 
-			err := c(testStringPtrConsumerValue)
+			err := c(valTestStringPtrConsumer)
 			if tt.err {
-				r.EqualError(err, testStringPtrConsumerError.Error())
+				r.EqualError(err, errTestStringPtrConsumer.Error())
 			}
 		})
 	}

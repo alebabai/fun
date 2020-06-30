@@ -94,7 +94,7 @@ func (mc MustBoolPtrSliceConsumer) ToBoolPtrSliceConsumer() BoolPtrSliceConsumer
 	}
 }
 
-// SilentBoolPtrSliceConsumer transforms MustBoolPtrSliceConsumer into SilentBoolPtrSliceConsumer
+// ToSilentBoolPtrSliceConsumer transforms MustBoolPtrSliceConsumer into SilentBoolPtrSliceConsumer
 func (mc MustBoolPtrSliceConsumer) ToSilentBoolPtrSliceConsumer() SilentBoolPtrSliceConsumer {
 	c := mc.ToBoolPtrSliceConsumer()
 	return c.ToSilentBoolPtrSliceConsumer()

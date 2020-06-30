@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testBoolSupplierResult bool
-	testBoolSupplierError  = errors.New("error")
+	resTestBoolSupplier bool
+	errTestBoolSupplier = errors.New("error")
 )
 
 func testBoolSupplier() (bool, error) {
-	return testBoolSupplierResult, nil
+	return resTestBoolSupplier, nil
 }
 
 func testBoolSupplierWithError() (bool, error) {
-	return testBoolSupplierResult, testBoolSupplierError
+	return resTestBoolSupplier, errTestBoolSupplier
 }
 
 func TestBoolSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestBoolSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolSupplierError.Error())
+				r.EqualError(err, errTestBoolSupplier.Error())
 			} else {
-				r.Equal(testBoolSupplierResult, v)
+				r.Equal(resTestBoolSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestBoolSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolSupplierError.Error())
+				r.EqualError(err, errTestBoolSupplier.Error())
 			} else {
-				r.Equal(testBoolSupplierResult, v)
+				r.Equal(resTestBoolSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestBoolSupplier_ToSilentBoolSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolSupplierResult, v)
+				r.Equal(resTestBoolSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestBoolSupplier_ToMustBoolSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBoolSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBoolSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBoolSupplierResult, v)
+				r.Equal(resTestBoolSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestBoolSupplier_ToMustBoolSupplier(t *testing.T) {
 
 func TestSilentBoolSupplier(t *testing.T) {
 	var ss SilentBoolSupplier = func() bool {
-		return testBoolSupplierResult
+		return resTestBoolSupplier
 	}
 	v := ss()
-	require.Equal(t, testBoolSupplierResult, v)
+	require.Equal(t, resTestBoolSupplier, v)
 }
 
 func TestSilentBoolSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentBoolSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolSupplierResult, v)
+				r.Equal(resTestBoolSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentBoolSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustBoolSupplier(t *testing.T) {
 	var ms MustBoolSupplier = func() bool {
-		return testBoolSupplierResult
+		return resTestBoolSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testBoolSupplierResult, v)
+	require.Equal(t, resTestBoolSupplier, v)
 }
 
 func TestMustBoolSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustBoolSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBoolSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBoolSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBoolSupplierResult, v)
+				r.Equal(resTestBoolSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustBoolSupplier_ToSilentBoolSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolSupplierResult, v)
+				r.Equal(resTestBoolSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustBoolSupplier_ToBoolSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolSupplierError.Error())
+				r.EqualError(err, errTestBoolSupplier.Error())
 			} else {
-				r.Equal(testBoolSupplierResult, v)
+				r.Equal(resTestBoolSupplier, v)
 			}
 		})
 	}

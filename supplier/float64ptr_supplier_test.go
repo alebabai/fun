@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testFloat64PtrSupplierResult *float64
-	testFloat64PtrSupplierError  = errors.New("error")
+	resTestFloat64PtrSupplier *float64
+	errTestFloat64PtrSupplier = errors.New("error")
 )
 
 func testFloat64PtrSupplier() (*float64, error) {
-	return testFloat64PtrSupplierResult, nil
+	return resTestFloat64PtrSupplier, nil
 }
 
 func testFloat64PtrSupplierWithError() (*float64, error) {
-	return testFloat64PtrSupplierResult, testFloat64PtrSupplierError
+	return resTestFloat64PtrSupplier, errTestFloat64PtrSupplier
 }
 
 func TestFloat64PtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestFloat64PtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat64PtrSupplierError.Error())
+				r.EqualError(err, errTestFloat64PtrSupplier.Error())
 			} else {
-				r.Equal(testFloat64PtrSupplierResult, v)
+				r.Equal(resTestFloat64PtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestFloat64PtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat64PtrSupplierError.Error())
+				r.EqualError(err, errTestFloat64PtrSupplier.Error())
 			} else {
-				r.Equal(testFloat64PtrSupplierResult, v)
+				r.Equal(resTestFloat64PtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestFloat64PtrSupplier_ToSilentFloat64PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat64PtrSupplierResult, v)
+				r.Equal(resTestFloat64PtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestFloat64PtrSupplier_ToMustFloat64PtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat64PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat64PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat64PtrSupplierResult, v)
+				r.Equal(resTestFloat64PtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestFloat64PtrSupplier_ToMustFloat64PtrSupplier(t *testing.T) {
 
 func TestSilentFloat64PtrSupplier(t *testing.T) {
 	var ss SilentFloat64PtrSupplier = func() *float64 {
-		return testFloat64PtrSupplierResult
+		return resTestFloat64PtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testFloat64PtrSupplierResult, v)
+	require.Equal(t, resTestFloat64PtrSupplier, v)
 }
 
 func TestSilentFloat64PtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentFloat64PtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat64PtrSupplierResult, v)
+				r.Equal(resTestFloat64PtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentFloat64PtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustFloat64PtrSupplier(t *testing.T) {
 	var ms MustFloat64PtrSupplier = func() *float64 {
-		return testFloat64PtrSupplierResult
+		return resTestFloat64PtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testFloat64PtrSupplierResult, v)
+	require.Equal(t, resTestFloat64PtrSupplier, v)
 }
 
 func TestMustFloat64PtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustFloat64PtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat64PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat64PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat64PtrSupplierResult, v)
+				r.Equal(resTestFloat64PtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustFloat64PtrSupplier_ToSilentFloat64PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat64PtrSupplierResult, v)
+				r.Equal(resTestFloat64PtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustFloat64PtrSupplier_ToFloat64PtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat64PtrSupplierError.Error())
+				r.EqualError(err, errTestFloat64PtrSupplier.Error())
 			} else {
-				r.Equal(testFloat64PtrSupplierResult, v)
+				r.Equal(resTestFloat64PtrSupplier, v)
 			}
 		})
 	}

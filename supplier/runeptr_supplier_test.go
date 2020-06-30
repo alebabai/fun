@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testRunePtrSupplierResult *rune
-	testRunePtrSupplierError  = errors.New("error")
+	resTestRunePtrSupplier *rune
+	errTestRunePtrSupplier = errors.New("error")
 )
 
 func testRunePtrSupplier() (*rune, error) {
-	return testRunePtrSupplierResult, nil
+	return resTestRunePtrSupplier, nil
 }
 
 func testRunePtrSupplierWithError() (*rune, error) {
-	return testRunePtrSupplierResult, testRunePtrSupplierError
+	return resTestRunePtrSupplier, errTestRunePtrSupplier
 }
 
 func TestRunePtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestRunePtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRunePtrSupplierError.Error())
+				r.EqualError(err, errTestRunePtrSupplier.Error())
 			} else {
-				r.Equal(testRunePtrSupplierResult, v)
+				r.Equal(resTestRunePtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestRunePtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRunePtrSupplierError.Error())
+				r.EqualError(err, errTestRunePtrSupplier.Error())
 			} else {
-				r.Equal(testRunePtrSupplierResult, v)
+				r.Equal(resTestRunePtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestRunePtrSupplier_ToSilentRunePtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRunePtrSupplierResult, v)
+				r.Equal(resTestRunePtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestRunePtrSupplier_ToMustRunePtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testRunePtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestRunePtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testRunePtrSupplierResult, v)
+				r.Equal(resTestRunePtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestRunePtrSupplier_ToMustRunePtrSupplier(t *testing.T) {
 
 func TestSilentRunePtrSupplier(t *testing.T) {
 	var ss SilentRunePtrSupplier = func() *rune {
-		return testRunePtrSupplierResult
+		return resTestRunePtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testRunePtrSupplierResult, v)
+	require.Equal(t, resTestRunePtrSupplier, v)
 }
 
 func TestSilentRunePtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentRunePtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRunePtrSupplierResult, v)
+				r.Equal(resTestRunePtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentRunePtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustRunePtrSupplier(t *testing.T) {
 	var ms MustRunePtrSupplier = func() *rune {
-		return testRunePtrSupplierResult
+		return resTestRunePtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testRunePtrSupplierResult, v)
+	require.Equal(t, resTestRunePtrSupplier, v)
 }
 
 func TestMustRunePtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustRunePtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testRunePtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestRunePtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testRunePtrSupplierResult, v)
+				r.Equal(resTestRunePtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustRunePtrSupplier_ToSilentRunePtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRunePtrSupplierResult, v)
+				r.Equal(resTestRunePtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustRunePtrSupplier_ToRunePtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRunePtrSupplierError.Error())
+				r.EqualError(err, errTestRunePtrSupplier.Error())
 			} else {
-				r.Equal(testRunePtrSupplierResult, v)
+				r.Equal(resTestRunePtrSupplier, v)
 			}
 		})
 	}

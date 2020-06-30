@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testBoolPtrSupplierResult *bool
-	testBoolPtrSupplierError  = errors.New("error")
+	resTestBoolPtrSupplier *bool
+	errTestBoolPtrSupplier = errors.New("error")
 )
 
 func testBoolPtrSupplier() (*bool, error) {
-	return testBoolPtrSupplierResult, nil
+	return resTestBoolPtrSupplier, nil
 }
 
 func testBoolPtrSupplierWithError() (*bool, error) {
-	return testBoolPtrSupplierResult, testBoolPtrSupplierError
+	return resTestBoolPtrSupplier, errTestBoolPtrSupplier
 }
 
 func TestBoolPtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestBoolPtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolPtrSupplierError.Error())
+				r.EqualError(err, errTestBoolPtrSupplier.Error())
 			} else {
-				r.Equal(testBoolPtrSupplierResult, v)
+				r.Equal(resTestBoolPtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestBoolPtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolPtrSupplierError.Error())
+				r.EqualError(err, errTestBoolPtrSupplier.Error())
 			} else {
-				r.Equal(testBoolPtrSupplierResult, v)
+				r.Equal(resTestBoolPtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestBoolPtrSupplier_ToSilentBoolPtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolPtrSupplierResult, v)
+				r.Equal(resTestBoolPtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestBoolPtrSupplier_ToMustBoolPtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBoolPtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBoolPtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBoolPtrSupplierResult, v)
+				r.Equal(resTestBoolPtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestBoolPtrSupplier_ToMustBoolPtrSupplier(t *testing.T) {
 
 func TestSilentBoolPtrSupplier(t *testing.T) {
 	var ss SilentBoolPtrSupplier = func() *bool {
-		return testBoolPtrSupplierResult
+		return resTestBoolPtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testBoolPtrSupplierResult, v)
+	require.Equal(t, resTestBoolPtrSupplier, v)
 }
 
 func TestSilentBoolPtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentBoolPtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolPtrSupplierResult, v)
+				r.Equal(resTestBoolPtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentBoolPtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustBoolPtrSupplier(t *testing.T) {
 	var ms MustBoolPtrSupplier = func() *bool {
-		return testBoolPtrSupplierResult
+		return resTestBoolPtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testBoolPtrSupplierResult, v)
+	require.Equal(t, resTestBoolPtrSupplier, v)
 }
 
 func TestMustBoolPtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustBoolPtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBoolPtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBoolPtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBoolPtrSupplierResult, v)
+				r.Equal(resTestBoolPtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustBoolPtrSupplier_ToSilentBoolPtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolPtrSupplierResult, v)
+				r.Equal(resTestBoolPtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustBoolPtrSupplier_ToBoolPtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolPtrSupplierError.Error())
+				r.EqualError(err, errTestBoolPtrSupplier.Error())
 			} else {
-				r.Equal(testBoolPtrSupplierResult, v)
+				r.Equal(resTestBoolPtrSupplier, v)
 			}
 		})
 	}

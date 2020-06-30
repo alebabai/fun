@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testBoolSliceSupplierResult []bool
-	testBoolSliceSupplierError  = errors.New("error")
+	resTestBoolSliceSupplier []bool
+	errTestBoolSliceSupplier = errors.New("error")
 )
 
 func testBoolSliceSupplier() ([]bool, error) {
-	return testBoolSliceSupplierResult, nil
+	return resTestBoolSliceSupplier, nil
 }
 
 func testBoolSliceSupplierWithError() ([]bool, error) {
-	return testBoolSliceSupplierResult, testBoolSliceSupplierError
+	return resTestBoolSliceSupplier, errTestBoolSliceSupplier
 }
 
 func TestBoolSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestBoolSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolSliceSupplierError.Error())
+				r.EqualError(err, errTestBoolSliceSupplier.Error())
 			} else {
-				r.Equal(testBoolSliceSupplierResult, v)
+				r.Equal(resTestBoolSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestBoolSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolSliceSupplierError.Error())
+				r.EqualError(err, errTestBoolSliceSupplier.Error())
 			} else {
-				r.Equal(testBoolSliceSupplierResult, v)
+				r.Equal(resTestBoolSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestBoolSliceSupplier_ToSilentBoolSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolSliceSupplierResult, v)
+				r.Equal(resTestBoolSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestBoolSliceSupplier_ToMustBoolSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBoolSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBoolSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBoolSliceSupplierResult, v)
+				r.Equal(resTestBoolSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestBoolSliceSupplier_ToMustBoolSliceSupplier(t *testing.T) {
 
 func TestSilentBoolSliceSupplier(t *testing.T) {
 	var ss SilentBoolSliceSupplier = func() []bool {
-		return testBoolSliceSupplierResult
+		return resTestBoolSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testBoolSliceSupplierResult, v)
+	require.Equal(t, resTestBoolSliceSupplier, v)
 }
 
 func TestSilentBoolSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentBoolSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolSliceSupplierResult, v)
+				r.Equal(resTestBoolSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentBoolSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustBoolSliceSupplier(t *testing.T) {
 	var ms MustBoolSliceSupplier = func() []bool {
-		return testBoolSliceSupplierResult
+		return resTestBoolSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testBoolSliceSupplierResult, v)
+	require.Equal(t, resTestBoolSliceSupplier, v)
 }
 
 func TestMustBoolSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustBoolSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBoolSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBoolSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBoolSliceSupplierResult, v)
+				r.Equal(resTestBoolSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustBoolSliceSupplier_ToSilentBoolSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolSliceSupplierResult, v)
+				r.Equal(resTestBoolSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustBoolSliceSupplier_ToBoolSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolSliceSupplierError.Error())
+				r.EqualError(err, errTestBoolSliceSupplier.Error())
 			} else {
-				r.Equal(testBoolSliceSupplierResult, v)
+				r.Equal(resTestBoolSliceSupplier, v)
 			}
 		})
 	}

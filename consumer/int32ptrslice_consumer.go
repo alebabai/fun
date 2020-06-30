@@ -94,7 +94,7 @@ func (mc MustInt32PtrSliceConsumer) ToInt32PtrSliceConsumer() Int32PtrSliceConsu
 	}
 }
 
-// SilentInt32PtrSliceConsumer transforms MustInt32PtrSliceConsumer into SilentInt32PtrSliceConsumer
+// ToSilentInt32PtrSliceConsumer transforms MustInt32PtrSliceConsumer into SilentInt32PtrSliceConsumer
 func (mc MustInt32PtrSliceConsumer) ToSilentInt32PtrSliceConsumer() SilentInt32PtrSliceConsumer {
 	c := mc.ToInt32PtrSliceConsumer()
 	return c.ToSilentInt32PtrSliceConsumer()

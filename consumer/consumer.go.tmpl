@@ -92,7 +92,7 @@ func (mc Must{{.Type.Title}}Consumer) To{{.Type.Title}}Consumer() {{.Type.Title}
 	}
 }
 
-// Silent{{.Type.Title}}Consumer transforms Must{{.Type.Title}}Consumer into Silent{{.Type.Title}}Consumer
+// ToSilent{{.Type.Title}}Consumer transforms Must{{.Type.Title}}Consumer into Silent{{.Type.Title}}Consumer
 func (mc Must{{.Type.Title}}Consumer) ToSilent{{.Type.Title}}Consumer() Silent{{.Type.Title}}Consumer {
 	c := mc.To{{.Type.Title}}Consumer()
 	return c.ToSilent{{.Type.Title}}Consumer()

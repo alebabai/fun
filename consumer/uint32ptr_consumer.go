@@ -94,7 +94,7 @@ func (mc MustUint32PtrConsumer) ToUint32PtrConsumer() Uint32PtrConsumer {
 	}
 }
 
-// SilentUint32PtrConsumer transforms MustUint32PtrConsumer into SilentUint32PtrConsumer
+// ToSilentUint32PtrConsumer transforms MustUint32PtrConsumer into SilentUint32PtrConsumer
 func (mc MustUint32PtrConsumer) ToSilentUint32PtrConsumer() SilentUint32PtrConsumer {
 	c := mc.ToUint32PtrConsumer()
 	return c.ToSilentUint32PtrConsumer()

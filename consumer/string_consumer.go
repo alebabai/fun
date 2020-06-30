@@ -94,7 +94,7 @@ func (mc MustStringConsumer) ToStringConsumer() StringConsumer {
 	}
 }
 
-// SilentStringConsumer transforms MustStringConsumer into SilentStringConsumer
+// ToSilentStringConsumer transforms MustStringConsumer into SilentStringConsumer
 func (mc MustStringConsumer) ToSilentStringConsumer() SilentStringConsumer {
 	c := mc.ToStringConsumer()
 	return c.ToSilentStringConsumer()

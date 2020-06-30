@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testSupplierResult interface{}
-	testSupplierError  = errors.New("error")
+	resTestSupplier interface{}
+	errTestSupplier = errors.New("error")
 )
 
 func testSupplier() (interface{}, error) {
-	return testSupplierResult, nil
+	return resTestSupplier, nil
 }
 
 func testSupplierWithError() (interface{}, error) {
-	return testSupplierResult, testSupplierError
+	return resTestSupplier, errTestSupplier
 }
 
 func TestSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testSupplierError.Error())
+				r.EqualError(err, errTestSupplier.Error())
 			} else {
-				r.Equal(testSupplierResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}
@@ -80,7 +80,7 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testSupplierResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}
@@ -110,13 +110,13 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testSupplierError.Error(), func() {
+				r.PanicsWithError(errTestSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testSupplierResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}
@@ -124,19 +124,19 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 
 func TestSilentSupplier(t *testing.T) {
 	var ss SilentSupplier = func() interface{} {
-		return testSupplierResult
+		return resTestSupplier
 	}
 	v := ss()
-	require.Equal(t, testSupplierResult, v)
+	require.Equal(t, resTestSupplier, v)
 }
 
 func TestMustSupplier(t *testing.T) {
 	var ms MustSupplier = func() interface{} {
-		return testSupplierResult
+		return resTestSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testSupplierResult, v)
+	require.Equal(t, resTestSupplier, v)
 }
 
 func TestMustSupplier_ToSilentSupplier(t *testing.T) {
@@ -169,7 +169,7 @@ func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testSupplierResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}
@@ -202,9 +202,9 @@ func TestMustSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testSupplierError.Error())
+				r.EqualError(err, errTestSupplier.Error())
 			} else {
-				r.Equal(testSupplierResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}

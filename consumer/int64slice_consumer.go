@@ -94,7 +94,7 @@ func (mc MustInt64SliceConsumer) ToInt64SliceConsumer() Int64SliceConsumer {
 	}
 }
 
-// SilentInt64SliceConsumer transforms MustInt64SliceConsumer into SilentInt64SliceConsumer
+// ToSilentInt64SliceConsumer transforms MustInt64SliceConsumer into SilentInt64SliceConsumer
 func (mc MustInt64SliceConsumer) ToSilentInt64SliceConsumer() SilentInt64SliceConsumer {
 	c := mc.ToInt64SliceConsumer()
 	return c.ToSilentInt64SliceConsumer()

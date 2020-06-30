@@ -94,7 +94,7 @@ func (mc MustUintSliceConsumer) ToUintSliceConsumer() UintSliceConsumer {
 	}
 }
 
-// SilentUintSliceConsumer transforms MustUintSliceConsumer into SilentUintSliceConsumer
+// ToSilentUintSliceConsumer transforms MustUintSliceConsumer into SilentUintSliceConsumer
 func (mc MustUintSliceConsumer) ToSilentUintSliceConsumer() SilentUintSliceConsumer {
 	c := mc.ToUintSliceConsumer()
 	return c.ToSilentUintSliceConsumer()

@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testInt32PtrSupplierResult *int32
-	testInt32PtrSupplierError  = errors.New("error")
+	resTestInt32PtrSupplier *int32
+	errTestInt32PtrSupplier = errors.New("error")
 )
 
 func testInt32PtrSupplier() (*int32, error) {
-	return testInt32PtrSupplierResult, nil
+	return resTestInt32PtrSupplier, nil
 }
 
 func testInt32PtrSupplierWithError() (*int32, error) {
-	return testInt32PtrSupplierResult, testInt32PtrSupplierError
+	return resTestInt32PtrSupplier, errTestInt32PtrSupplier
 }
 
 func TestInt32PtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestInt32PtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt32PtrSupplierError.Error())
+				r.EqualError(err, errTestInt32PtrSupplier.Error())
 			} else {
-				r.Equal(testInt32PtrSupplierResult, v)
+				r.Equal(resTestInt32PtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestInt32PtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt32PtrSupplierError.Error())
+				r.EqualError(err, errTestInt32PtrSupplier.Error())
 			} else {
-				r.Equal(testInt32PtrSupplierResult, v)
+				r.Equal(resTestInt32PtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestInt32PtrSupplier_ToSilentInt32PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt32PtrSupplierResult, v)
+				r.Equal(resTestInt32PtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestInt32PtrSupplier_ToMustInt32PtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt32PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt32PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt32PtrSupplierResult, v)
+				r.Equal(resTestInt32PtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestInt32PtrSupplier_ToMustInt32PtrSupplier(t *testing.T) {
 
 func TestSilentInt32PtrSupplier(t *testing.T) {
 	var ss SilentInt32PtrSupplier = func() *int32 {
-		return testInt32PtrSupplierResult
+		return resTestInt32PtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testInt32PtrSupplierResult, v)
+	require.Equal(t, resTestInt32PtrSupplier, v)
 }
 
 func TestSilentInt32PtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentInt32PtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt32PtrSupplierResult, v)
+				r.Equal(resTestInt32PtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentInt32PtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustInt32PtrSupplier(t *testing.T) {
 	var ms MustInt32PtrSupplier = func() *int32 {
-		return testInt32PtrSupplierResult
+		return resTestInt32PtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testInt32PtrSupplierResult, v)
+	require.Equal(t, resTestInt32PtrSupplier, v)
 }
 
 func TestMustInt32PtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustInt32PtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt32PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt32PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt32PtrSupplierResult, v)
+				r.Equal(resTestInt32PtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustInt32PtrSupplier_ToSilentInt32PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt32PtrSupplierResult, v)
+				r.Equal(resTestInt32PtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustInt32PtrSupplier_ToInt32PtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt32PtrSupplierError.Error())
+				r.EqualError(err, errTestInt32PtrSupplier.Error())
 			} else {
-				r.Equal(testInt32PtrSupplierResult, v)
+				r.Equal(resTestInt32PtrSupplier, v)
 			}
 		})
 	}

@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testRuneSliceSupplierResult []rune
-	testRuneSliceSupplierError  = errors.New("error")
+	resTestRuneSliceSupplier []rune
+	errTestRuneSliceSupplier = errors.New("error")
 )
 
 func testRuneSliceSupplier() ([]rune, error) {
-	return testRuneSliceSupplierResult, nil
+	return resTestRuneSliceSupplier, nil
 }
 
 func testRuneSliceSupplierWithError() ([]rune, error) {
-	return testRuneSliceSupplierResult, testRuneSliceSupplierError
+	return resTestRuneSliceSupplier, errTestRuneSliceSupplier
 }
 
 func TestRuneSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestRuneSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRuneSliceSupplierError.Error())
+				r.EqualError(err, errTestRuneSliceSupplier.Error())
 			} else {
-				r.Equal(testRuneSliceSupplierResult, v)
+				r.Equal(resTestRuneSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestRuneSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRuneSliceSupplierError.Error())
+				r.EqualError(err, errTestRuneSliceSupplier.Error())
 			} else {
-				r.Equal(testRuneSliceSupplierResult, v)
+				r.Equal(resTestRuneSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestRuneSliceSupplier_ToSilentRuneSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRuneSliceSupplierResult, v)
+				r.Equal(resTestRuneSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestRuneSliceSupplier_ToMustRuneSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testRuneSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestRuneSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testRuneSliceSupplierResult, v)
+				r.Equal(resTestRuneSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestRuneSliceSupplier_ToMustRuneSliceSupplier(t *testing.T) {
 
 func TestSilentRuneSliceSupplier(t *testing.T) {
 	var ss SilentRuneSliceSupplier = func() []rune {
-		return testRuneSliceSupplierResult
+		return resTestRuneSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testRuneSliceSupplierResult, v)
+	require.Equal(t, resTestRuneSliceSupplier, v)
 }
 
 func TestSilentRuneSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentRuneSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRuneSliceSupplierResult, v)
+				r.Equal(resTestRuneSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentRuneSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustRuneSliceSupplier(t *testing.T) {
 	var ms MustRuneSliceSupplier = func() []rune {
-		return testRuneSliceSupplierResult
+		return resTestRuneSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testRuneSliceSupplierResult, v)
+	require.Equal(t, resTestRuneSliceSupplier, v)
 }
 
 func TestMustRuneSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustRuneSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testRuneSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestRuneSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testRuneSliceSupplierResult, v)
+				r.Equal(resTestRuneSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustRuneSliceSupplier_ToSilentRuneSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRuneSliceSupplierResult, v)
+				r.Equal(resTestRuneSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustRuneSliceSupplier_ToRuneSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRuneSliceSupplierError.Error())
+				r.EqualError(err, errTestRuneSliceSupplier.Error())
 			} else {
-				r.Equal(testRuneSliceSupplierResult, v)
+				r.Equal(resTestRuneSliceSupplier, v)
 			}
 		})
 	}

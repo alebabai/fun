@@ -94,7 +94,7 @@ func (mc MustUintPtrConsumer) ToUintPtrConsumer() UintPtrConsumer {
 	}
 }
 
-// SilentUintPtrConsumer transforms MustUintPtrConsumer into SilentUintPtrConsumer
+// ToSilentUintPtrConsumer transforms MustUintPtrConsumer into SilentUintPtrConsumer
 func (mc MustUintPtrConsumer) ToSilentUintPtrConsumer() SilentUintPtrConsumer {
 	c := mc.ToUintPtrConsumer()
 	return c.ToSilentUintPtrConsumer()

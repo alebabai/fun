@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testInt64SupplierResult int64
-	testInt64SupplierError  = errors.New("error")
+	resTestInt64Supplier int64
+	errTestInt64Supplier = errors.New("error")
 )
 
 func testInt64Supplier() (int64, error) {
-	return testInt64SupplierResult, nil
+	return resTestInt64Supplier, nil
 }
 
 func testInt64SupplierWithError() (int64, error) {
-	return testInt64SupplierResult, testInt64SupplierError
+	return resTestInt64Supplier, errTestInt64Supplier
 }
 
 func TestInt64Supplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestInt64Supplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt64SupplierError.Error())
+				r.EqualError(err, errTestInt64Supplier.Error())
 			} else {
-				r.Equal(testInt64SupplierResult, v)
+				r.Equal(resTestInt64Supplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestInt64Supplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt64SupplierError.Error())
+				r.EqualError(err, errTestInt64Supplier.Error())
 			} else {
-				r.Equal(testInt64SupplierResult, v)
+				r.Equal(resTestInt64Supplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestInt64Supplier_ToSilentInt64Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt64SupplierResult, v)
+				r.Equal(resTestInt64Supplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestInt64Supplier_ToMustInt64Supplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt64SupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt64Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt64SupplierResult, v)
+				r.Equal(resTestInt64Supplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestInt64Supplier_ToMustInt64Supplier(t *testing.T) {
 
 func TestSilentInt64Supplier(t *testing.T) {
 	var ss SilentInt64Supplier = func() int64 {
-		return testInt64SupplierResult
+		return resTestInt64Supplier
 	}
 	v := ss()
-	require.Equal(t, testInt64SupplierResult, v)
+	require.Equal(t, resTestInt64Supplier, v)
 }
 
 func TestSilentInt64Supplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentInt64Supplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt64SupplierResult, v)
+				r.Equal(resTestInt64Supplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentInt64Supplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustInt64Supplier(t *testing.T) {
 	var ms MustInt64Supplier = func() int64 {
-		return testInt64SupplierResult
+		return resTestInt64Supplier
 	}
 
 	v := ms()
-	require.Equal(t, testInt64SupplierResult, v)
+	require.Equal(t, resTestInt64Supplier, v)
 }
 
 func TestMustInt64Supplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustInt64Supplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt64SupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt64Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt64SupplierResult, v)
+				r.Equal(resTestInt64Supplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustInt64Supplier_ToSilentInt64Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt64SupplierResult, v)
+				r.Equal(resTestInt64Supplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustInt64Supplier_ToInt64Supplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt64SupplierError.Error())
+				r.EqualError(err, errTestInt64Supplier.Error())
 			} else {
-				r.Equal(testInt64SupplierResult, v)
+				r.Equal(resTestInt64Supplier, v)
 			}
 		})
 	}

@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testInt16PtrSliceConsumerValue []*int16
-	testInt16PtrSliceConsumerError = errors.New("error")
+	valTestInt16PtrSliceConsumer []*int16
+	errTestInt16PtrSliceConsumer = errors.New("error")
 )
 
 type testInt16PtrSliceConsumerFactory func(t *testing.T) Int16PtrSliceConsumer
@@ -27,7 +27,7 @@ func TestInt16PtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestInt16PtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
-					return testInt16PtrSliceConsumerError
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
+					return errTestInt16PtrSliceConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestInt16PtrSliceConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testInt16PtrSliceConsumerValue)
+			err := c(valTestInt16PtrSliceConsumer)
 			if err != nil {
-				r.EqualError(err, testInt16PtrSliceConsumerError.Error())
+				r.EqualError(err, errTestInt16PtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestInt16PtrSliceSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestInt16PtrSliceSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
-					return testInt16PtrSliceConsumerError
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
+					return errTestInt16PtrSliceConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestInt16PtrSliceSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testInt16PtrSliceConsumerValue)
+			err := c(valTestInt16PtrSliceConsumer)
 			if err != nil {
-				r.EqualError(err, testInt16PtrSliceConsumerError.Error())
+				r.EqualError(err, errTestInt16PtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testInt16PtrSliceConsumerError
+					return errTestInt16PtrSliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testInt16PtrSliceConsumerValue)
+			err := cc(valTestInt16PtrSliceConsumer)
 			if err != nil {
-				r.EqualError(err, testInt16PtrSliceConsumerError.Error())
+				r.EqualError(err, errTestInt16PtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestInt16PtrSliceConsumer_ToSilentInt16PtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestInt16PtrSliceConsumer_ToSilentInt16PtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
-					return testInt16PtrSliceConsumerError
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
+					return errTestInt16PtrSliceConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestInt16PtrSliceConsumer_ToSilentInt16PtrSliceConsumer(t *testing.T) {
 			sc := c.ToSilentInt16PtrSliceConsumer()
 			r.NotNil(sc)
 
-			sc(testInt16PtrSliceConsumerValue)
+			sc(valTestInt16PtrSliceConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestInt16PtrSliceConsumer_ToMustInt16PtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestInt16PtrSliceConsumer_ToMustInt16PtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
-					return testInt16PtrSliceConsumerError
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
+					return errTestInt16PtrSliceConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestInt16PtrSliceConsumer_ToMustInt16PtrSliceConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testInt16PtrSliceConsumerError.Error(), func() {
-					mc(testInt16PtrSliceConsumerValue)
+				r.PanicsWithError(errTestInt16PtrSliceConsumer.Error(), func() {
+					mc(valTestInt16PtrSliceConsumer)
 				})
 			} else {
-				mc(testInt16PtrSliceConsumerValue)
+				mc(valTestInt16PtrSliceConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestInt16PtrSliceConsumer_ToMustInt16PtrSliceConsumer(t *testing.T) {
 
 func TestSilentInt16PtrSliceConsumer(t *testing.T) {
 	var sc SilentInt16PtrSliceConsumer = func(v []*int16) {
-		require.Equal(t, testInt16PtrSliceConsumerValue, v)
+		require.Equal(t, valTestInt16PtrSliceConsumer, v)
 		return
 	}
-	sc(testInt16PtrSliceConsumerValue)
+	sc(valTestInt16PtrSliceConsumer)
 }
 
 func TestSilentInt16PtrSliceConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testInt16PtrSliceConsumerError
+					return errTestInt16PtrSliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testInt16PtrSliceConsumerValue)
+			csc(valTestInt16PtrSliceConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentInt16PtrSliceConsumer_AndThen(t *testing.T) {
 
 func TestMustInt16PtrSliceConsumer(t *testing.T) {
 	var sc SilentInt16PtrSliceConsumer = func(v []*int16) {
-		require.Equal(t, testInt16PtrSliceConsumerValue, v)
+		require.Equal(t, valTestInt16PtrSliceConsumer, v)
 		return
 	}
-	sc(testInt16PtrSliceConsumerValue)
+	sc(valTestInt16PtrSliceConsumer)
 }
 
 func TestMustInt16PtrSliceConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testInt16PtrSliceConsumerError
+					return errTestInt16PtrSliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustInt16PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
 					calls++
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustInt16PtrSliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testInt16PtrSliceConsumerError.Error(), func() {
-					cmc(testInt16PtrSliceConsumerValue)
+				r.PanicsWithError(errTestInt16PtrSliceConsumer.Error(), func() {
+					cmc(valTestInt16PtrSliceConsumer)
 				})
 			} else {
-				cmc(testInt16PtrSliceConsumerValue)
+				cmc(valTestInt16PtrSliceConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustInt16PtrSliceConsumer_ToSilentInt16PtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustInt16PtrSliceConsumer_ToSilentInt16PtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
-					return testInt16PtrSliceConsumerError
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
+					return errTestInt16PtrSliceConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustInt16PtrSliceConsumer_ToSilentInt16PtrSliceConsumer(t *testing.T) {
 			sc := mc.ToSilentInt16PtrSliceConsumer()
 			r.NotNil(sc)
 
-			sc(testInt16PtrSliceConsumerValue)
+			sc(valTestInt16PtrSliceConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustInt16PtrSliceConsumer_ToInt16PtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustInt16PtrSliceConsumer_ToInt16PtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Int16PtrSliceConsumer {
 				return func(v []*int16) error {
-					require.Equal(t, testInt16PtrSliceConsumerValue, v)
-					return testInt16PtrSliceConsumerError
+					require.Equal(t, valTestInt16PtrSliceConsumer, v)
+					return errTestInt16PtrSliceConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustInt16PtrSliceConsumer_ToInt16PtrSliceConsumer(t *testing.T) {
 			c = mc.ToInt16PtrSliceConsumer()
 			r.NotNil(c)
 
-			err := c(testInt16PtrSliceConsumerValue)
+			err := c(valTestInt16PtrSliceConsumer)
 			if tt.err {
-				r.EqualError(err, testInt16PtrSliceConsumerError.Error())
+				r.EqualError(err, errTestInt16PtrSliceConsumer.Error())
 			}
 		})
 	}

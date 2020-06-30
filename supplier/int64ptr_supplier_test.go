@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testInt64PtrSupplierResult *int64
-	testInt64PtrSupplierError  = errors.New("error")
+	resTestInt64PtrSupplier *int64
+	errTestInt64PtrSupplier = errors.New("error")
 )
 
 func testInt64PtrSupplier() (*int64, error) {
-	return testInt64PtrSupplierResult, nil
+	return resTestInt64PtrSupplier, nil
 }
 
 func testInt64PtrSupplierWithError() (*int64, error) {
-	return testInt64PtrSupplierResult, testInt64PtrSupplierError
+	return resTestInt64PtrSupplier, errTestInt64PtrSupplier
 }
 
 func TestInt64PtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestInt64PtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt64PtrSupplierError.Error())
+				r.EqualError(err, errTestInt64PtrSupplier.Error())
 			} else {
-				r.Equal(testInt64PtrSupplierResult, v)
+				r.Equal(resTestInt64PtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestInt64PtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt64PtrSupplierError.Error())
+				r.EqualError(err, errTestInt64PtrSupplier.Error())
 			} else {
-				r.Equal(testInt64PtrSupplierResult, v)
+				r.Equal(resTestInt64PtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestInt64PtrSupplier_ToSilentInt64PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt64PtrSupplierResult, v)
+				r.Equal(resTestInt64PtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestInt64PtrSupplier_ToMustInt64PtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt64PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt64PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt64PtrSupplierResult, v)
+				r.Equal(resTestInt64PtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestInt64PtrSupplier_ToMustInt64PtrSupplier(t *testing.T) {
 
 func TestSilentInt64PtrSupplier(t *testing.T) {
 	var ss SilentInt64PtrSupplier = func() *int64 {
-		return testInt64PtrSupplierResult
+		return resTestInt64PtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testInt64PtrSupplierResult, v)
+	require.Equal(t, resTestInt64PtrSupplier, v)
 }
 
 func TestSilentInt64PtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentInt64PtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt64PtrSupplierResult, v)
+				r.Equal(resTestInt64PtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentInt64PtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustInt64PtrSupplier(t *testing.T) {
 	var ms MustInt64PtrSupplier = func() *int64 {
-		return testInt64PtrSupplierResult
+		return resTestInt64PtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testInt64PtrSupplierResult, v)
+	require.Equal(t, resTestInt64PtrSupplier, v)
 }
 
 func TestMustInt64PtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustInt64PtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt64PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt64PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt64PtrSupplierResult, v)
+				r.Equal(resTestInt64PtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustInt64PtrSupplier_ToSilentInt64PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt64PtrSupplierResult, v)
+				r.Equal(resTestInt64PtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustInt64PtrSupplier_ToInt64PtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt64PtrSupplierError.Error())
+				r.EqualError(err, errTestInt64PtrSupplier.Error())
 			} else {
-				r.Equal(testInt64PtrSupplierResult, v)
+				r.Equal(resTestInt64PtrSupplier, v)
 			}
 		})
 	}

@@ -94,7 +94,7 @@ func (mc MustBoolSliceConsumer) ToBoolSliceConsumer() BoolSliceConsumer {
 	}
 }
 
-// SilentBoolSliceConsumer transforms MustBoolSliceConsumer into SilentBoolSliceConsumer
+// ToSilentBoolSliceConsumer transforms MustBoolSliceConsumer into SilentBoolSliceConsumer
 func (mc MustBoolSliceConsumer) ToSilentBoolSliceConsumer() SilentBoolSliceConsumer {
 	c := mc.ToBoolSliceConsumer()
 	return c.ToSilentBoolSliceConsumer()

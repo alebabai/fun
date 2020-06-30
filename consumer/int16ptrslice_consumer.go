@@ -94,7 +94,7 @@ func (mc MustInt16PtrSliceConsumer) ToInt16PtrSliceConsumer() Int16PtrSliceConsu
 	}
 }
 
-// SilentInt16PtrSliceConsumer transforms MustInt16PtrSliceConsumer into SilentInt16PtrSliceConsumer
+// ToSilentInt16PtrSliceConsumer transforms MustInt16PtrSliceConsumer into SilentInt16PtrSliceConsumer
 func (mc MustInt16PtrSliceConsumer) ToSilentInt16PtrSliceConsumer() SilentInt16PtrSliceConsumer {
 	c := mc.ToInt16PtrSliceConsumer()
 	return c.ToSilentInt16PtrSliceConsumer()

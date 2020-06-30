@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testFloat32SupplierResult float32
-	testFloat32SupplierError  = errors.New("error")
+	resTestFloat32Supplier float32
+	errTestFloat32Supplier = errors.New("error")
 )
 
 func testFloat32Supplier() (float32, error) {
-	return testFloat32SupplierResult, nil
+	return resTestFloat32Supplier, nil
 }
 
 func testFloat32SupplierWithError() (float32, error) {
-	return testFloat32SupplierResult, testFloat32SupplierError
+	return resTestFloat32Supplier, errTestFloat32Supplier
 }
 
 func TestFloat32Supplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestFloat32Supplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat32SupplierError.Error())
+				r.EqualError(err, errTestFloat32Supplier.Error())
 			} else {
-				r.Equal(testFloat32SupplierResult, v)
+				r.Equal(resTestFloat32Supplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestFloat32Supplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat32SupplierError.Error())
+				r.EqualError(err, errTestFloat32Supplier.Error())
 			} else {
-				r.Equal(testFloat32SupplierResult, v)
+				r.Equal(resTestFloat32Supplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestFloat32Supplier_ToSilentFloat32Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat32SupplierResult, v)
+				r.Equal(resTestFloat32Supplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestFloat32Supplier_ToMustFloat32Supplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat32SupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat32Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat32SupplierResult, v)
+				r.Equal(resTestFloat32Supplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestFloat32Supplier_ToMustFloat32Supplier(t *testing.T) {
 
 func TestSilentFloat32Supplier(t *testing.T) {
 	var ss SilentFloat32Supplier = func() float32 {
-		return testFloat32SupplierResult
+		return resTestFloat32Supplier
 	}
 	v := ss()
-	require.Equal(t, testFloat32SupplierResult, v)
+	require.Equal(t, resTestFloat32Supplier, v)
 }
 
 func TestSilentFloat32Supplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentFloat32Supplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat32SupplierResult, v)
+				r.Equal(resTestFloat32Supplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentFloat32Supplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustFloat32Supplier(t *testing.T) {
 	var ms MustFloat32Supplier = func() float32 {
-		return testFloat32SupplierResult
+		return resTestFloat32Supplier
 	}
 
 	v := ms()
-	require.Equal(t, testFloat32SupplierResult, v)
+	require.Equal(t, resTestFloat32Supplier, v)
 }
 
 func TestMustFloat32Supplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustFloat32Supplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat32SupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat32Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat32SupplierResult, v)
+				r.Equal(resTestFloat32Supplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustFloat32Supplier_ToSilentFloat32Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat32SupplierResult, v)
+				r.Equal(resTestFloat32Supplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustFloat32Supplier_ToFloat32Supplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat32SupplierError.Error())
+				r.EqualError(err, errTestFloat32Supplier.Error())
 			} else {
-				r.Equal(testFloat32SupplierResult, v)
+				r.Equal(resTestFloat32Supplier, v)
 			}
 		})
 	}

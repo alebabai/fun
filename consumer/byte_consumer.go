@@ -94,7 +94,7 @@ func (mc MustByteConsumer) ToByteConsumer() ByteConsumer {
 	}
 }
 
-// SilentByteConsumer transforms MustByteConsumer into SilentByteConsumer
+// ToSilentByteConsumer transforms MustByteConsumer into SilentByteConsumer
 func (mc MustByteConsumer) ToSilentByteConsumer() SilentByteConsumer {
 	c := mc.ToByteConsumer()
 	return c.ToSilentByteConsumer()

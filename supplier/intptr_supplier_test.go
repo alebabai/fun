@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testIntPtrSupplierResult *int
-	testIntPtrSupplierError  = errors.New("error")
+	resTestIntPtrSupplier *int
+	errTestIntPtrSupplier = errors.New("error")
 )
 
 func testIntPtrSupplier() (*int, error) {
-	return testIntPtrSupplierResult, nil
+	return resTestIntPtrSupplier, nil
 }
 
 func testIntPtrSupplierWithError() (*int, error) {
-	return testIntPtrSupplierResult, testIntPtrSupplierError
+	return resTestIntPtrSupplier, errTestIntPtrSupplier
 }
 
 func TestIntPtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestIntPtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testIntPtrSupplierError.Error())
+				r.EqualError(err, errTestIntPtrSupplier.Error())
 			} else {
-				r.Equal(testIntPtrSupplierResult, v)
+				r.Equal(resTestIntPtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestIntPtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testIntPtrSupplierError.Error())
+				r.EqualError(err, errTestIntPtrSupplier.Error())
 			} else {
-				r.Equal(testIntPtrSupplierResult, v)
+				r.Equal(resTestIntPtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestIntPtrSupplier_ToSilentIntPtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testIntPtrSupplierResult, v)
+				r.Equal(resTestIntPtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestIntPtrSupplier_ToMustIntPtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testIntPtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestIntPtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testIntPtrSupplierResult, v)
+				r.Equal(resTestIntPtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestIntPtrSupplier_ToMustIntPtrSupplier(t *testing.T) {
 
 func TestSilentIntPtrSupplier(t *testing.T) {
 	var ss SilentIntPtrSupplier = func() *int {
-		return testIntPtrSupplierResult
+		return resTestIntPtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testIntPtrSupplierResult, v)
+	require.Equal(t, resTestIntPtrSupplier, v)
 }
 
 func TestSilentIntPtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentIntPtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testIntPtrSupplierResult, v)
+				r.Equal(resTestIntPtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentIntPtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustIntPtrSupplier(t *testing.T) {
 	var ms MustIntPtrSupplier = func() *int {
-		return testIntPtrSupplierResult
+		return resTestIntPtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testIntPtrSupplierResult, v)
+	require.Equal(t, resTestIntPtrSupplier, v)
 }
 
 func TestMustIntPtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustIntPtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testIntPtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestIntPtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testIntPtrSupplierResult, v)
+				r.Equal(resTestIntPtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustIntPtrSupplier_ToSilentIntPtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testIntPtrSupplierResult, v)
+				r.Equal(resTestIntPtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustIntPtrSupplier_ToIntPtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testIntPtrSupplierError.Error())
+				r.EqualError(err, errTestIntPtrSupplier.Error())
 			} else {
-				r.Equal(testIntPtrSupplierResult, v)
+				r.Equal(resTestIntPtrSupplier, v)
 			}
 		})
 	}

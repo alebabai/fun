@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testInt64PtrSliceSupplierResult []*int64
-	testInt64PtrSliceSupplierError  = errors.New("error")
+	resTestInt64PtrSliceSupplier []*int64
+	errTestInt64PtrSliceSupplier = errors.New("error")
 )
 
 func testInt64PtrSliceSupplier() ([]*int64, error) {
-	return testInt64PtrSliceSupplierResult, nil
+	return resTestInt64PtrSliceSupplier, nil
 }
 
 func testInt64PtrSliceSupplierWithError() ([]*int64, error) {
-	return testInt64PtrSliceSupplierResult, testInt64PtrSliceSupplierError
+	return resTestInt64PtrSliceSupplier, errTestInt64PtrSliceSupplier
 }
 
 func TestInt64PtrSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestInt64PtrSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt64PtrSliceSupplierError.Error())
+				r.EqualError(err, errTestInt64PtrSliceSupplier.Error())
 			} else {
-				r.Equal(testInt64PtrSliceSupplierResult, v)
+				r.Equal(resTestInt64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestInt64PtrSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt64PtrSliceSupplierError.Error())
+				r.EqualError(err, errTestInt64PtrSliceSupplier.Error())
 			} else {
-				r.Equal(testInt64PtrSliceSupplierResult, v)
+				r.Equal(resTestInt64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestInt64PtrSliceSupplier_ToSilentInt64PtrSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt64PtrSliceSupplierResult, v)
+				r.Equal(resTestInt64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestInt64PtrSliceSupplier_ToMustInt64PtrSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt64PtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt64PtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt64PtrSliceSupplierResult, v)
+				r.Equal(resTestInt64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestInt64PtrSliceSupplier_ToMustInt64PtrSliceSupplier(t *testing.T) {
 
 func TestSilentInt64PtrSliceSupplier(t *testing.T) {
 	var ss SilentInt64PtrSliceSupplier = func() []*int64 {
-		return testInt64PtrSliceSupplierResult
+		return resTestInt64PtrSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testInt64PtrSliceSupplierResult, v)
+	require.Equal(t, resTestInt64PtrSliceSupplier, v)
 }
 
 func TestSilentInt64PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentInt64PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt64PtrSliceSupplierResult, v)
+				r.Equal(resTestInt64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentInt64PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustInt64PtrSliceSupplier(t *testing.T) {
 	var ms MustInt64PtrSliceSupplier = func() []*int64 {
-		return testInt64PtrSliceSupplierResult
+		return resTestInt64PtrSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testInt64PtrSliceSupplierResult, v)
+	require.Equal(t, resTestInt64PtrSliceSupplier, v)
 }
 
 func TestMustInt64PtrSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustInt64PtrSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt64PtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt64PtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt64PtrSliceSupplierResult, v)
+				r.Equal(resTestInt64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustInt64PtrSliceSupplier_ToSilentInt64PtrSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt64PtrSliceSupplierResult, v)
+				r.Equal(resTestInt64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustInt64PtrSliceSupplier_ToInt64PtrSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt64PtrSliceSupplierError.Error())
+				r.EqualError(err, errTestInt64PtrSliceSupplier.Error())
 			} else {
-				r.Equal(testInt64PtrSliceSupplierResult, v)
+				r.Equal(resTestInt64PtrSliceSupplier, v)
 			}
 		})
 	}

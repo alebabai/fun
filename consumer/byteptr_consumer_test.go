@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testBytePtrConsumerValue *byte
-	testBytePtrConsumerError = errors.New("error")
+	valTestBytePtrConsumer *byte
+	errTestBytePtrConsumer = errors.New("error")
 )
 
 type testBytePtrConsumerFactory func(t *testing.T) BytePtrConsumer
@@ -27,7 +27,7 @@ func TestBytePtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestBytePtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
-					return testBytePtrConsumerError
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return errTestBytePtrConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestBytePtrConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testBytePtrConsumerValue)
+			err := c(valTestBytePtrConsumer)
 			if err != nil {
-				r.EqualError(err, testBytePtrConsumerError.Error())
+				r.EqualError(err, errTestBytePtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestBytePtrSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestBytePtrSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
-					return testBytePtrConsumerError
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return errTestBytePtrConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestBytePtrSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testBytePtrConsumerValue)
+			err := c(valTestBytePtrConsumer)
 			if err != nil {
-				r.EqualError(err, testBytePtrConsumerError.Error())
+				r.EqualError(err, errTestBytePtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestBytePtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestBytePtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestBytePtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testBytePtrConsumerError
+					return errTestBytePtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestBytePtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestBytePtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testBytePtrConsumerValue)
+			err := cc(valTestBytePtrConsumer)
 			if err != nil {
-				r.EqualError(err, testBytePtrConsumerError.Error())
+				r.EqualError(err, errTestBytePtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestBytePtrConsumer_ToSilentBytePtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestBytePtrConsumer_ToSilentBytePtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
-					return testBytePtrConsumerError
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return errTestBytePtrConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestBytePtrConsumer_ToSilentBytePtrConsumer(t *testing.T) {
 			sc := c.ToSilentBytePtrConsumer()
 			r.NotNil(sc)
 
-			sc(testBytePtrConsumerValue)
+			sc(valTestBytePtrConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestBytePtrConsumer_ToMustBytePtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestBytePtrConsumer_ToMustBytePtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
-					return testBytePtrConsumerError
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return errTestBytePtrConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestBytePtrConsumer_ToMustBytePtrConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testBytePtrConsumerError.Error(), func() {
-					mc(testBytePtrConsumerValue)
+				r.PanicsWithError(errTestBytePtrConsumer.Error(), func() {
+					mc(valTestBytePtrConsumer)
 				})
 			} else {
-				mc(testBytePtrConsumerValue)
+				mc(valTestBytePtrConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestBytePtrConsumer_ToMustBytePtrConsumer(t *testing.T) {
 
 func TestSilentBytePtrConsumer(t *testing.T) {
 	var sc SilentBytePtrConsumer = func(v *byte) {
-		require.Equal(t, testBytePtrConsumerValue, v)
+		require.Equal(t, valTestBytePtrConsumer, v)
 		return
 	}
-	sc(testBytePtrConsumerValue)
+	sc(valTestBytePtrConsumer)
 }
 
 func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testBytePtrConsumerError
+					return errTestBytePtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testBytePtrConsumerValue)
+			csc(valTestBytePtrConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
 
 func TestMustBytePtrConsumer(t *testing.T) {
 	var sc SilentBytePtrConsumer = func(v *byte) {
-		require.Equal(t, testBytePtrConsumerValue, v)
+		require.Equal(t, valTestBytePtrConsumer, v)
 		return
 	}
-	sc(testBytePtrConsumerValue)
+	sc(valTestBytePtrConsumer)
 }
 
 func TestMustBytePtrConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustBytePtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustBytePtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustBytePtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testBytePtrConsumerError
+					return errTestBytePtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustBytePtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustBytePtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testBytePtrConsumerError.Error(), func() {
-					cmc(testBytePtrConsumerValue)
+				r.PanicsWithError(errTestBytePtrConsumer.Error(), func() {
+					cmc(valTestBytePtrConsumer)
 				})
 			} else {
-				cmc(testBytePtrConsumerValue)
+				cmc(valTestBytePtrConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustBytePtrConsumer_ToSilentBytePtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustBytePtrConsumer_ToSilentBytePtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
-					return testBytePtrConsumerError
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return errTestBytePtrConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustBytePtrConsumer_ToSilentBytePtrConsumer(t *testing.T) {
 			sc := mc.ToSilentBytePtrConsumer()
 			r.NotNil(sc)
 
-			sc(testBytePtrConsumerValue)
+			sc(valTestBytePtrConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustBytePtrConsumer_ToBytePtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
+					require.Equal(t, valTestBytePtrConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustBytePtrConsumer_ToBytePtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
-					require.Equal(t, testBytePtrConsumerValue, v)
-					return testBytePtrConsumerError
+					require.Equal(t, valTestBytePtrConsumer, v)
+					return errTestBytePtrConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustBytePtrConsumer_ToBytePtrConsumer(t *testing.T) {
 			c = mc.ToBytePtrConsumer()
 			r.NotNil(c)
 
-			err := c(testBytePtrConsumerValue)
+			err := c(valTestBytePtrConsumer)
 			if tt.err {
-				r.EqualError(err, testBytePtrConsumerError.Error())
+				r.EqualError(err, errTestBytePtrConsumer.Error())
 			}
 		})
 	}

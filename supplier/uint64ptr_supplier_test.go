@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testUint64PtrSupplierResult *uint64
-	testUint64PtrSupplierError  = errors.New("error")
+	resTestUint64PtrSupplier *uint64
+	errTestUint64PtrSupplier = errors.New("error")
 )
 
 func testUint64PtrSupplier() (*uint64, error) {
-	return testUint64PtrSupplierResult, nil
+	return resTestUint64PtrSupplier, nil
 }
 
 func testUint64PtrSupplierWithError() (*uint64, error) {
-	return testUint64PtrSupplierResult, testUint64PtrSupplierError
+	return resTestUint64PtrSupplier, errTestUint64PtrSupplier
 }
 
 func TestUint64PtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestUint64PtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint64PtrSupplierError.Error())
+				r.EqualError(err, errTestUint64PtrSupplier.Error())
 			} else {
-				r.Equal(testUint64PtrSupplierResult, v)
+				r.Equal(resTestUint64PtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestUint64PtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint64PtrSupplierError.Error())
+				r.EqualError(err, errTestUint64PtrSupplier.Error())
 			} else {
-				r.Equal(testUint64PtrSupplierResult, v)
+				r.Equal(resTestUint64PtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestUint64PtrSupplier_ToSilentUint64PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint64PtrSupplierResult, v)
+				r.Equal(resTestUint64PtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestUint64PtrSupplier_ToMustUint64PtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint64PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint64PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint64PtrSupplierResult, v)
+				r.Equal(resTestUint64PtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestUint64PtrSupplier_ToMustUint64PtrSupplier(t *testing.T) {
 
 func TestSilentUint64PtrSupplier(t *testing.T) {
 	var ss SilentUint64PtrSupplier = func() *uint64 {
-		return testUint64PtrSupplierResult
+		return resTestUint64PtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testUint64PtrSupplierResult, v)
+	require.Equal(t, resTestUint64PtrSupplier, v)
 }
 
 func TestSilentUint64PtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentUint64PtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint64PtrSupplierResult, v)
+				r.Equal(resTestUint64PtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentUint64PtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustUint64PtrSupplier(t *testing.T) {
 	var ms MustUint64PtrSupplier = func() *uint64 {
-		return testUint64PtrSupplierResult
+		return resTestUint64PtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testUint64PtrSupplierResult, v)
+	require.Equal(t, resTestUint64PtrSupplier, v)
 }
 
 func TestMustUint64PtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustUint64PtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint64PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint64PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint64PtrSupplierResult, v)
+				r.Equal(resTestUint64PtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustUint64PtrSupplier_ToSilentUint64PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint64PtrSupplierResult, v)
+				r.Equal(resTestUint64PtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustUint64PtrSupplier_ToUint64PtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint64PtrSupplierError.Error())
+				r.EqualError(err, errTestUint64PtrSupplier.Error())
 			} else {
-				r.Equal(testUint64PtrSupplierResult, v)
+				r.Equal(resTestUint64PtrSupplier, v)
 			}
 		})
 	}

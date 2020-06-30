@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testFloat32PtrSliceConsumerValue []*float32
-	testFloat32PtrSliceConsumerError = errors.New("error")
+	valTestFloat32PtrSliceConsumer []*float32
+	errTestFloat32PtrSliceConsumer = errors.New("error")
 )
 
 type testFloat32PtrSliceConsumerFactory func(t *testing.T) Float32PtrSliceConsumer
@@ -27,7 +27,7 @@ func TestFloat32PtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestFloat32PtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
-					return testFloat32PtrSliceConsumerError
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return errTestFloat32PtrSliceConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestFloat32PtrSliceConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testFloat32PtrSliceConsumerValue)
+			err := c(valTestFloat32PtrSliceConsumer)
 			if err != nil {
-				r.EqualError(err, testFloat32PtrSliceConsumerError.Error())
+				r.EqualError(err, errTestFloat32PtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestFloat32PtrSliceSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestFloat32PtrSliceSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
-					return testFloat32PtrSliceConsumerError
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return errTestFloat32PtrSliceConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestFloat32PtrSliceSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testFloat32PtrSliceConsumerValue)
+			err := c(valTestFloat32PtrSliceConsumer)
 			if err != nil {
-				r.EqualError(err, testFloat32PtrSliceConsumerError.Error())
+				r.EqualError(err, errTestFloat32PtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat32PtrSliceConsumerError
+					return errTestFloat32PtrSliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testFloat32PtrSliceConsumerValue)
+			err := cc(valTestFloat32PtrSliceConsumer)
 			if err != nil {
-				r.EqualError(err, testFloat32PtrSliceConsumerError.Error())
+				r.EqualError(err, errTestFloat32PtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestFloat32PtrSliceConsumer_ToSilentFloat32PtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestFloat32PtrSliceConsumer_ToSilentFloat32PtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
-					return testFloat32PtrSliceConsumerError
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return errTestFloat32PtrSliceConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestFloat32PtrSliceConsumer_ToSilentFloat32PtrSliceConsumer(t *testing.T) {
 			sc := c.ToSilentFloat32PtrSliceConsumer()
 			r.NotNil(sc)
 
-			sc(testFloat32PtrSliceConsumerValue)
+			sc(valTestFloat32PtrSliceConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestFloat32PtrSliceConsumer_ToMustFloat32PtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestFloat32PtrSliceConsumer_ToMustFloat32PtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
-					return testFloat32PtrSliceConsumerError
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return errTestFloat32PtrSliceConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestFloat32PtrSliceConsumer_ToMustFloat32PtrSliceConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testFloat32PtrSliceConsumerError.Error(), func() {
-					mc(testFloat32PtrSliceConsumerValue)
+				r.PanicsWithError(errTestFloat32PtrSliceConsumer.Error(), func() {
+					mc(valTestFloat32PtrSliceConsumer)
 				})
 			} else {
-				mc(testFloat32PtrSliceConsumerValue)
+				mc(valTestFloat32PtrSliceConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestFloat32PtrSliceConsumer_ToMustFloat32PtrSliceConsumer(t *testing.T) {
 
 func TestSilentFloat32PtrSliceConsumer(t *testing.T) {
 	var sc SilentFloat32PtrSliceConsumer = func(v []*float32) {
-		require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+		require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 		return
 	}
-	sc(testFloat32PtrSliceConsumerValue)
+	sc(valTestFloat32PtrSliceConsumer)
 }
 
 func TestSilentFloat32PtrSliceConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat32PtrSliceConsumerError
+					return errTestFloat32PtrSliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testFloat32PtrSliceConsumerValue)
+			csc(valTestFloat32PtrSliceConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 
 func TestMustFloat32PtrSliceConsumer(t *testing.T) {
 	var sc SilentFloat32PtrSliceConsumer = func(v []*float32) {
-		require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+		require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 		return
 	}
-	sc(testFloat32PtrSliceConsumerValue)
+	sc(valTestFloat32PtrSliceConsumer)
 }
 
 func TestMustFloat32PtrSliceConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat32PtrSliceConsumerError
+					return errTestFloat32PtrSliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
 					calls++
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustFloat32PtrSliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testFloat32PtrSliceConsumerError.Error(), func() {
-					cmc(testFloat32PtrSliceConsumerValue)
+				r.PanicsWithError(errTestFloat32PtrSliceConsumer.Error(), func() {
+					cmc(valTestFloat32PtrSliceConsumer)
 				})
 			} else {
-				cmc(testFloat32PtrSliceConsumerValue)
+				cmc(valTestFloat32PtrSliceConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustFloat32PtrSliceConsumer_ToSilentFloat32PtrSliceConsumer(t *testing.
 			name: "ok",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustFloat32PtrSliceConsumer_ToSilentFloat32PtrSliceConsumer(t *testing.
 			name: "with_error",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
-					return testFloat32PtrSliceConsumerError
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return errTestFloat32PtrSliceConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustFloat32PtrSliceConsumer_ToSilentFloat32PtrSliceConsumer(t *testing.
 			sc := mc.ToSilentFloat32PtrSliceConsumer()
 			r.NotNil(sc)
 
-			sc(testFloat32PtrSliceConsumerValue)
+			sc(valTestFloat32PtrSliceConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustFloat32PtrSliceConsumer_ToFloat32PtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustFloat32PtrSliceConsumer_ToFloat32PtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32PtrSliceConsumer {
 				return func(v []*float32) error {
-					require.Equal(t, testFloat32PtrSliceConsumerValue, v)
-					return testFloat32PtrSliceConsumerError
+					require.Equal(t, valTestFloat32PtrSliceConsumer, v)
+					return errTestFloat32PtrSliceConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustFloat32PtrSliceConsumer_ToFloat32PtrSliceConsumer(t *testing.T) {
 			c = mc.ToFloat32PtrSliceConsumer()
 			r.NotNil(c)
 
-			err := c(testFloat32PtrSliceConsumerValue)
+			err := c(valTestFloat32PtrSliceConsumer)
 			if tt.err {
-				r.EqualError(err, testFloat32PtrSliceConsumerError.Error())
+				r.EqualError(err, errTestFloat32PtrSliceConsumer.Error())
 			}
 		})
 	}

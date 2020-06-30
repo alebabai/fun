@@ -94,7 +94,7 @@ func (mc MustFloat32Consumer) ToFloat32Consumer() Float32Consumer {
 	}
 }
 
-// SilentFloat32Consumer transforms MustFloat32Consumer into SilentFloat32Consumer
+// ToSilentFloat32Consumer transforms MustFloat32Consumer into SilentFloat32Consumer
 func (mc MustFloat32Consumer) ToSilentFloat32Consumer() SilentFloat32Consumer {
 	c := mc.ToFloat32Consumer()
 	return c.ToSilentFloat32Consumer()

@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testUint32PtrSliceSupplierResult []*uint32
-	testUint32PtrSliceSupplierError  = errors.New("error")
+	resTestUint32PtrSliceSupplier []*uint32
+	errTestUint32PtrSliceSupplier = errors.New("error")
 )
 
 func testUint32PtrSliceSupplier() ([]*uint32, error) {
-	return testUint32PtrSliceSupplierResult, nil
+	return resTestUint32PtrSliceSupplier, nil
 }
 
 func testUint32PtrSliceSupplierWithError() ([]*uint32, error) {
-	return testUint32PtrSliceSupplierResult, testUint32PtrSliceSupplierError
+	return resTestUint32PtrSliceSupplier, errTestUint32PtrSliceSupplier
 }
 
 func TestUint32PtrSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestUint32PtrSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint32PtrSliceSupplierError.Error())
+				r.EqualError(err, errTestUint32PtrSliceSupplier.Error())
 			} else {
-				r.Equal(testUint32PtrSliceSupplierResult, v)
+				r.Equal(resTestUint32PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestUint32PtrSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint32PtrSliceSupplierError.Error())
+				r.EqualError(err, errTestUint32PtrSliceSupplier.Error())
 			} else {
-				r.Equal(testUint32PtrSliceSupplierResult, v)
+				r.Equal(resTestUint32PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestUint32PtrSliceSupplier_ToSilentUint32PtrSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint32PtrSliceSupplierResult, v)
+				r.Equal(resTestUint32PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestUint32PtrSliceSupplier_ToMustUint32PtrSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint32PtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint32PtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint32PtrSliceSupplierResult, v)
+				r.Equal(resTestUint32PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestUint32PtrSliceSupplier_ToMustUint32PtrSliceSupplier(t *testing.T) {
 
 func TestSilentUint32PtrSliceSupplier(t *testing.T) {
 	var ss SilentUint32PtrSliceSupplier = func() []*uint32 {
-		return testUint32PtrSliceSupplierResult
+		return resTestUint32PtrSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testUint32PtrSliceSupplierResult, v)
+	require.Equal(t, resTestUint32PtrSliceSupplier, v)
 }
 
 func TestSilentUint32PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentUint32PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint32PtrSliceSupplierResult, v)
+				r.Equal(resTestUint32PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentUint32PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustUint32PtrSliceSupplier(t *testing.T) {
 	var ms MustUint32PtrSliceSupplier = func() []*uint32 {
-		return testUint32PtrSliceSupplierResult
+		return resTestUint32PtrSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testUint32PtrSliceSupplierResult, v)
+	require.Equal(t, resTestUint32PtrSliceSupplier, v)
 }
 
 func TestMustUint32PtrSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustUint32PtrSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint32PtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint32PtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint32PtrSliceSupplierResult, v)
+				r.Equal(resTestUint32PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustUint32PtrSliceSupplier_ToSilentUint32PtrSliceSupplier(t *testing.T)
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint32PtrSliceSupplierResult, v)
+				r.Equal(resTestUint32PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustUint32PtrSliceSupplier_ToUint32PtrSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint32PtrSliceSupplierError.Error())
+				r.EqualError(err, errTestUint32PtrSliceSupplier.Error())
 			} else {
-				r.Equal(testUint32PtrSliceSupplierResult, v)
+				r.Equal(resTestUint32PtrSliceSupplier, v)
 			}
 		})
 	}

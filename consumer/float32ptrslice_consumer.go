@@ -94,7 +94,7 @@ func (mc MustFloat32PtrSliceConsumer) ToFloat32PtrSliceConsumer() Float32PtrSlic
 	}
 }
 
-// SilentFloat32PtrSliceConsumer transforms MustFloat32PtrSliceConsumer into SilentFloat32PtrSliceConsumer
+// ToSilentFloat32PtrSliceConsumer transforms MustFloat32PtrSliceConsumer into SilentFloat32PtrSliceConsumer
 func (mc MustFloat32PtrSliceConsumer) ToSilentFloat32PtrSliceConsumer() SilentFloat32PtrSliceConsumer {
 	c := mc.ToFloat32PtrSliceConsumer()
 	return c.ToSilentFloat32PtrSliceConsumer()

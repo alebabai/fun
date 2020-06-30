@@ -94,7 +94,7 @@ func (mc MustStringPtrSliceConsumer) ToStringPtrSliceConsumer() StringPtrSliceCo
 	}
 }
 
-// SilentStringPtrSliceConsumer transforms MustStringPtrSliceConsumer into SilentStringPtrSliceConsumer
+// ToSilentStringPtrSliceConsumer transforms MustStringPtrSliceConsumer into SilentStringPtrSliceConsumer
 func (mc MustStringPtrSliceConsumer) ToSilentStringPtrSliceConsumer() SilentStringPtrSliceConsumer {
 	c := mc.ToStringPtrSliceConsumer()
 	return c.ToSilentStringPtrSliceConsumer()

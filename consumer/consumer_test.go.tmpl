@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	test{{.Type.Title}}ConsumerValue {{.Type.Name}}
-	test{{.Type.Title}}ConsumerError = errors.New("error")
+	valTest{{.Type.Title}}Consumer {{.Type.Name}}
+	errTest{{.Type.Title}}Consumer = errors.New("error")
 )
 
 type test{{.Type.Title}}ConsumerFactory func(t *testing.T) {{.Type.Title}}Consumer
@@ -23,7 +23,7 @@ func Test{{.Type.Title}}Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					return nil
 				}
 			},
@@ -32,8 +32,8 @@ func Test{{.Type.Title}}Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
-					return test{{.Type.Title}}ConsumerError
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return errTest{{.Type.Title}}Consumer
 				}
 			},
 		},
@@ -43,9 +43,9 @@ func Test{{.Type.Title}}Consumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(test{{.Type.Title}}ConsumerValue)
+			err := c(valTest{{.Type.Title}}Consumer)
 			if err != nil {
-				r.EqualError(err, test{{.Type.Title}}ConsumerError.Error())
+				r.EqualError(err, errTest{{.Type.Title}}Consumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -63,7 +63,7 @@ func Test{{.Type.Title}}Supplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					return nil
 				}
 			},
@@ -72,8 +72,8 @@ func Test{{.Type.Title}}Supplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
-					return test{{.Type.Title}}ConsumerError
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return errTest{{.Type.Title}}Consumer
 				}
 			},
 		},
@@ -86,9 +86,9 @@ func Test{{.Type.Title}}Supplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(test{{.Type.Title}}ConsumerValue)
+			err := c(valTest{{.Type.Title}}Consumer)
 			if err != nil {
-				r.EqualError(err, test{{.Type.Title}}ConsumerError.Error())
+				r.EqualError(err, errTest{{.Type.Title}}Consumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -110,7 +110,7 @@ func Test{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -118,7 +118,7 @@ func Test{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -130,15 +130,15 @@ func Test{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return test{{.Type.Title}}ConsumerError
+					return errTest{{.Type.Title}}Consumer
 				}
 			},
 			cf2: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -150,7 +150,7 @@ func Test{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -172,9 +172,9 @@ func Test{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(test{{.Type.Title}}ConsumerValue)
+			err := cc(valTest{{.Type.Title}}Consumer)
 			if err != nil {
-				r.EqualError(err, test{{.Type.Title}}ConsumerError.Error())
+				r.EqualError(err, errTest{{.Type.Title}}Consumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -192,7 +192,7 @@ func Test{{.Type.Title}}Consumer_ToSilent{{.Type.Title}}Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					return nil
 				}
 			},
@@ -201,8 +201,8 @@ func Test{{.Type.Title}}Consumer_ToSilent{{.Type.Title}}Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
-					return test{{.Type.Title}}ConsumerError
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return errTest{{.Type.Title}}Consumer
 				}
 			},
 		},
@@ -215,7 +215,7 @@ func Test{{.Type.Title}}Consumer_ToSilent{{.Type.Title}}Consumer(t *testing.T) {
 			sc := c.ToSilent{{.Type.Title}}Consumer()
 			r.NotNil(sc)
 
-			sc(test{{.Type.Title}}ConsumerValue)
+			sc(valTest{{.Type.Title}}Consumer)
 		})
 	}
 }
@@ -230,7 +230,7 @@ func Test{{.Type.Title}}Consumer_ToMust{{.Type.Title}}Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					return nil
 				}
 			},
@@ -239,8 +239,8 @@ func Test{{.Type.Title}}Consumer_ToMust{{.Type.Title}}Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
-					return test{{.Type.Title}}ConsumerError
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return errTest{{.Type.Title}}Consumer
 				}
 			},
 			err: true,
@@ -255,11 +255,11 @@ func Test{{.Type.Title}}Consumer_ToMust{{.Type.Title}}Consumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(test{{.Type.Title}}ConsumerError.Error(), func() {
-					mc(test{{.Type.Title}}ConsumerValue)
+				r.PanicsWithError(errTest{{.Type.Title}}Consumer.Error(), func() {
+					mc(valTest{{.Type.Title}}Consumer)
 				})
 			} else {
-				mc(test{{.Type.Title}}ConsumerValue)
+				mc(valTest{{.Type.Title}}Consumer)
 			}
 		})
 	}
@@ -267,10 +267,10 @@ func Test{{.Type.Title}}Consumer_ToMust{{.Type.Title}}Consumer(t *testing.T) {
 
 func TestSilent{{.Type.Title}}Consumer(t *testing.T) {
 	var sc Silent{{.Type.Title}}Consumer = func(v {{.Type.Name}}) {
-		require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+		require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 		return
 	}
-	sc(test{{.Type.Title}}ConsumerValue)
+	sc(valTest{{.Type.Title}}Consumer)
 }
 
 func TestSilent{{.Type.Title}}Consumer_AndThen(t *testing.T) {
@@ -286,7 +286,7 @@ func TestSilent{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -294,7 +294,7 @@ func TestSilent{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -306,15 +306,15 @@ func TestSilent{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return test{{.Type.Title}}ConsumerError
+					return errTest{{.Type.Title}}Consumer
 				}
 			},
 			cf2: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -326,7 +326,7 @@ func TestSilent{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -356,7 +356,7 @@ func TestSilent{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(test{{.Type.Title}}ConsumerValue)
+			csc(valTest{{.Type.Title}}Consumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -364,10 +364,10 @@ func TestSilent{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 
 func TestMust{{.Type.Title}}Consumer(t *testing.T) {
 	var sc Silent{{.Type.Title}}Consumer = func(v {{.Type.Name}}) {
-		require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+		require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 		return
 	}
-	sc(test{{.Type.Title}}ConsumerValue)
+	sc(valTest{{.Type.Title}}Consumer)
 }
 
 func TestMust{{.Type.Title}}Consumer_AndThen(t *testing.T) {
@@ -384,7 +384,7 @@ func TestMust{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -392,7 +392,7 @@ func TestMust{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -404,15 +404,15 @@ func TestMust{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return test{{.Type.Title}}ConsumerError
+					return errTest{{.Type.Title}}Consumer
 				}
 			},
 			cf2: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -425,7 +425,7 @@ func TestMust{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
 					calls++
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -456,11 +456,11 @@ func TestMust{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(test{{.Type.Title}}ConsumerError.Error(), func() {
-					cmc(test{{.Type.Title}}ConsumerValue)
+				r.PanicsWithError(errTest{{.Type.Title}}Consumer.Error(), func() {
+					cmc(valTest{{.Type.Title}}Consumer)
 				})
 			} else {
-				cmc(test{{.Type.Title}}ConsumerValue)
+				cmc(valTest{{.Type.Title}}Consumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -476,7 +476,7 @@ func TestMust{{.Type.Title}}Consumer_ToSilent{{.Type.Title}}Consumer(t *testing.
 			name: "ok",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					return nil
 				}
 			},
@@ -485,8 +485,8 @@ func TestMust{{.Type.Title}}Consumer_ToSilent{{.Type.Title}}Consumer(t *testing.
 			name: "with_error",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
-					return test{{.Type.Title}}ConsumerError
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return errTest{{.Type.Title}}Consumer
 				}
 			},
 		},
@@ -503,7 +503,7 @@ func TestMust{{.Type.Title}}Consumer_ToSilent{{.Type.Title}}Consumer(t *testing.
 			sc := mc.ToSilent{{.Type.Title}}Consumer()
 			r.NotNil(sc)
 
-			sc(test{{.Type.Title}}ConsumerValue)
+			sc(valTest{{.Type.Title}}Consumer)
 		})
 	}
 }
@@ -518,7 +518,7 @@ func TestMust{{.Type.Title}}Consumer_To{{.Type.Title}}Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 					return nil
 				}
 			},
@@ -527,8 +527,8 @@ func TestMust{{.Type.Title}}Consumer_To{{.Type.Title}}Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) {{.Type.Title}}Consumer {
 				return func(v {{.Type.Name}}) error {
-					require.Equal(t, test{{.Type.Title}}ConsumerValue, v)
-					return test{{.Type.Title}}ConsumerError
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return errTest{{.Type.Title}}Consumer
 				}
 			},
 			err: true,
@@ -546,9 +546,9 @@ func TestMust{{.Type.Title}}Consumer_To{{.Type.Title}}Consumer(t *testing.T) {
 			c = mc.To{{.Type.Title}}Consumer()
 			r.NotNil(c)
 
-			err := c(test{{.Type.Title}}ConsumerValue)
+			err := c(valTest{{.Type.Title}}Consumer)
 			if tt.err {
-				r.EqualError(err, test{{.Type.Title}}ConsumerError.Error())
+				r.EqualError(err, errTest{{.Type.Title}}Consumer.Error())
 			}
 		})
 	}

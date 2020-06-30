@@ -94,7 +94,7 @@ func (mc MustRuneConsumer) ToRuneConsumer() RuneConsumer {
 	}
 }
 
-// SilentRuneConsumer transforms MustRuneConsumer into SilentRuneConsumer
+// ToSilentRuneConsumer transforms MustRuneConsumer into SilentRuneConsumer
 func (mc MustRuneConsumer) ToSilentRuneConsumer() SilentRuneConsumer {
 	c := mc.ToRuneConsumer()
 	return c.ToSilentRuneConsumer()

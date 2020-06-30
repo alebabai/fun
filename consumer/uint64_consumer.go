@@ -94,7 +94,7 @@ func (mc MustUint64Consumer) ToUint64Consumer() Uint64Consumer {
 	}
 }
 
-// SilentUint64Consumer transforms MustUint64Consumer into SilentUint64Consumer
+// ToSilentUint64Consumer transforms MustUint64Consumer into SilentUint64Consumer
 func (mc MustUint64Consumer) ToSilentUint64Consumer() SilentUint64Consumer {
 	c := mc.ToUint64Consumer()
 	return c.ToSilentUint64Consumer()

@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testStringSupplierResult string
-	testStringSupplierError  = errors.New("error")
+	resTestStringSupplier string
+	errTestStringSupplier = errors.New("error")
 )
 
 func testStringSupplier() (string, error) {
-	return testStringSupplierResult, nil
+	return resTestStringSupplier, nil
 }
 
 func testStringSupplierWithError() (string, error) {
-	return testStringSupplierResult, testStringSupplierError
+	return resTestStringSupplier, errTestStringSupplier
 }
 
 func TestStringSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestStringSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringSupplierError.Error())
+				r.EqualError(err, errTestStringSupplier.Error())
 			} else {
-				r.Equal(testStringSupplierResult, v)
+				r.Equal(resTestStringSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestStringSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringSupplierError.Error())
+				r.EqualError(err, errTestStringSupplier.Error())
 			} else {
-				r.Equal(testStringSupplierResult, v)
+				r.Equal(resTestStringSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestStringSupplier_ToSilentStringSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringSupplierResult, v)
+				r.Equal(resTestStringSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestStringSupplier_ToMustStringSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testStringSupplierError.Error(), func() {
+				r.PanicsWithError(errTestStringSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testStringSupplierResult, v)
+				r.Equal(resTestStringSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestStringSupplier_ToMustStringSupplier(t *testing.T) {
 
 func TestSilentStringSupplier(t *testing.T) {
 	var ss SilentStringSupplier = func() string {
-		return testStringSupplierResult
+		return resTestStringSupplier
 	}
 	v := ss()
-	require.Equal(t, testStringSupplierResult, v)
+	require.Equal(t, resTestStringSupplier, v)
 }
 
 func TestSilentStringSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentStringSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringSupplierResult, v)
+				r.Equal(resTestStringSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentStringSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustStringSupplier(t *testing.T) {
 	var ms MustStringSupplier = func() string {
-		return testStringSupplierResult
+		return resTestStringSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testStringSupplierResult, v)
+	require.Equal(t, resTestStringSupplier, v)
 }
 
 func TestMustStringSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustStringSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testStringSupplierError.Error(), func() {
+				r.PanicsWithError(errTestStringSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testStringSupplierResult, v)
+				r.Equal(resTestStringSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustStringSupplier_ToSilentStringSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringSupplierResult, v)
+				r.Equal(resTestStringSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustStringSupplier_ToStringSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringSupplierError.Error())
+				r.EqualError(err, errTestStringSupplier.Error())
 			} else {
-				r.Equal(testStringSupplierResult, v)
+				r.Equal(resTestStringSupplier, v)
 			}
 		})
 	}

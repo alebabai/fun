@@ -94,7 +94,7 @@ func (mc MustInt16Consumer) ToInt16Consumer() Int16Consumer {
 	}
 }
 
-// SilentInt16Consumer transforms MustInt16Consumer into SilentInt16Consumer
+// ToSilentInt16Consumer transforms MustInt16Consumer into SilentInt16Consumer
 func (mc MustInt16Consumer) ToSilentInt16Consumer() SilentInt16Consumer {
 	c := mc.ToInt16Consumer()
 	return c.ToSilentInt16Consumer()

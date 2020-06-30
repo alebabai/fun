@@ -94,7 +94,7 @@ func (mc MustBytePtrSliceConsumer) ToBytePtrSliceConsumer() BytePtrSliceConsumer
 	}
 }
 
-// SilentBytePtrSliceConsumer transforms MustBytePtrSliceConsumer into SilentBytePtrSliceConsumer
+// ToSilentBytePtrSliceConsumer transforms MustBytePtrSliceConsumer into SilentBytePtrSliceConsumer
 func (mc MustBytePtrSliceConsumer) ToSilentBytePtrSliceConsumer() SilentBytePtrSliceConsumer {
 	c := mc.ToBytePtrSliceConsumer()
 	return c.ToSilentBytePtrSliceConsumer()

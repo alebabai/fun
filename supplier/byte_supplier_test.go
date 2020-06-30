@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testByteSupplierResult byte
-	testByteSupplierError  = errors.New("error")
+	resTestByteSupplier byte
+	errTestByteSupplier = errors.New("error")
 )
 
 func testByteSupplier() (byte, error) {
-	return testByteSupplierResult, nil
+	return resTestByteSupplier, nil
 }
 
 func testByteSupplierWithError() (byte, error) {
-	return testByteSupplierResult, testByteSupplierError
+	return resTestByteSupplier, errTestByteSupplier
 }
 
 func TestByteSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestByteSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testByteSupplierError.Error())
+				r.EqualError(err, errTestByteSupplier.Error())
 			} else {
-				r.Equal(testByteSupplierResult, v)
+				r.Equal(resTestByteSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestByteSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testByteSupplierError.Error())
+				r.EqualError(err, errTestByteSupplier.Error())
 			} else {
-				r.Equal(testByteSupplierResult, v)
+				r.Equal(resTestByteSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestByteSupplier_ToSilentByteSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testByteSupplierResult, v)
+				r.Equal(resTestByteSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestByteSupplier_ToMustByteSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testByteSupplierError.Error(), func() {
+				r.PanicsWithError(errTestByteSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testByteSupplierResult, v)
+				r.Equal(resTestByteSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestByteSupplier_ToMustByteSupplier(t *testing.T) {
 
 func TestSilentByteSupplier(t *testing.T) {
 	var ss SilentByteSupplier = func() byte {
-		return testByteSupplierResult
+		return resTestByteSupplier
 	}
 	v := ss()
-	require.Equal(t, testByteSupplierResult, v)
+	require.Equal(t, resTestByteSupplier, v)
 }
 
 func TestSilentByteSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentByteSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testByteSupplierResult, v)
+				r.Equal(resTestByteSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentByteSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustByteSupplier(t *testing.T) {
 	var ms MustByteSupplier = func() byte {
-		return testByteSupplierResult
+		return resTestByteSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testByteSupplierResult, v)
+	require.Equal(t, resTestByteSupplier, v)
 }
 
 func TestMustByteSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustByteSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testByteSupplierError.Error(), func() {
+				r.PanicsWithError(errTestByteSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testByteSupplierResult, v)
+				r.Equal(resTestByteSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustByteSupplier_ToSilentByteSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testByteSupplierResult, v)
+				r.Equal(resTestByteSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustByteSupplier_ToByteSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testByteSupplierError.Error())
+				r.EqualError(err, errTestByteSupplier.Error())
 			} else {
-				r.Equal(testByteSupplierResult, v)
+				r.Equal(resTestByteSupplier, v)
 			}
 		})
 	}

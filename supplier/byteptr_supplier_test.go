@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testBytePtrSupplierResult *byte
-	testBytePtrSupplierError  = errors.New("error")
+	resTestBytePtrSupplier *byte
+	errTestBytePtrSupplier = errors.New("error")
 )
 
 func testBytePtrSupplier() (*byte, error) {
-	return testBytePtrSupplierResult, nil
+	return resTestBytePtrSupplier, nil
 }
 
 func testBytePtrSupplierWithError() (*byte, error) {
-	return testBytePtrSupplierResult, testBytePtrSupplierError
+	return resTestBytePtrSupplier, errTestBytePtrSupplier
 }
 
 func TestBytePtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestBytePtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBytePtrSupplierError.Error())
+				r.EqualError(err, errTestBytePtrSupplier.Error())
 			} else {
-				r.Equal(testBytePtrSupplierResult, v)
+				r.Equal(resTestBytePtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestBytePtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBytePtrSupplierError.Error())
+				r.EqualError(err, errTestBytePtrSupplier.Error())
 			} else {
-				r.Equal(testBytePtrSupplierResult, v)
+				r.Equal(resTestBytePtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestBytePtrSupplier_ToSilentBytePtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBytePtrSupplierResult, v)
+				r.Equal(resTestBytePtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestBytePtrSupplier_ToMustBytePtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBytePtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBytePtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBytePtrSupplierResult, v)
+				r.Equal(resTestBytePtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestBytePtrSupplier_ToMustBytePtrSupplier(t *testing.T) {
 
 func TestSilentBytePtrSupplier(t *testing.T) {
 	var ss SilentBytePtrSupplier = func() *byte {
-		return testBytePtrSupplierResult
+		return resTestBytePtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testBytePtrSupplierResult, v)
+	require.Equal(t, resTestBytePtrSupplier, v)
 }
 
 func TestSilentBytePtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentBytePtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBytePtrSupplierResult, v)
+				r.Equal(resTestBytePtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentBytePtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustBytePtrSupplier(t *testing.T) {
 	var ms MustBytePtrSupplier = func() *byte {
-		return testBytePtrSupplierResult
+		return resTestBytePtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testBytePtrSupplierResult, v)
+	require.Equal(t, resTestBytePtrSupplier, v)
 }
 
 func TestMustBytePtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustBytePtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBytePtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBytePtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBytePtrSupplierResult, v)
+				r.Equal(resTestBytePtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustBytePtrSupplier_ToSilentBytePtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBytePtrSupplierResult, v)
+				r.Equal(resTestBytePtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustBytePtrSupplier_ToBytePtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBytePtrSupplierError.Error())
+				r.EqualError(err, errTestBytePtrSupplier.Error())
 			} else {
-				r.Equal(testBytePtrSupplierResult, v)
+				r.Equal(resTestBytePtrSupplier, v)
 			}
 		})
 	}

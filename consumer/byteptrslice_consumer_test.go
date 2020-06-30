@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testBytePtrSliceConsumerValue []*byte
-	testBytePtrSliceConsumerError = errors.New("error")
+	valTestBytePtrSliceConsumer []*byte
+	errTestBytePtrSliceConsumer = errors.New("error")
 )
 
 type testBytePtrSliceConsumerFactory func(t *testing.T) BytePtrSliceConsumer
@@ -27,7 +27,7 @@ func TestBytePtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestBytePtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
-					return testBytePtrSliceConsumerError
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
+					return errTestBytePtrSliceConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestBytePtrSliceConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testBytePtrSliceConsumerValue)
+			err := c(valTestBytePtrSliceConsumer)
 			if err != nil {
-				r.EqualError(err, testBytePtrSliceConsumerError.Error())
+				r.EqualError(err, errTestBytePtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestBytePtrSliceSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestBytePtrSliceSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
-					return testBytePtrSliceConsumerError
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
+					return errTestBytePtrSliceConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestBytePtrSliceSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testBytePtrSliceConsumerValue)
+			err := c(valTestBytePtrSliceConsumer)
 			if err != nil {
-				r.EqualError(err, testBytePtrSliceConsumerError.Error())
+				r.EqualError(err, errTestBytePtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testBytePtrSliceConsumerError
+					return errTestBytePtrSliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestBytePtrSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testBytePtrSliceConsumerValue)
+			err := cc(valTestBytePtrSliceConsumer)
 			if err != nil {
-				r.EqualError(err, testBytePtrSliceConsumerError.Error())
+				r.EqualError(err, errTestBytePtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestBytePtrSliceConsumer_ToSilentBytePtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestBytePtrSliceConsumer_ToSilentBytePtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
-					return testBytePtrSliceConsumerError
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
+					return errTestBytePtrSliceConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestBytePtrSliceConsumer_ToSilentBytePtrSliceConsumer(t *testing.T) {
 			sc := c.ToSilentBytePtrSliceConsumer()
 			r.NotNil(sc)
 
-			sc(testBytePtrSliceConsumerValue)
+			sc(valTestBytePtrSliceConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestBytePtrSliceConsumer_ToMustBytePtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestBytePtrSliceConsumer_ToMustBytePtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
-					return testBytePtrSliceConsumerError
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
+					return errTestBytePtrSliceConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestBytePtrSliceConsumer_ToMustBytePtrSliceConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testBytePtrSliceConsumerError.Error(), func() {
-					mc(testBytePtrSliceConsumerValue)
+				r.PanicsWithError(errTestBytePtrSliceConsumer.Error(), func() {
+					mc(valTestBytePtrSliceConsumer)
 				})
 			} else {
-				mc(testBytePtrSliceConsumerValue)
+				mc(valTestBytePtrSliceConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestBytePtrSliceConsumer_ToMustBytePtrSliceConsumer(t *testing.T) {
 
 func TestSilentBytePtrSliceConsumer(t *testing.T) {
 	var sc SilentBytePtrSliceConsumer = func(v []*byte) {
-		require.Equal(t, testBytePtrSliceConsumerValue, v)
+		require.Equal(t, valTestBytePtrSliceConsumer, v)
 		return
 	}
-	sc(testBytePtrSliceConsumerValue)
+	sc(valTestBytePtrSliceConsumer)
 }
 
 func TestSilentBytePtrSliceConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testBytePtrSliceConsumerError
+					return errTestBytePtrSliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentBytePtrSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testBytePtrSliceConsumerValue)
+			csc(valTestBytePtrSliceConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentBytePtrSliceConsumer_AndThen(t *testing.T) {
 
 func TestMustBytePtrSliceConsumer(t *testing.T) {
 	var sc SilentBytePtrSliceConsumer = func(v []*byte) {
-		require.Equal(t, testBytePtrSliceConsumerValue, v)
+		require.Equal(t, valTestBytePtrSliceConsumer, v)
 		return
 	}
-	sc(testBytePtrSliceConsumerValue)
+	sc(valTestBytePtrSliceConsumer)
 }
 
 func TestMustBytePtrSliceConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testBytePtrSliceConsumerError
+					return errTestBytePtrSliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustBytePtrSliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
 					calls++
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustBytePtrSliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testBytePtrSliceConsumerError.Error(), func() {
-					cmc(testBytePtrSliceConsumerValue)
+				r.PanicsWithError(errTestBytePtrSliceConsumer.Error(), func() {
+					cmc(valTestBytePtrSliceConsumer)
 				})
 			} else {
-				cmc(testBytePtrSliceConsumerValue)
+				cmc(valTestBytePtrSliceConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustBytePtrSliceConsumer_ToSilentBytePtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustBytePtrSliceConsumer_ToSilentBytePtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
-					return testBytePtrSliceConsumerError
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
+					return errTestBytePtrSliceConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustBytePtrSliceConsumer_ToSilentBytePtrSliceConsumer(t *testing.T) {
 			sc := mc.ToSilentBytePtrSliceConsumer()
 			r.NotNil(sc)
 
-			sc(testBytePtrSliceConsumerValue)
+			sc(valTestBytePtrSliceConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustBytePtrSliceConsumer_ToBytePtrSliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustBytePtrSliceConsumer_ToBytePtrSliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BytePtrSliceConsumer {
 				return func(v []*byte) error {
-					require.Equal(t, testBytePtrSliceConsumerValue, v)
-					return testBytePtrSliceConsumerError
+					require.Equal(t, valTestBytePtrSliceConsumer, v)
+					return errTestBytePtrSliceConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustBytePtrSliceConsumer_ToBytePtrSliceConsumer(t *testing.T) {
 			c = mc.ToBytePtrSliceConsumer()
 			r.NotNil(c)
 
-			err := c(testBytePtrSliceConsumerValue)
+			err := c(valTestBytePtrSliceConsumer)
 			if tt.err {
-				r.EqualError(err, testBytePtrSliceConsumerError.Error())
+				r.EqualError(err, errTestBytePtrSliceConsumer.Error())
 			}
 		})
 	}

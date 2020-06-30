@@ -94,7 +94,7 @@ func (mc MustStringSliceConsumer) ToStringSliceConsumer() StringSliceConsumer {
 	}
 }
 
-// SilentStringSliceConsumer transforms MustStringSliceConsumer into SilentStringSliceConsumer
+// ToSilentStringSliceConsumer transforms MustStringSliceConsumer into SilentStringSliceConsumer
 func (mc MustStringSliceConsumer) ToSilentStringSliceConsumer() SilentStringSliceConsumer {
 	c := mc.ToStringSliceConsumer()
 	return c.ToSilentStringSliceConsumer()

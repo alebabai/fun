@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testStringSliceSupplierResult []string
-	testStringSliceSupplierError  = errors.New("error")
+	resTestStringSliceSupplier []string
+	errTestStringSliceSupplier = errors.New("error")
 )
 
 func testStringSliceSupplier() ([]string, error) {
-	return testStringSliceSupplierResult, nil
+	return resTestStringSliceSupplier, nil
 }
 
 func testStringSliceSupplierWithError() ([]string, error) {
-	return testStringSliceSupplierResult, testStringSliceSupplierError
+	return resTestStringSliceSupplier, errTestStringSliceSupplier
 }
 
 func TestStringSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestStringSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringSliceSupplierError.Error())
+				r.EqualError(err, errTestStringSliceSupplier.Error())
 			} else {
-				r.Equal(testStringSliceSupplierResult, v)
+				r.Equal(resTestStringSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestStringSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringSliceSupplierError.Error())
+				r.EqualError(err, errTestStringSliceSupplier.Error())
 			} else {
-				r.Equal(testStringSliceSupplierResult, v)
+				r.Equal(resTestStringSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestStringSliceSupplier_ToSilentStringSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringSliceSupplierResult, v)
+				r.Equal(resTestStringSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestStringSliceSupplier_ToMustStringSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testStringSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestStringSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testStringSliceSupplierResult, v)
+				r.Equal(resTestStringSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestStringSliceSupplier_ToMustStringSliceSupplier(t *testing.T) {
 
 func TestSilentStringSliceSupplier(t *testing.T) {
 	var ss SilentStringSliceSupplier = func() []string {
-		return testStringSliceSupplierResult
+		return resTestStringSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testStringSliceSupplierResult, v)
+	require.Equal(t, resTestStringSliceSupplier, v)
 }
 
 func TestSilentStringSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentStringSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringSliceSupplierResult, v)
+				r.Equal(resTestStringSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentStringSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustStringSliceSupplier(t *testing.T) {
 	var ms MustStringSliceSupplier = func() []string {
-		return testStringSliceSupplierResult
+		return resTestStringSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testStringSliceSupplierResult, v)
+	require.Equal(t, resTestStringSliceSupplier, v)
 }
 
 func TestMustStringSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustStringSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testStringSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestStringSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testStringSliceSupplierResult, v)
+				r.Equal(resTestStringSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustStringSliceSupplier_ToSilentStringSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testStringSliceSupplierResult, v)
+				r.Equal(resTestStringSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustStringSliceSupplier_ToStringSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testStringSliceSupplierError.Error())
+				r.EqualError(err, errTestStringSliceSupplier.Error())
 			} else {
-				r.Equal(testStringSliceSupplierResult, v)
+				r.Equal(resTestStringSliceSupplier, v)
 			}
 		})
 	}

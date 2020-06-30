@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testFloat64SupplierResult float64
-	testFloat64SupplierError  = errors.New("error")
+	resTestFloat64Supplier float64
+	errTestFloat64Supplier = errors.New("error")
 )
 
 func testFloat64Supplier() (float64, error) {
-	return testFloat64SupplierResult, nil
+	return resTestFloat64Supplier, nil
 }
 
 func testFloat64SupplierWithError() (float64, error) {
-	return testFloat64SupplierResult, testFloat64SupplierError
+	return resTestFloat64Supplier, errTestFloat64Supplier
 }
 
 func TestFloat64Supplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestFloat64Supplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat64SupplierError.Error())
+				r.EqualError(err, errTestFloat64Supplier.Error())
 			} else {
-				r.Equal(testFloat64SupplierResult, v)
+				r.Equal(resTestFloat64Supplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestFloat64Supplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat64SupplierError.Error())
+				r.EqualError(err, errTestFloat64Supplier.Error())
 			} else {
-				r.Equal(testFloat64SupplierResult, v)
+				r.Equal(resTestFloat64Supplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestFloat64Supplier_ToSilentFloat64Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat64SupplierResult, v)
+				r.Equal(resTestFloat64Supplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestFloat64Supplier_ToMustFloat64Supplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat64SupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat64Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat64SupplierResult, v)
+				r.Equal(resTestFloat64Supplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestFloat64Supplier_ToMustFloat64Supplier(t *testing.T) {
 
 func TestSilentFloat64Supplier(t *testing.T) {
 	var ss SilentFloat64Supplier = func() float64 {
-		return testFloat64SupplierResult
+		return resTestFloat64Supplier
 	}
 	v := ss()
-	require.Equal(t, testFloat64SupplierResult, v)
+	require.Equal(t, resTestFloat64Supplier, v)
 }
 
 func TestSilentFloat64Supplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentFloat64Supplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat64SupplierResult, v)
+				r.Equal(resTestFloat64Supplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentFloat64Supplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustFloat64Supplier(t *testing.T) {
 	var ms MustFloat64Supplier = func() float64 {
-		return testFloat64SupplierResult
+		return resTestFloat64Supplier
 	}
 
 	v := ms()
-	require.Equal(t, testFloat64SupplierResult, v)
+	require.Equal(t, resTestFloat64Supplier, v)
 }
 
 func TestMustFloat64Supplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustFloat64Supplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat64SupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat64Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat64SupplierResult, v)
+				r.Equal(resTestFloat64Supplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustFloat64Supplier_ToSilentFloat64Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat64SupplierResult, v)
+				r.Equal(resTestFloat64Supplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustFloat64Supplier_ToFloat64Supplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat64SupplierError.Error())
+				r.EqualError(err, errTestFloat64Supplier.Error())
 			} else {
-				r.Equal(testFloat64SupplierResult, v)
+				r.Equal(resTestFloat64Supplier, v)
 			}
 		})
 	}

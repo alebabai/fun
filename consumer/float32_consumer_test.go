@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testFloat32ConsumerValue float32
-	testFloat32ConsumerError = errors.New("error")
+	valTestFloat32Consumer float32
+	errTestFloat32Consumer = errors.New("error")
 )
 
 type testFloat32ConsumerFactory func(t *testing.T) Float32Consumer
@@ -27,7 +27,7 @@ func TestFloat32Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestFloat32Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
-					return testFloat32ConsumerError
+					require.Equal(t, valTestFloat32Consumer, v)
+					return errTestFloat32Consumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestFloat32Consumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testFloat32ConsumerValue)
+			err := c(valTestFloat32Consumer)
 			if err != nil {
-				r.EqualError(err, testFloat32ConsumerError.Error())
+				r.EqualError(err, errTestFloat32Consumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestFloat32Supplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestFloat32Supplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
-					return testFloat32ConsumerError
+					require.Equal(t, valTestFloat32Consumer, v)
+					return errTestFloat32Consumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestFloat32Supplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testFloat32ConsumerValue)
+			err := c(valTestFloat32Consumer)
 			if err != nil {
-				r.EqualError(err, testFloat32ConsumerError.Error())
+				r.EqualError(err, errTestFloat32Consumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestFloat32Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestFloat32Consumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestFloat32Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat32ConsumerError
+					return errTestFloat32Consumer
 				}
 			},
 			cf2: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestFloat32Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestFloat32Consumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testFloat32ConsumerValue)
+			err := cc(valTestFloat32Consumer)
 			if err != nil {
-				r.EqualError(err, testFloat32ConsumerError.Error())
+				r.EqualError(err, errTestFloat32Consumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestFloat32Consumer_ToSilentFloat32Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestFloat32Consumer_ToSilentFloat32Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
-					return testFloat32ConsumerError
+					require.Equal(t, valTestFloat32Consumer, v)
+					return errTestFloat32Consumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestFloat32Consumer_ToSilentFloat32Consumer(t *testing.T) {
 			sc := c.ToSilentFloat32Consumer()
 			r.NotNil(sc)
 
-			sc(testFloat32ConsumerValue)
+			sc(valTestFloat32Consumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestFloat32Consumer_ToMustFloat32Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestFloat32Consumer_ToMustFloat32Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
-					return testFloat32ConsumerError
+					require.Equal(t, valTestFloat32Consumer, v)
+					return errTestFloat32Consumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestFloat32Consumer_ToMustFloat32Consumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testFloat32ConsumerError.Error(), func() {
-					mc(testFloat32ConsumerValue)
+				r.PanicsWithError(errTestFloat32Consumer.Error(), func() {
+					mc(valTestFloat32Consumer)
 				})
 			} else {
-				mc(testFloat32ConsumerValue)
+				mc(valTestFloat32Consumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestFloat32Consumer_ToMustFloat32Consumer(t *testing.T) {
 
 func TestSilentFloat32Consumer(t *testing.T) {
 	var sc SilentFloat32Consumer = func(v float32) {
-		require.Equal(t, testFloat32ConsumerValue, v)
+		require.Equal(t, valTestFloat32Consumer, v)
 		return
 	}
-	sc(testFloat32ConsumerValue)
+	sc(valTestFloat32Consumer)
 }
 
 func TestSilentFloat32Consumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentFloat32Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentFloat32Consumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentFloat32Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat32ConsumerError
+					return errTestFloat32Consumer
 				}
 			},
 			cf2: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentFloat32Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentFloat32Consumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testFloat32ConsumerValue)
+			csc(valTestFloat32Consumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentFloat32Consumer_AndThen(t *testing.T) {
 
 func TestMustFloat32Consumer(t *testing.T) {
 	var sc SilentFloat32Consumer = func(v float32) {
-		require.Equal(t, testFloat32ConsumerValue, v)
+		require.Equal(t, valTestFloat32Consumer, v)
 		return
 	}
-	sc(testFloat32ConsumerValue)
+	sc(valTestFloat32Consumer)
 }
 
 func TestMustFloat32Consumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustFloat32Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustFloat32Consumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustFloat32Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat32ConsumerError
+					return errTestFloat32Consumer
 				}
 			},
 			cf2: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustFloat32Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
 					calls++
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustFloat32Consumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testFloat32ConsumerError.Error(), func() {
-					cmc(testFloat32ConsumerValue)
+				r.PanicsWithError(errTestFloat32Consumer.Error(), func() {
+					cmc(valTestFloat32Consumer)
 				})
 			} else {
-				cmc(testFloat32ConsumerValue)
+				cmc(valTestFloat32Consumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustFloat32Consumer_ToSilentFloat32Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustFloat32Consumer_ToSilentFloat32Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
-					return testFloat32ConsumerError
+					require.Equal(t, valTestFloat32Consumer, v)
+					return errTestFloat32Consumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustFloat32Consumer_ToSilentFloat32Consumer(t *testing.T) {
 			sc := mc.ToSilentFloat32Consumer()
 			r.NotNil(sc)
 
-			sc(testFloat32ConsumerValue)
+			sc(valTestFloat32Consumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustFloat32Consumer_ToFloat32Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
+					require.Equal(t, valTestFloat32Consumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustFloat32Consumer_ToFloat32Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float32Consumer {
 				return func(v float32) error {
-					require.Equal(t, testFloat32ConsumerValue, v)
-					return testFloat32ConsumerError
+					require.Equal(t, valTestFloat32Consumer, v)
+					return errTestFloat32Consumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustFloat32Consumer_ToFloat32Consumer(t *testing.T) {
 			c = mc.ToFloat32Consumer()
 			r.NotNil(c)
 
-			err := c(testFloat32ConsumerValue)
+			err := c(valTestFloat32Consumer)
 			if tt.err {
-				r.EqualError(err, testFloat32ConsumerError.Error())
+				r.EqualError(err, errTestFloat32Consumer.Error())
 			}
 		})
 	}

@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testIntSupplierResult int
-	testIntSupplierError  = errors.New("error")
+	resTestIntSupplier int
+	errTestIntSupplier = errors.New("error")
 )
 
 func testIntSupplier() (int, error) {
-	return testIntSupplierResult, nil
+	return resTestIntSupplier, nil
 }
 
 func testIntSupplierWithError() (int, error) {
-	return testIntSupplierResult, testIntSupplierError
+	return resTestIntSupplier, errTestIntSupplier
 }
 
 func TestIntSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestIntSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testIntSupplierError.Error())
+				r.EqualError(err, errTestIntSupplier.Error())
 			} else {
-				r.Equal(testIntSupplierResult, v)
+				r.Equal(resTestIntSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestIntSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testIntSupplierError.Error())
+				r.EqualError(err, errTestIntSupplier.Error())
 			} else {
-				r.Equal(testIntSupplierResult, v)
+				r.Equal(resTestIntSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestIntSupplier_ToSilentIntSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testIntSupplierResult, v)
+				r.Equal(resTestIntSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestIntSupplier_ToMustIntSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testIntSupplierError.Error(), func() {
+				r.PanicsWithError(errTestIntSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testIntSupplierResult, v)
+				r.Equal(resTestIntSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestIntSupplier_ToMustIntSupplier(t *testing.T) {
 
 func TestSilentIntSupplier(t *testing.T) {
 	var ss SilentIntSupplier = func() int {
-		return testIntSupplierResult
+		return resTestIntSupplier
 	}
 	v := ss()
-	require.Equal(t, testIntSupplierResult, v)
+	require.Equal(t, resTestIntSupplier, v)
 }
 
 func TestSilentIntSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentIntSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testIntSupplierResult, v)
+				r.Equal(resTestIntSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentIntSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustIntSupplier(t *testing.T) {
 	var ms MustIntSupplier = func() int {
-		return testIntSupplierResult
+		return resTestIntSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testIntSupplierResult, v)
+	require.Equal(t, resTestIntSupplier, v)
 }
 
 func TestMustIntSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustIntSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testIntSupplierError.Error(), func() {
+				r.PanicsWithError(errTestIntSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testIntSupplierResult, v)
+				r.Equal(resTestIntSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustIntSupplier_ToSilentIntSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testIntSupplierResult, v)
+				r.Equal(resTestIntSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustIntSupplier_ToIntSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testIntSupplierError.Error())
+				r.EqualError(err, errTestIntSupplier.Error())
 			} else {
-				r.Equal(testIntSupplierResult, v)
+				r.Equal(resTestIntSupplier, v)
 			}
 		})
 	}

@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testUint64ConsumerValue uint64
-	testUint64ConsumerError = errors.New("error")
+	valTestUint64Consumer uint64
+	errTestUint64Consumer = errors.New("error")
 )
 
 type testUint64ConsumerFactory func(t *testing.T) Uint64Consumer
@@ -27,7 +27,7 @@ func TestUint64Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestUint64Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
-					return testUint64ConsumerError
+					require.Equal(t, valTestUint64Consumer, v)
+					return errTestUint64Consumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestUint64Consumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testUint64ConsumerValue)
+			err := c(valTestUint64Consumer)
 			if err != nil {
-				r.EqualError(err, testUint64ConsumerError.Error())
+				r.EqualError(err, errTestUint64Consumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestUint64Supplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestUint64Supplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
-					return testUint64ConsumerError
+					require.Equal(t, valTestUint64Consumer, v)
+					return errTestUint64Consumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestUint64Supplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testUint64ConsumerValue)
+			err := c(valTestUint64Consumer)
 			if err != nil {
-				r.EqualError(err, testUint64ConsumerError.Error())
+				r.EqualError(err, errTestUint64Consumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestUint64Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestUint64Consumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestUint64Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testUint64ConsumerError
+					return errTestUint64Consumer
 				}
 			},
 			cf2: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestUint64Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestUint64Consumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testUint64ConsumerValue)
+			err := cc(valTestUint64Consumer)
 			if err != nil {
-				r.EqualError(err, testUint64ConsumerError.Error())
+				r.EqualError(err, errTestUint64Consumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestUint64Consumer_ToSilentUint64Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestUint64Consumer_ToSilentUint64Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
-					return testUint64ConsumerError
+					require.Equal(t, valTestUint64Consumer, v)
+					return errTestUint64Consumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestUint64Consumer_ToSilentUint64Consumer(t *testing.T) {
 			sc := c.ToSilentUint64Consumer()
 			r.NotNil(sc)
 
-			sc(testUint64ConsumerValue)
+			sc(valTestUint64Consumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestUint64Consumer_ToMustUint64Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestUint64Consumer_ToMustUint64Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
-					return testUint64ConsumerError
+					require.Equal(t, valTestUint64Consumer, v)
+					return errTestUint64Consumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestUint64Consumer_ToMustUint64Consumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testUint64ConsumerError.Error(), func() {
-					mc(testUint64ConsumerValue)
+				r.PanicsWithError(errTestUint64Consumer.Error(), func() {
+					mc(valTestUint64Consumer)
 				})
 			} else {
-				mc(testUint64ConsumerValue)
+				mc(valTestUint64Consumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestUint64Consumer_ToMustUint64Consumer(t *testing.T) {
 
 func TestSilentUint64Consumer(t *testing.T) {
 	var sc SilentUint64Consumer = func(v uint64) {
-		require.Equal(t, testUint64ConsumerValue, v)
+		require.Equal(t, valTestUint64Consumer, v)
 		return
 	}
-	sc(testUint64ConsumerValue)
+	sc(valTestUint64Consumer)
 }
 
 func TestSilentUint64Consumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentUint64Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentUint64Consumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentUint64Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testUint64ConsumerError
+					return errTestUint64Consumer
 				}
 			},
 			cf2: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentUint64Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentUint64Consumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testUint64ConsumerValue)
+			csc(valTestUint64Consumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentUint64Consumer_AndThen(t *testing.T) {
 
 func TestMustUint64Consumer(t *testing.T) {
 	var sc SilentUint64Consumer = func(v uint64) {
-		require.Equal(t, testUint64ConsumerValue, v)
+		require.Equal(t, valTestUint64Consumer, v)
 		return
 	}
-	sc(testUint64ConsumerValue)
+	sc(valTestUint64Consumer)
 }
 
 func TestMustUint64Consumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustUint64Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustUint64Consumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustUint64Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testUint64ConsumerError
+					return errTestUint64Consumer
 				}
 			},
 			cf2: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustUint64Consumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
 					calls++
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustUint64Consumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testUint64ConsumerError.Error(), func() {
-					cmc(testUint64ConsumerValue)
+				r.PanicsWithError(errTestUint64Consumer.Error(), func() {
+					cmc(valTestUint64Consumer)
 				})
 			} else {
-				cmc(testUint64ConsumerValue)
+				cmc(valTestUint64Consumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustUint64Consumer_ToSilentUint64Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustUint64Consumer_ToSilentUint64Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
-					return testUint64ConsumerError
+					require.Equal(t, valTestUint64Consumer, v)
+					return errTestUint64Consumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustUint64Consumer_ToSilentUint64Consumer(t *testing.T) {
 			sc := mc.ToSilentUint64Consumer()
 			r.NotNil(sc)
 
-			sc(testUint64ConsumerValue)
+			sc(valTestUint64Consumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustUint64Consumer_ToUint64Consumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
+					require.Equal(t, valTestUint64Consumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustUint64Consumer_ToUint64Consumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint64Consumer {
 				return func(v uint64) error {
-					require.Equal(t, testUint64ConsumerValue, v)
-					return testUint64ConsumerError
+					require.Equal(t, valTestUint64Consumer, v)
+					return errTestUint64Consumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustUint64Consumer_ToUint64Consumer(t *testing.T) {
 			c = mc.ToUint64Consumer()
 			r.NotNil(c)
 
-			err := c(testUint64ConsumerValue)
+			err := c(valTestUint64Consumer)
 			if tt.err {
-				r.EqualError(err, testUint64ConsumerError.Error())
+				r.EqualError(err, errTestUint64Consumer.Error())
 			}
 		})
 	}

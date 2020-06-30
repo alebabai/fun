@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testUint8SliceSupplierResult []uint8
-	testUint8SliceSupplierError  = errors.New("error")
+	resTestUint8SliceSupplier []uint8
+	errTestUint8SliceSupplier = errors.New("error")
 )
 
 func testUint8SliceSupplier() ([]uint8, error) {
-	return testUint8SliceSupplierResult, nil
+	return resTestUint8SliceSupplier, nil
 }
 
 func testUint8SliceSupplierWithError() ([]uint8, error) {
-	return testUint8SliceSupplierResult, testUint8SliceSupplierError
+	return resTestUint8SliceSupplier, errTestUint8SliceSupplier
 }
 
 func TestUint8SliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestUint8SliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint8SliceSupplierError.Error())
+				r.EqualError(err, errTestUint8SliceSupplier.Error())
 			} else {
-				r.Equal(testUint8SliceSupplierResult, v)
+				r.Equal(resTestUint8SliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestUint8SliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint8SliceSupplierError.Error())
+				r.EqualError(err, errTestUint8SliceSupplier.Error())
 			} else {
-				r.Equal(testUint8SliceSupplierResult, v)
+				r.Equal(resTestUint8SliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestUint8SliceSupplier_ToSilentUint8SliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint8SliceSupplierResult, v)
+				r.Equal(resTestUint8SliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestUint8SliceSupplier_ToMustUint8SliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint8SliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint8SliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint8SliceSupplierResult, v)
+				r.Equal(resTestUint8SliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestUint8SliceSupplier_ToMustUint8SliceSupplier(t *testing.T) {
 
 func TestSilentUint8SliceSupplier(t *testing.T) {
 	var ss SilentUint8SliceSupplier = func() []uint8 {
-		return testUint8SliceSupplierResult
+		return resTestUint8SliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testUint8SliceSupplierResult, v)
+	require.Equal(t, resTestUint8SliceSupplier, v)
 }
 
 func TestSilentUint8SliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentUint8SliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint8SliceSupplierResult, v)
+				r.Equal(resTestUint8SliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentUint8SliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustUint8SliceSupplier(t *testing.T) {
 	var ms MustUint8SliceSupplier = func() []uint8 {
-		return testUint8SliceSupplierResult
+		return resTestUint8SliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testUint8SliceSupplierResult, v)
+	require.Equal(t, resTestUint8SliceSupplier, v)
 }
 
 func TestMustUint8SliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustUint8SliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint8SliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint8SliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint8SliceSupplierResult, v)
+				r.Equal(resTestUint8SliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustUint8SliceSupplier_ToSilentUint8SliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint8SliceSupplierResult, v)
+				r.Equal(resTestUint8SliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustUint8SliceSupplier_ToUint8SliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint8SliceSupplierError.Error())
+				r.EqualError(err, errTestUint8SliceSupplier.Error())
 			} else {
-				r.Equal(testUint8SliceSupplierResult, v)
+				r.Equal(resTestUint8SliceSupplier, v)
 			}
 		})
 	}

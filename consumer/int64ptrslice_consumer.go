@@ -94,7 +94,7 @@ func (mc MustInt64PtrSliceConsumer) ToInt64PtrSliceConsumer() Int64PtrSliceConsu
 	}
 }
 
-// SilentInt64PtrSliceConsumer transforms MustInt64PtrSliceConsumer into SilentInt64PtrSliceConsumer
+// ToSilentInt64PtrSliceConsumer transforms MustInt64PtrSliceConsumer into SilentInt64PtrSliceConsumer
 func (mc MustInt64PtrSliceConsumer) ToSilentInt64PtrSliceConsumer() SilentInt64PtrSliceConsumer {
 	c := mc.ToInt64PtrSliceConsumer()
 	return c.ToSilentInt64PtrSliceConsumer()

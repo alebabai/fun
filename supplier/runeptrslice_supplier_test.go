@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testRunePtrSliceSupplierResult []*rune
-	testRunePtrSliceSupplierError  = errors.New("error")
+	resTestRunePtrSliceSupplier []*rune
+	errTestRunePtrSliceSupplier = errors.New("error")
 )
 
 func testRunePtrSliceSupplier() ([]*rune, error) {
-	return testRunePtrSliceSupplierResult, nil
+	return resTestRunePtrSliceSupplier, nil
 }
 
 func testRunePtrSliceSupplierWithError() ([]*rune, error) {
-	return testRunePtrSliceSupplierResult, testRunePtrSliceSupplierError
+	return resTestRunePtrSliceSupplier, errTestRunePtrSliceSupplier
 }
 
 func TestRunePtrSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestRunePtrSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRunePtrSliceSupplierError.Error())
+				r.EqualError(err, errTestRunePtrSliceSupplier.Error())
 			} else {
-				r.Equal(testRunePtrSliceSupplierResult, v)
+				r.Equal(resTestRunePtrSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestRunePtrSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRunePtrSliceSupplierError.Error())
+				r.EqualError(err, errTestRunePtrSliceSupplier.Error())
 			} else {
-				r.Equal(testRunePtrSliceSupplierResult, v)
+				r.Equal(resTestRunePtrSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestRunePtrSliceSupplier_ToSilentRunePtrSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRunePtrSliceSupplierResult, v)
+				r.Equal(resTestRunePtrSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestRunePtrSliceSupplier_ToMustRunePtrSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testRunePtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestRunePtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testRunePtrSliceSupplierResult, v)
+				r.Equal(resTestRunePtrSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestRunePtrSliceSupplier_ToMustRunePtrSliceSupplier(t *testing.T) {
 
 func TestSilentRunePtrSliceSupplier(t *testing.T) {
 	var ss SilentRunePtrSliceSupplier = func() []*rune {
-		return testRunePtrSliceSupplierResult
+		return resTestRunePtrSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testRunePtrSliceSupplierResult, v)
+	require.Equal(t, resTestRunePtrSliceSupplier, v)
 }
 
 func TestSilentRunePtrSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentRunePtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRunePtrSliceSupplierResult, v)
+				r.Equal(resTestRunePtrSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentRunePtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustRunePtrSliceSupplier(t *testing.T) {
 	var ms MustRunePtrSliceSupplier = func() []*rune {
-		return testRunePtrSliceSupplierResult
+		return resTestRunePtrSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testRunePtrSliceSupplierResult, v)
+	require.Equal(t, resTestRunePtrSliceSupplier, v)
 }
 
 func TestMustRunePtrSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustRunePtrSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testRunePtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestRunePtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testRunePtrSliceSupplierResult, v)
+				r.Equal(resTestRunePtrSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustRunePtrSliceSupplier_ToSilentRunePtrSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testRunePtrSliceSupplierResult, v)
+				r.Equal(resTestRunePtrSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustRunePtrSliceSupplier_ToRunePtrSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testRunePtrSliceSupplierError.Error())
+				r.EqualError(err, errTestRunePtrSliceSupplier.Error())
 			} else {
-				r.Equal(testRunePtrSliceSupplierResult, v)
+				r.Equal(resTestRunePtrSliceSupplier, v)
 			}
 		})
 	}

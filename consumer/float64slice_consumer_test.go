@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testFloat64SliceConsumerValue []float64
-	testFloat64SliceConsumerError = errors.New("error")
+	valTestFloat64SliceConsumer []float64
+	errTestFloat64SliceConsumer = errors.New("error")
 )
 
 type testFloat64SliceConsumerFactory func(t *testing.T) Float64SliceConsumer
@@ -27,7 +27,7 @@ func TestFloat64SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestFloat64SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
-					return testFloat64SliceConsumerError
+					require.Equal(t, valTestFloat64SliceConsumer, v)
+					return errTestFloat64SliceConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestFloat64SliceConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testFloat64SliceConsumerValue)
+			err := c(valTestFloat64SliceConsumer)
 			if err != nil {
-				r.EqualError(err, testFloat64SliceConsumerError.Error())
+				r.EqualError(err, errTestFloat64SliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestFloat64SliceSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestFloat64SliceSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
-					return testFloat64SliceConsumerError
+					require.Equal(t, valTestFloat64SliceConsumer, v)
+					return errTestFloat64SliceConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestFloat64SliceSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testFloat64SliceConsumerValue)
+			err := c(valTestFloat64SliceConsumer)
 			if err != nil {
-				r.EqualError(err, testFloat64SliceConsumerError.Error())
+				r.EqualError(err, errTestFloat64SliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat64SliceConsumerError
+					return errTestFloat64SliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestFloat64SliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testFloat64SliceConsumerValue)
+			err := cc(valTestFloat64SliceConsumer)
 			if err != nil {
-				r.EqualError(err, testFloat64SliceConsumerError.Error())
+				r.EqualError(err, errTestFloat64SliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestFloat64SliceConsumer_ToSilentFloat64SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestFloat64SliceConsumer_ToSilentFloat64SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
-					return testFloat64SliceConsumerError
+					require.Equal(t, valTestFloat64SliceConsumer, v)
+					return errTestFloat64SliceConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestFloat64SliceConsumer_ToSilentFloat64SliceConsumer(t *testing.T) {
 			sc := c.ToSilentFloat64SliceConsumer()
 			r.NotNil(sc)
 
-			sc(testFloat64SliceConsumerValue)
+			sc(valTestFloat64SliceConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestFloat64SliceConsumer_ToMustFloat64SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestFloat64SliceConsumer_ToMustFloat64SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
-					return testFloat64SliceConsumerError
+					require.Equal(t, valTestFloat64SliceConsumer, v)
+					return errTestFloat64SliceConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestFloat64SliceConsumer_ToMustFloat64SliceConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testFloat64SliceConsumerError.Error(), func() {
-					mc(testFloat64SliceConsumerValue)
+				r.PanicsWithError(errTestFloat64SliceConsumer.Error(), func() {
+					mc(valTestFloat64SliceConsumer)
 				})
 			} else {
-				mc(testFloat64SliceConsumerValue)
+				mc(valTestFloat64SliceConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestFloat64SliceConsumer_ToMustFloat64SliceConsumer(t *testing.T) {
 
 func TestSilentFloat64SliceConsumer(t *testing.T) {
 	var sc SilentFloat64SliceConsumer = func(v []float64) {
-		require.Equal(t, testFloat64SliceConsumerValue, v)
+		require.Equal(t, valTestFloat64SliceConsumer, v)
 		return
 	}
-	sc(testFloat64SliceConsumerValue)
+	sc(valTestFloat64SliceConsumer)
 }
 
 func TestSilentFloat64SliceConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat64SliceConsumerError
+					return errTestFloat64SliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentFloat64SliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testFloat64SliceConsumerValue)
+			csc(valTestFloat64SliceConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentFloat64SliceConsumer_AndThen(t *testing.T) {
 
 func TestMustFloat64SliceConsumer(t *testing.T) {
 	var sc SilentFloat64SliceConsumer = func(v []float64) {
-		require.Equal(t, testFloat64SliceConsumerValue, v)
+		require.Equal(t, valTestFloat64SliceConsumer, v)
 		return
 	}
-	sc(testFloat64SliceConsumerValue)
+	sc(valTestFloat64SliceConsumer)
 }
 
 func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat64SliceConsumerError
+					return errTestFloat64SliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testFloat64SliceConsumerError.Error(), func() {
-					cmc(testFloat64SliceConsumerValue)
+				r.PanicsWithError(errTestFloat64SliceConsumer.Error(), func() {
+					cmc(valTestFloat64SliceConsumer)
 				})
 			} else {
-				cmc(testFloat64SliceConsumerValue)
+				cmc(valTestFloat64SliceConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustFloat64SliceConsumer_ToSilentFloat64SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustFloat64SliceConsumer_ToSilentFloat64SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
-					return testFloat64SliceConsumerError
+					require.Equal(t, valTestFloat64SliceConsumer, v)
+					return errTestFloat64SliceConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustFloat64SliceConsumer_ToSilentFloat64SliceConsumer(t *testing.T) {
 			sc := mc.ToSilentFloat64SliceConsumer()
 			r.NotNil(sc)
 
-			sc(testFloat64SliceConsumerValue)
+			sc(valTestFloat64SliceConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustFloat64SliceConsumer_ToFloat64SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
+					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustFloat64SliceConsumer_ToFloat64SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
-					require.Equal(t, testFloat64SliceConsumerValue, v)
-					return testFloat64SliceConsumerError
+					require.Equal(t, valTestFloat64SliceConsumer, v)
+					return errTestFloat64SliceConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustFloat64SliceConsumer_ToFloat64SliceConsumer(t *testing.T) {
 			c = mc.ToFloat64SliceConsumer()
 			r.NotNil(c)
 
-			err := c(testFloat64SliceConsumerValue)
+			err := c(valTestFloat64SliceConsumer)
 			if tt.err {
-				r.EqualError(err, testFloat64SliceConsumerError.Error())
+				r.EqualError(err, errTestFloat64SliceConsumer.Error())
 			}
 		})
 	}

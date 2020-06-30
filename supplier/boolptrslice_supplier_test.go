@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testBoolPtrSliceSupplierResult []*bool
-	testBoolPtrSliceSupplierError  = errors.New("error")
+	resTestBoolPtrSliceSupplier []*bool
+	errTestBoolPtrSliceSupplier = errors.New("error")
 )
 
 func testBoolPtrSliceSupplier() ([]*bool, error) {
-	return testBoolPtrSliceSupplierResult, nil
+	return resTestBoolPtrSliceSupplier, nil
 }
 
 func testBoolPtrSliceSupplierWithError() ([]*bool, error) {
-	return testBoolPtrSliceSupplierResult, testBoolPtrSliceSupplierError
+	return resTestBoolPtrSliceSupplier, errTestBoolPtrSliceSupplier
 }
 
 func TestBoolPtrSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestBoolPtrSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolPtrSliceSupplierError.Error())
+				r.EqualError(err, errTestBoolPtrSliceSupplier.Error())
 			} else {
-				r.Equal(testBoolPtrSliceSupplierResult, v)
+				r.Equal(resTestBoolPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestBoolPtrSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolPtrSliceSupplierError.Error())
+				r.EqualError(err, errTestBoolPtrSliceSupplier.Error())
 			} else {
-				r.Equal(testBoolPtrSliceSupplierResult, v)
+				r.Equal(resTestBoolPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestBoolPtrSliceSupplier_ToSilentBoolPtrSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolPtrSliceSupplierResult, v)
+				r.Equal(resTestBoolPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestBoolPtrSliceSupplier_ToMustBoolPtrSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBoolPtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBoolPtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBoolPtrSliceSupplierResult, v)
+				r.Equal(resTestBoolPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestBoolPtrSliceSupplier_ToMustBoolPtrSliceSupplier(t *testing.T) {
 
 func TestSilentBoolPtrSliceSupplier(t *testing.T) {
 	var ss SilentBoolPtrSliceSupplier = func() []*bool {
-		return testBoolPtrSliceSupplierResult
+		return resTestBoolPtrSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testBoolPtrSliceSupplierResult, v)
+	require.Equal(t, resTestBoolPtrSliceSupplier, v)
 }
 
 func TestSilentBoolPtrSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentBoolPtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolPtrSliceSupplierResult, v)
+				r.Equal(resTestBoolPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentBoolPtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustBoolPtrSliceSupplier(t *testing.T) {
 	var ms MustBoolPtrSliceSupplier = func() []*bool {
-		return testBoolPtrSliceSupplierResult
+		return resTestBoolPtrSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testBoolPtrSliceSupplierResult, v)
+	require.Equal(t, resTestBoolPtrSliceSupplier, v)
 }
 
 func TestMustBoolPtrSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustBoolPtrSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testBoolPtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestBoolPtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testBoolPtrSliceSupplierResult, v)
+				r.Equal(resTestBoolPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustBoolPtrSliceSupplier_ToSilentBoolPtrSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testBoolPtrSliceSupplierResult, v)
+				r.Equal(resTestBoolPtrSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustBoolPtrSliceSupplier_ToBoolPtrSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testBoolPtrSliceSupplierError.Error())
+				r.EqualError(err, errTestBoolPtrSliceSupplier.Error())
 			} else {
-				r.Equal(testBoolPtrSliceSupplierResult, v)
+				r.Equal(resTestBoolPtrSliceSupplier, v)
 			}
 		})
 	}

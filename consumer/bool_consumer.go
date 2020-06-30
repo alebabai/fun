@@ -94,7 +94,7 @@ func (mc MustBoolConsumer) ToBoolConsumer() BoolConsumer {
 	}
 }
 
-// SilentBoolConsumer transforms MustBoolConsumer into SilentBoolConsumer
+// ToSilentBoolConsumer transforms MustBoolConsumer into SilentBoolConsumer
 func (mc MustBoolConsumer) ToSilentBoolConsumer() SilentBoolConsumer {
 	c := mc.ToBoolConsumer()
 	return c.ToSilentBoolConsumer()

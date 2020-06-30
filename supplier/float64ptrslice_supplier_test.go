@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testFloat64PtrSliceSupplierResult []*float64
-	testFloat64PtrSliceSupplierError  = errors.New("error")
+	resTestFloat64PtrSliceSupplier []*float64
+	errTestFloat64PtrSliceSupplier = errors.New("error")
 )
 
 func testFloat64PtrSliceSupplier() ([]*float64, error) {
-	return testFloat64PtrSliceSupplierResult, nil
+	return resTestFloat64PtrSliceSupplier, nil
 }
 
 func testFloat64PtrSliceSupplierWithError() ([]*float64, error) {
-	return testFloat64PtrSliceSupplierResult, testFloat64PtrSliceSupplierError
+	return resTestFloat64PtrSliceSupplier, errTestFloat64PtrSliceSupplier
 }
 
 func TestFloat64PtrSliceSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestFloat64PtrSliceSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat64PtrSliceSupplierError.Error())
+				r.EqualError(err, errTestFloat64PtrSliceSupplier.Error())
 			} else {
-				r.Equal(testFloat64PtrSliceSupplierResult, v)
+				r.Equal(resTestFloat64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestFloat64PtrSliceSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat64PtrSliceSupplierError.Error())
+				r.EqualError(err, errTestFloat64PtrSliceSupplier.Error())
 			} else {
-				r.Equal(testFloat64PtrSliceSupplierResult, v)
+				r.Equal(resTestFloat64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestFloat64PtrSliceSupplier_ToSilentFloat64PtrSliceSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat64PtrSliceSupplierResult, v)
+				r.Equal(resTestFloat64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestFloat64PtrSliceSupplier_ToMustFloat64PtrSliceSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat64PtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat64PtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat64PtrSliceSupplierResult, v)
+				r.Equal(resTestFloat64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestFloat64PtrSliceSupplier_ToMustFloat64PtrSliceSupplier(t *testing.T) {
 
 func TestSilentFloat64PtrSliceSupplier(t *testing.T) {
 	var ss SilentFloat64PtrSliceSupplier = func() []*float64 {
-		return testFloat64PtrSliceSupplierResult
+		return resTestFloat64PtrSliceSupplier
 	}
 	v := ss()
-	require.Equal(t, testFloat64PtrSliceSupplierResult, v)
+	require.Equal(t, resTestFloat64PtrSliceSupplier, v)
 }
 
 func TestSilentFloat64PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentFloat64PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat64PtrSliceSupplierResult, v)
+				r.Equal(resTestFloat64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentFloat64PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustFloat64PtrSliceSupplier(t *testing.T) {
 	var ms MustFloat64PtrSliceSupplier = func() []*float64 {
-		return testFloat64PtrSliceSupplierResult
+		return resTestFloat64PtrSliceSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testFloat64PtrSliceSupplierResult, v)
+	require.Equal(t, resTestFloat64PtrSliceSupplier, v)
 }
 
 func TestMustFloat64PtrSliceSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustFloat64PtrSliceSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testFloat64PtrSliceSupplierError.Error(), func() {
+				r.PanicsWithError(errTestFloat64PtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testFloat64PtrSliceSupplierResult, v)
+				r.Equal(resTestFloat64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustFloat64PtrSliceSupplier_ToSilentFloat64PtrSliceSupplier(t *testing.
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testFloat64PtrSliceSupplierResult, v)
+				r.Equal(resTestFloat64PtrSliceSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustFloat64PtrSliceSupplier_ToFloat64PtrSliceSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testFloat64PtrSliceSupplierError.Error())
+				r.EqualError(err, errTestFloat64PtrSliceSupplier.Error())
 			} else {
-				r.Equal(testFloat64PtrSliceSupplierResult, v)
+				r.Equal(resTestFloat64PtrSliceSupplier, v)
 			}
 		})
 	}

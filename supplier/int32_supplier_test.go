@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testInt32SupplierResult int32
-	testInt32SupplierError  = errors.New("error")
+	resTestInt32Supplier int32
+	errTestInt32Supplier = errors.New("error")
 )
 
 func testInt32Supplier() (int32, error) {
-	return testInt32SupplierResult, nil
+	return resTestInt32Supplier, nil
 }
 
 func testInt32SupplierWithError() (int32, error) {
-	return testInt32SupplierResult, testInt32SupplierError
+	return resTestInt32Supplier, errTestInt32Supplier
 }
 
 func TestInt32Supplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestInt32Supplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt32SupplierError.Error())
+				r.EqualError(err, errTestInt32Supplier.Error())
 			} else {
-				r.Equal(testInt32SupplierResult, v)
+				r.Equal(resTestInt32Supplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestInt32Supplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt32SupplierError.Error())
+				r.EqualError(err, errTestInt32Supplier.Error())
 			} else {
-				r.Equal(testInt32SupplierResult, v)
+				r.Equal(resTestInt32Supplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestInt32Supplier_ToSilentInt32Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt32SupplierResult, v)
+				r.Equal(resTestInt32Supplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestInt32Supplier_ToMustInt32Supplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt32SupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt32Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt32SupplierResult, v)
+				r.Equal(resTestInt32Supplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestInt32Supplier_ToMustInt32Supplier(t *testing.T) {
 
 func TestSilentInt32Supplier(t *testing.T) {
 	var ss SilentInt32Supplier = func() int32 {
-		return testInt32SupplierResult
+		return resTestInt32Supplier
 	}
 	v := ss()
-	require.Equal(t, testInt32SupplierResult, v)
+	require.Equal(t, resTestInt32Supplier, v)
 }
 
 func TestSilentInt32Supplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentInt32Supplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt32SupplierResult, v)
+				r.Equal(resTestInt32Supplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentInt32Supplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustInt32Supplier(t *testing.T) {
 	var ms MustInt32Supplier = func() int32 {
-		return testInt32SupplierResult
+		return resTestInt32Supplier
 	}
 
 	v := ms()
-	require.Equal(t, testInt32SupplierResult, v)
+	require.Equal(t, resTestInt32Supplier, v)
 }
 
 func TestMustInt32Supplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustInt32Supplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testInt32SupplierError.Error(), func() {
+				r.PanicsWithError(errTestInt32Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testInt32SupplierResult, v)
+				r.Equal(resTestInt32Supplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustInt32Supplier_ToSilentInt32Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testInt32SupplierResult, v)
+				r.Equal(resTestInt32Supplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustInt32Supplier_ToInt32Supplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testInt32SupplierError.Error())
+				r.EqualError(err, errTestInt32Supplier.Error())
 			} else {
-				r.Equal(testInt32SupplierResult, v)
+				r.Equal(resTestInt32Supplier, v)
 			}
 		})
 	}

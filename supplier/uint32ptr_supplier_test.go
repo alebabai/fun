@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testUint32PtrSupplierResult *uint32
-	testUint32PtrSupplierError  = errors.New("error")
+	resTestUint32PtrSupplier *uint32
+	errTestUint32PtrSupplier = errors.New("error")
 )
 
 func testUint32PtrSupplier() (*uint32, error) {
-	return testUint32PtrSupplierResult, nil
+	return resTestUint32PtrSupplier, nil
 }
 
 func testUint32PtrSupplierWithError() (*uint32, error) {
-	return testUint32PtrSupplierResult, testUint32PtrSupplierError
+	return resTestUint32PtrSupplier, errTestUint32PtrSupplier
 }
 
 func TestUint32PtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestUint32PtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint32PtrSupplierError.Error())
+				r.EqualError(err, errTestUint32PtrSupplier.Error())
 			} else {
-				r.Equal(testUint32PtrSupplierResult, v)
+				r.Equal(resTestUint32PtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestUint32PtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint32PtrSupplierError.Error())
+				r.EqualError(err, errTestUint32PtrSupplier.Error())
 			} else {
-				r.Equal(testUint32PtrSupplierResult, v)
+				r.Equal(resTestUint32PtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestUint32PtrSupplier_ToSilentUint32PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint32PtrSupplierResult, v)
+				r.Equal(resTestUint32PtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestUint32PtrSupplier_ToMustUint32PtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint32PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint32PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint32PtrSupplierResult, v)
+				r.Equal(resTestUint32PtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestUint32PtrSupplier_ToMustUint32PtrSupplier(t *testing.T) {
 
 func TestSilentUint32PtrSupplier(t *testing.T) {
 	var ss SilentUint32PtrSupplier = func() *uint32 {
-		return testUint32PtrSupplierResult
+		return resTestUint32PtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testUint32PtrSupplierResult, v)
+	require.Equal(t, resTestUint32PtrSupplier, v)
 }
 
 func TestSilentUint32PtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentUint32PtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint32PtrSupplierResult, v)
+				r.Equal(resTestUint32PtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentUint32PtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustUint32PtrSupplier(t *testing.T) {
 	var ms MustUint32PtrSupplier = func() *uint32 {
-		return testUint32PtrSupplierResult
+		return resTestUint32PtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testUint32PtrSupplierResult, v)
+	require.Equal(t, resTestUint32PtrSupplier, v)
 }
 
 func TestMustUint32PtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustUint32PtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint32PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint32PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint32PtrSupplierResult, v)
+				r.Equal(resTestUint32PtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustUint32PtrSupplier_ToSilentUint32PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint32PtrSupplierResult, v)
+				r.Equal(resTestUint32PtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustUint32PtrSupplier_ToUint32PtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint32PtrSupplierError.Error())
+				r.EqualError(err, errTestUint32PtrSupplier.Error())
 			} else {
-				r.Equal(testUint32PtrSupplierResult, v)
+				r.Equal(resTestUint32PtrSupplier, v)
 			}
 		})
 	}

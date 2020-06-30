@@ -94,7 +94,7 @@ func (mc MustIntConsumer) ToIntConsumer() IntConsumer {
 	}
 }
 
-// SilentIntConsumer transforms MustIntConsumer into SilentIntConsumer
+// ToSilentIntConsumer transforms MustIntConsumer into SilentIntConsumer
 func (mc MustIntConsumer) ToSilentIntConsumer() SilentIntConsumer {
 	c := mc.ToIntConsumer()
 	return c.ToSilentIntConsumer()

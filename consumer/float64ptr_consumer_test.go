@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testFloat64PtrConsumerValue *float64
-	testFloat64PtrConsumerError = errors.New("error")
+	valTestFloat64PtrConsumer *float64
+	errTestFloat64PtrConsumer = errors.New("error")
 )
 
 type testFloat64PtrConsumerFactory func(t *testing.T) Float64PtrConsumer
@@ -27,7 +27,7 @@ func TestFloat64PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestFloat64PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
-					return testFloat64PtrConsumerError
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return errTestFloat64PtrConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestFloat64PtrConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testFloat64PtrConsumerValue)
+			err := c(valTestFloat64PtrConsumer)
 			if err != nil {
-				r.EqualError(err, testFloat64PtrConsumerError.Error())
+				r.EqualError(err, errTestFloat64PtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestFloat64PtrSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestFloat64PtrSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
-					return testFloat64PtrConsumerError
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return errTestFloat64PtrConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestFloat64PtrSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testFloat64PtrConsumerValue)
+			err := c(valTestFloat64PtrConsumer)
 			if err != nil {
-				r.EqualError(err, testFloat64PtrConsumerError.Error())
+				r.EqualError(err, errTestFloat64PtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat64PtrConsumerError
+					return errTestFloat64PtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestFloat64PtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testFloat64PtrConsumerValue)
+			err := cc(valTestFloat64PtrConsumer)
 			if err != nil {
-				r.EqualError(err, testFloat64PtrConsumerError.Error())
+				r.EqualError(err, errTestFloat64PtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestFloat64PtrConsumer_ToSilentFloat64PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestFloat64PtrConsumer_ToSilentFloat64PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
-					return testFloat64PtrConsumerError
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return errTestFloat64PtrConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestFloat64PtrConsumer_ToSilentFloat64PtrConsumer(t *testing.T) {
 			sc := c.ToSilentFloat64PtrConsumer()
 			r.NotNil(sc)
 
-			sc(testFloat64PtrConsumerValue)
+			sc(valTestFloat64PtrConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestFloat64PtrConsumer_ToMustFloat64PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestFloat64PtrConsumer_ToMustFloat64PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
-					return testFloat64PtrConsumerError
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return errTestFloat64PtrConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestFloat64PtrConsumer_ToMustFloat64PtrConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testFloat64PtrConsumerError.Error(), func() {
-					mc(testFloat64PtrConsumerValue)
+				r.PanicsWithError(errTestFloat64PtrConsumer.Error(), func() {
+					mc(valTestFloat64PtrConsumer)
 				})
 			} else {
-				mc(testFloat64PtrConsumerValue)
+				mc(valTestFloat64PtrConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestFloat64PtrConsumer_ToMustFloat64PtrConsumer(t *testing.T) {
 
 func TestSilentFloat64PtrConsumer(t *testing.T) {
 	var sc SilentFloat64PtrConsumer = func(v *float64) {
-		require.Equal(t, testFloat64PtrConsumerValue, v)
+		require.Equal(t, valTestFloat64PtrConsumer, v)
 		return
 	}
-	sc(testFloat64PtrConsumerValue)
+	sc(valTestFloat64PtrConsumer)
 }
 
 func TestSilentFloat64PtrConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat64PtrConsumerError
+					return errTestFloat64PtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentFloat64PtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testFloat64PtrConsumerValue)
+			csc(valTestFloat64PtrConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentFloat64PtrConsumer_AndThen(t *testing.T) {
 
 func TestMustFloat64PtrConsumer(t *testing.T) {
 	var sc SilentFloat64PtrConsumer = func(v *float64) {
-		require.Equal(t, testFloat64PtrConsumerValue, v)
+		require.Equal(t, valTestFloat64PtrConsumer, v)
 		return
 	}
-	sc(testFloat64PtrConsumerValue)
+	sc(valTestFloat64PtrConsumer)
 }
 
 func TestMustFloat64PtrConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testFloat64PtrConsumerError
+					return errTestFloat64PtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustFloat64PtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
 					calls++
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustFloat64PtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testFloat64PtrConsumerError.Error(), func() {
-					cmc(testFloat64PtrConsumerValue)
+				r.PanicsWithError(errTestFloat64PtrConsumer.Error(), func() {
+					cmc(valTestFloat64PtrConsumer)
 				})
 			} else {
-				cmc(testFloat64PtrConsumerValue)
+				cmc(valTestFloat64PtrConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustFloat64PtrConsumer_ToSilentFloat64PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustFloat64PtrConsumer_ToSilentFloat64PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
-					return testFloat64PtrConsumerError
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return errTestFloat64PtrConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustFloat64PtrConsumer_ToSilentFloat64PtrConsumer(t *testing.T) {
 			sc := mc.ToSilentFloat64PtrConsumer()
 			r.NotNil(sc)
 
-			sc(testFloat64PtrConsumerValue)
+			sc(valTestFloat64PtrConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustFloat64PtrConsumer_ToFloat64PtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
+					require.Equal(t, valTestFloat64PtrConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustFloat64PtrConsumer_ToFloat64PtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Float64PtrConsumer {
 				return func(v *float64) error {
-					require.Equal(t, testFloat64PtrConsumerValue, v)
-					return testFloat64PtrConsumerError
+					require.Equal(t, valTestFloat64PtrConsumer, v)
+					return errTestFloat64PtrConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustFloat64PtrConsumer_ToFloat64PtrConsumer(t *testing.T) {
 			c = mc.ToFloat64PtrConsumer()
 			r.NotNil(c)
 
-			err := c(testFloat64PtrConsumerValue)
+			err := c(valTestFloat64PtrConsumer)
 			if tt.err {
-				r.EqualError(err, testFloat64PtrConsumerError.Error())
+				r.EqualError(err, errTestFloat64PtrConsumer.Error())
 			}
 		})
 	}

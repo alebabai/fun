@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testBoolPtrConsumerValue *bool
-	testBoolPtrConsumerError = errors.New("error")
+	valTestBoolPtrConsumer *bool
+	errTestBoolPtrConsumer = errors.New("error")
 )
 
 type testBoolPtrConsumerFactory func(t *testing.T) BoolPtrConsumer
@@ -27,7 +27,7 @@ func TestBoolPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestBoolPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
-					return testBoolPtrConsumerError
+					require.Equal(t, valTestBoolPtrConsumer, v)
+					return errTestBoolPtrConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestBoolPtrConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testBoolPtrConsumerValue)
+			err := c(valTestBoolPtrConsumer)
 			if err != nil {
-				r.EqualError(err, testBoolPtrConsumerError.Error())
+				r.EqualError(err, errTestBoolPtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestBoolPtrSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestBoolPtrSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
-					return testBoolPtrConsumerError
+					require.Equal(t, valTestBoolPtrConsumer, v)
+					return errTestBoolPtrConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestBoolPtrSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testBoolPtrConsumerValue)
+			err := c(valTestBoolPtrConsumer)
 			if err != nil {
-				r.EqualError(err, testBoolPtrConsumerError.Error())
+				r.EqualError(err, errTestBoolPtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestBoolPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestBoolPtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestBoolPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testBoolPtrConsumerError
+					return errTestBoolPtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestBoolPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestBoolPtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testBoolPtrConsumerValue)
+			err := cc(valTestBoolPtrConsumer)
 			if err != nil {
-				r.EqualError(err, testBoolPtrConsumerError.Error())
+				r.EqualError(err, errTestBoolPtrConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestBoolPtrConsumer_ToSilentBoolPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestBoolPtrConsumer_ToSilentBoolPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
-					return testBoolPtrConsumerError
+					require.Equal(t, valTestBoolPtrConsumer, v)
+					return errTestBoolPtrConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestBoolPtrConsumer_ToSilentBoolPtrConsumer(t *testing.T) {
 			sc := c.ToSilentBoolPtrConsumer()
 			r.NotNil(sc)
 
-			sc(testBoolPtrConsumerValue)
+			sc(valTestBoolPtrConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestBoolPtrConsumer_ToMustBoolPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestBoolPtrConsumer_ToMustBoolPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
-					return testBoolPtrConsumerError
+					require.Equal(t, valTestBoolPtrConsumer, v)
+					return errTestBoolPtrConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestBoolPtrConsumer_ToMustBoolPtrConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testBoolPtrConsumerError.Error(), func() {
-					mc(testBoolPtrConsumerValue)
+				r.PanicsWithError(errTestBoolPtrConsumer.Error(), func() {
+					mc(valTestBoolPtrConsumer)
 				})
 			} else {
-				mc(testBoolPtrConsumerValue)
+				mc(valTestBoolPtrConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestBoolPtrConsumer_ToMustBoolPtrConsumer(t *testing.T) {
 
 func TestSilentBoolPtrConsumer(t *testing.T) {
 	var sc SilentBoolPtrConsumer = func(v *bool) {
-		require.Equal(t, testBoolPtrConsumerValue, v)
+		require.Equal(t, valTestBoolPtrConsumer, v)
 		return
 	}
-	sc(testBoolPtrConsumerValue)
+	sc(valTestBoolPtrConsumer)
 }
 
 func TestSilentBoolPtrConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentBoolPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentBoolPtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentBoolPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testBoolPtrConsumerError
+					return errTestBoolPtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentBoolPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentBoolPtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testBoolPtrConsumerValue)
+			csc(valTestBoolPtrConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentBoolPtrConsumer_AndThen(t *testing.T) {
 
 func TestMustBoolPtrConsumer(t *testing.T) {
 	var sc SilentBoolPtrConsumer = func(v *bool) {
-		require.Equal(t, testBoolPtrConsumerValue, v)
+		require.Equal(t, valTestBoolPtrConsumer, v)
 		return
 	}
-	sc(testBoolPtrConsumerValue)
+	sc(valTestBoolPtrConsumer)
 }
 
 func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testBoolPtrConsumerError
+					return errTestBoolPtrConsumer
 				}
 			},
 			cf2: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testBoolPtrConsumerError.Error(), func() {
-					cmc(testBoolPtrConsumerValue)
+				r.PanicsWithError(errTestBoolPtrConsumer.Error(), func() {
+					cmc(valTestBoolPtrConsumer)
 				})
 			} else {
-				cmc(testBoolPtrConsumerValue)
+				cmc(valTestBoolPtrConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustBoolPtrConsumer_ToSilentBoolPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustBoolPtrConsumer_ToSilentBoolPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
-					return testBoolPtrConsumerError
+					require.Equal(t, valTestBoolPtrConsumer, v)
+					return errTestBoolPtrConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustBoolPtrConsumer_ToSilentBoolPtrConsumer(t *testing.T) {
 			sc := mc.ToSilentBoolPtrConsumer()
 			r.NotNil(sc)
 
-			sc(testBoolPtrConsumerValue)
+			sc(valTestBoolPtrConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustBoolPtrConsumer_ToBoolPtrConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
+					require.Equal(t, valTestBoolPtrConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustBoolPtrConsumer_ToBoolPtrConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
-					require.Equal(t, testBoolPtrConsumerValue, v)
-					return testBoolPtrConsumerError
+					require.Equal(t, valTestBoolPtrConsumer, v)
+					return errTestBoolPtrConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustBoolPtrConsumer_ToBoolPtrConsumer(t *testing.T) {
 			c = mc.ToBoolPtrConsumer()
 			r.NotNil(c)
 
-			err := c(testBoolPtrConsumerValue)
+			err := c(valTestBoolPtrConsumer)
 			if tt.err {
-				r.EqualError(err, testBoolPtrConsumerError.Error())
+				r.EqualError(err, errTestBoolPtrConsumer.Error())
 			}
 		})
 	}

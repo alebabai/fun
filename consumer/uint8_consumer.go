@@ -94,7 +94,7 @@ func (mc MustUint8Consumer) ToUint8Consumer() Uint8Consumer {
 	}
 }
 
-// SilentUint8Consumer transforms MustUint8Consumer into SilentUint8Consumer
+// ToSilentUint8Consumer transforms MustUint8Consumer into SilentUint8Consumer
 func (mc MustUint8Consumer) ToSilentUint8Consumer() SilentUint8Consumer {
 	c := mc.ToUint8Consumer()
 	return c.ToSilentUint8Consumer()

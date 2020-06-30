@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testUint16PtrSupplierResult *uint16
-	testUint16PtrSupplierError  = errors.New("error")
+	resTestUint16PtrSupplier *uint16
+	errTestUint16PtrSupplier = errors.New("error")
 )
 
 func testUint16PtrSupplier() (*uint16, error) {
-	return testUint16PtrSupplierResult, nil
+	return resTestUint16PtrSupplier, nil
 }
 
 func testUint16PtrSupplierWithError() (*uint16, error) {
-	return testUint16PtrSupplierResult, testUint16PtrSupplierError
+	return resTestUint16PtrSupplier, errTestUint16PtrSupplier
 }
 
 func TestUint16PtrSupplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestUint16PtrSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint16PtrSupplierError.Error())
+				r.EqualError(err, errTestUint16PtrSupplier.Error())
 			} else {
-				r.Equal(testUint16PtrSupplierResult, v)
+				r.Equal(resTestUint16PtrSupplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestUint16PtrSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint16PtrSupplierError.Error())
+				r.EqualError(err, errTestUint16PtrSupplier.Error())
 			} else {
-				r.Equal(testUint16PtrSupplierResult, v)
+				r.Equal(resTestUint16PtrSupplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestUint16PtrSupplier_ToSilentUint16PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint16PtrSupplierResult, v)
+				r.Equal(resTestUint16PtrSupplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestUint16PtrSupplier_ToMustUint16PtrSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint16PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint16PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint16PtrSupplierResult, v)
+				r.Equal(resTestUint16PtrSupplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestUint16PtrSupplier_ToMustUint16PtrSupplier(t *testing.T) {
 
 func TestSilentUint16PtrSupplier(t *testing.T) {
 	var ss SilentUint16PtrSupplier = func() *uint16 {
-		return testUint16PtrSupplierResult
+		return resTestUint16PtrSupplier
 	}
 	v := ss()
-	require.Equal(t, testUint16PtrSupplierResult, v)
+	require.Equal(t, resTestUint16PtrSupplier, v)
 }
 
 func TestSilentUint16PtrSupplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentUint16PtrSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint16PtrSupplierResult, v)
+				r.Equal(resTestUint16PtrSupplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentUint16PtrSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustUint16PtrSupplier(t *testing.T) {
 	var ms MustUint16PtrSupplier = func() *uint16 {
-		return testUint16PtrSupplierResult
+		return resTestUint16PtrSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testUint16PtrSupplierResult, v)
+	require.Equal(t, resTestUint16PtrSupplier, v)
 }
 
 func TestMustUint16PtrSupplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustUint16PtrSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint16PtrSupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint16PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint16PtrSupplierResult, v)
+				r.Equal(resTestUint16PtrSupplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustUint16PtrSupplier_ToSilentUint16PtrSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint16PtrSupplierResult, v)
+				r.Equal(resTestUint16PtrSupplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustUint16PtrSupplier_ToUint16PtrSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint16PtrSupplierError.Error())
+				r.EqualError(err, errTestUint16PtrSupplier.Error())
 			} else {
-				r.Equal(testUint16PtrSupplierResult, v)
+				r.Equal(resTestUint16PtrSupplier, v)
 			}
 		})
 	}

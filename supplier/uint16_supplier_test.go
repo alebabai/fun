@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	testUint16SupplierResult uint16
-	testUint16SupplierError  = errors.New("error")
+	resTestUint16Supplier uint16
+	errTestUint16Supplier = errors.New("error")
 )
 
 func testUint16Supplier() (uint16, error) {
-	return testUint16SupplierResult, nil
+	return resTestUint16Supplier, nil
 }
 
 func testUint16SupplierWithError() (uint16, error) {
-	return testUint16SupplierResult, testUint16SupplierError
+	return resTestUint16Supplier, errTestUint16Supplier
 }
 
 func TestUint16Supplier(t *testing.T) {
@@ -45,9 +45,9 @@ func TestUint16Supplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint16SupplierError.Error())
+				r.EqualError(err, errTestUint16Supplier.Error())
 			} else {
-				r.Equal(testUint16SupplierResult, v)
+				r.Equal(resTestUint16Supplier, v)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func TestUint16Supplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint16SupplierError.Error())
+				r.EqualError(err, errTestUint16Supplier.Error())
 			} else {
-				r.Equal(testUint16SupplierResult, v)
+				r.Equal(resTestUint16Supplier, v)
 			}
 		})
 	}
@@ -114,7 +114,7 @@ func TestUint16Supplier_ToSilentUint16Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint16SupplierResult, v)
+				r.Equal(resTestUint16Supplier, v)
 			}
 		})
 	}
@@ -144,13 +144,13 @@ func TestUint16Supplier_ToMustUint16Supplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint16SupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint16Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint16SupplierResult, v)
+				r.Equal(resTestUint16Supplier, v)
 			}
 		})
 	}
@@ -158,10 +158,10 @@ func TestUint16Supplier_ToMustUint16Supplier(t *testing.T) {
 
 func TestSilentUint16Supplier(t *testing.T) {
 	var ss SilentUint16Supplier = func() uint16 {
-		return testUint16SupplierResult
+		return resTestUint16Supplier
 	}
 	v := ss()
-	require.Equal(t, testUint16SupplierResult, v)
+	require.Equal(t, resTestUint16Supplier, v)
 }
 
 func TestSilentUint16Supplier_ToSilentSupplier(t *testing.T) {
@@ -194,7 +194,7 @@ func TestSilentUint16Supplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint16SupplierResult, v)
+				r.Equal(resTestUint16Supplier, v)
 			}
 		})
 	}
@@ -202,11 +202,11 @@ func TestSilentUint16Supplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustUint16Supplier(t *testing.T) {
 	var ms MustUint16Supplier = func() uint16 {
-		return testUint16SupplierResult
+		return resTestUint16Supplier
 	}
 
 	v := ms()
-	require.Equal(t, testUint16SupplierResult, v)
+	require.Equal(t, resTestUint16Supplier, v)
 }
 
 func TestMustUint16Supplier_ToMustSupplier(t *testing.T) {
@@ -236,13 +236,13 @@ func TestMustUint16Supplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testUint16SupplierError.Error(), func() {
+				r.PanicsWithError(errTestUint16Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testUint16SupplierResult, v)
+				r.Equal(resTestUint16Supplier, v)
 			}
 		})
 	}
@@ -278,7 +278,7 @@ func TestMustUint16Supplier_ToSilentUint16Supplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testUint16SupplierResult, v)
+				r.Equal(resTestUint16Supplier, v)
 			}
 		})
 	}
@@ -311,9 +311,9 @@ func TestMustUint16Supplier_ToUint16Supplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testUint16SupplierError.Error())
+				r.EqualError(err, errTestUint16Supplier.Error())
 			} else {
-				r.Equal(testUint16SupplierResult, v)
+				r.Equal(resTestUint16Supplier, v)
 			}
 		})
 	}

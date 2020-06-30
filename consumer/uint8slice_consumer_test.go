@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	testUint8SliceConsumerValue []uint8
-	testUint8SliceConsumerError = errors.New("error")
+	valTestUint8SliceConsumer []uint8
+	errTestUint8SliceConsumer = errors.New("error")
 )
 
 type testUint8SliceConsumerFactory func(t *testing.T) Uint8SliceConsumer
@@ -27,7 +27,7 @@ func TestUint8SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					return nil
 				}
 			},
@@ -36,8 +36,8 @@ func TestUint8SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
-					return testUint8SliceConsumerError
+					require.Equal(t, valTestUint8SliceConsumer, v)
+					return errTestUint8SliceConsumer
 				}
 			},
 		},
@@ -47,9 +47,9 @@ func TestUint8SliceConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(testUint8SliceConsumerValue)
+			err := c(valTestUint8SliceConsumer)
 			if err != nil {
-				r.EqualError(err, testUint8SliceConsumerError.Error())
+				r.EqualError(err, errTestUint8SliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -66,7 +66,7 @@ func TestUint8SliceSupplier_ToSupplier(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					return nil
 				}
 			},
@@ -75,8 +75,8 @@ func TestUint8SliceSupplier_ToSupplier(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
-					return testUint8SliceConsumerError
+					require.Equal(t, valTestUint8SliceConsumer, v)
+					return errTestUint8SliceConsumer
 				}
 			},
 		},
@@ -89,9 +89,9 @@ func TestUint8SliceSupplier_ToSupplier(t *testing.T) {
 			c := tc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(testUint8SliceConsumerValue)
+			err := c(valTestUint8SliceConsumer)
 			if err != nil {
-				r.EqualError(err, testUint8SliceConsumerError.Error())
+				r.EqualError(err, errTestUint8SliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -112,7 +112,7 @@ func TestUint8SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -120,7 +120,7 @@ func TestUint8SliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -132,15 +132,15 @@ func TestUint8SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testUint8SliceConsumerError
+					return errTestUint8SliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -152,7 +152,7 @@ func TestUint8SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -174,9 +174,9 @@ func TestUint8SliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(testUint8SliceConsumerValue)
+			err := cc(valTestUint8SliceConsumer)
 			if err != nil {
-				r.EqualError(err, testUint8SliceConsumerError.Error())
+				r.EqualError(err, errTestUint8SliceConsumer.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -194,7 +194,7 @@ func TestUint8SliceConsumer_ToSilentUint8SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					return nil
 				}
 			},
@@ -203,8 +203,8 @@ func TestUint8SliceConsumer_ToSilentUint8SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
-					return testUint8SliceConsumerError
+					require.Equal(t, valTestUint8SliceConsumer, v)
+					return errTestUint8SliceConsumer
 				}
 			},
 		},
@@ -217,7 +217,7 @@ func TestUint8SliceConsumer_ToSilentUint8SliceConsumer(t *testing.T) {
 			sc := c.ToSilentUint8SliceConsumer()
 			r.NotNil(sc)
 
-			sc(testUint8SliceConsumerValue)
+			sc(valTestUint8SliceConsumer)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestUint8SliceConsumer_ToMustUint8SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					return nil
 				}
 			},
@@ -241,8 +241,8 @@ func TestUint8SliceConsumer_ToMustUint8SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
-					return testUint8SliceConsumerError
+					require.Equal(t, valTestUint8SliceConsumer, v)
+					return errTestUint8SliceConsumer
 				}
 			},
 			err: true,
@@ -257,11 +257,11 @@ func TestUint8SliceConsumer_ToMustUint8SliceConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(testUint8SliceConsumerError.Error(), func() {
-					mc(testUint8SliceConsumerValue)
+				r.PanicsWithError(errTestUint8SliceConsumer.Error(), func() {
+					mc(valTestUint8SliceConsumer)
 				})
 			} else {
-				mc(testUint8SliceConsumerValue)
+				mc(valTestUint8SliceConsumer)
 			}
 		})
 	}
@@ -269,10 +269,10 @@ func TestUint8SliceConsumer_ToMustUint8SliceConsumer(t *testing.T) {
 
 func TestSilentUint8SliceConsumer(t *testing.T) {
 	var sc SilentUint8SliceConsumer = func(v []uint8) {
-		require.Equal(t, testUint8SliceConsumerValue, v)
+		require.Equal(t, valTestUint8SliceConsumer, v)
 		return
 	}
-	sc(testUint8SliceConsumerValue)
+	sc(valTestUint8SliceConsumer)
 }
 
 func TestSilentUint8SliceConsumer_AndThen(t *testing.T) {
@@ -288,7 +288,7 @@ func TestSilentUint8SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -296,7 +296,7 @@ func TestSilentUint8SliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -308,15 +308,15 @@ func TestSilentUint8SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testUint8SliceConsumerError
+					return errTestUint8SliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -328,7 +328,7 @@ func TestSilentUint8SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -358,7 +358,7 @@ func TestSilentUint8SliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(testUint8SliceConsumerValue)
+			csc(valTestUint8SliceConsumer)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -366,10 +366,10 @@ func TestSilentUint8SliceConsumer_AndThen(t *testing.T) {
 
 func TestMustUint8SliceConsumer(t *testing.T) {
 	var sc SilentUint8SliceConsumer = func(v []uint8) {
-		require.Equal(t, testUint8SliceConsumerValue, v)
+		require.Equal(t, valTestUint8SliceConsumer, v)
 		return
 	}
-	sc(testUint8SliceConsumerValue)
+	sc(valTestUint8SliceConsumer)
 }
 
 func TestMustUint8SliceConsumer_AndThen(t *testing.T) {
@@ -386,7 +386,7 @@ func TestMustUint8SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -394,7 +394,7 @@ func TestMustUint8SliceConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -406,15 +406,15 @@ func TestMustUint8SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return testUint8SliceConsumerError
+					return errTestUint8SliceConsumer
 				}
 			},
 			cf2: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -427,7 +427,7 @@ func TestMustUint8SliceConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
 					calls++
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -458,11 +458,11 @@ func TestMustUint8SliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.err {
-				r.PanicsWithError(testUint8SliceConsumerError.Error(), func() {
-					cmc(testUint8SliceConsumerValue)
+				r.PanicsWithError(errTestUint8SliceConsumer.Error(), func() {
+					cmc(valTestUint8SliceConsumer)
 				})
 			} else {
-				cmc(testUint8SliceConsumerValue)
+				cmc(valTestUint8SliceConsumer)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -478,7 +478,7 @@ func TestMustUint8SliceConsumer_ToSilentUint8SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustUint8SliceConsumer_ToSilentUint8SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
-					return testUint8SliceConsumerError
+					require.Equal(t, valTestUint8SliceConsumer, v)
+					return errTestUint8SliceConsumer
 				}
 			},
 		},
@@ -505,7 +505,7 @@ func TestMustUint8SliceConsumer_ToSilentUint8SliceConsumer(t *testing.T) {
 			sc := mc.ToSilentUint8SliceConsumer()
 			r.NotNil(sc)
 
-			sc(testUint8SliceConsumerValue)
+			sc(valTestUint8SliceConsumer)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestMustUint8SliceConsumer_ToUint8SliceConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
+					require.Equal(t, valTestUint8SliceConsumer, v)
 					return nil
 				}
 			},
@@ -529,8 +529,8 @@ func TestMustUint8SliceConsumer_ToUint8SliceConsumer(t *testing.T) {
 			name: "with_error",
 			cf: func(t *testing.T) Uint8SliceConsumer {
 				return func(v []uint8) error {
-					require.Equal(t, testUint8SliceConsumerValue, v)
-					return testUint8SliceConsumerError
+					require.Equal(t, valTestUint8SliceConsumer, v)
+					return errTestUint8SliceConsumer
 				}
 			},
 			err: true,
@@ -548,9 +548,9 @@ func TestMustUint8SliceConsumer_ToUint8SliceConsumer(t *testing.T) {
 			c = mc.ToUint8SliceConsumer()
 			r.NotNil(c)
 
-			err := c(testUint8SliceConsumerValue)
+			err := c(valTestUint8SliceConsumer)
 			if tt.err {
-				r.EqualError(err, testUint8SliceConsumerError.Error())
+				r.EqualError(err, errTestUint8SliceConsumer.Error())
 			}
 		})
 	}
