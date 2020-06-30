@@ -5,6 +5,12 @@ import (
 	"strings"
 )
 
+const (
+	PtrPrefix      = "*"
+	SlicePrefix    = "[]"
+	PtrSlicePrefix = "[]*"
+)
+
 var (
 	BuiltinTypes = []string{
 		"interface{}",
@@ -31,14 +37,14 @@ func generateComplexTypes(builtinType string) []string {
 	}
 }
 
-func getComplexTypeTitle(builtinType, complexType string) string {
-	title := strings.Title(builtinType)
-	if strings.HasPrefix(complexType, "*") {
-		title = fmt.Sprintf("%sPtr", title)
-	} else if strings.HasPrefix(complexType, "[]*") {
-		title = fmt.Sprintf("%sPtrSlice", title)
-	} else if strings.HasPrefix(complexType, "[]") {
-		title = fmt.Sprintf("%sSlice", title)
+func getComplexTypeTitle(complexType string) string {
+	title := strings.Title(complexType)
+	if strings.HasPrefix(complexType, PtrPrefix) {
+		title = fmt.Sprintf("%sPtr", strings.TrimLeft(title, PtrPrefix))
+	} else if strings.HasPrefix(complexType, PtrSlicePrefix) {
+		title = fmt.Sprintf("%sPtrSlice", strings.TrimLeft(title, PtrSlicePrefix))
+	} else if strings.HasPrefix(complexType, SlicePrefix) {
+		title = fmt.Sprintf("%sSlice", strings.TrimLeft(title, SlicePrefix))
 	}
 	return title
 }
@@ -56,7 +62,7 @@ func GetTypes() []*Type {
 			for _, ct := range generateComplexTypes(bt) {
 				t := &Type{
 					Name:  ct,
-					Title: getComplexTypeTitle(bt, ct),
+					Title: getComplexTypeTitle(ct),
 				}
 				types = append(types, t)
 			}
