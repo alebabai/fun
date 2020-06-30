@@ -17,5 +17,8 @@ func main() {
 		"specify directory to process",
 	)
 	flag.Parse()
-	Generate(*dir)
+	err = Generate(*dir)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

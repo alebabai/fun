@@ -6,7 +6,6 @@ import (
 	"go/format"
 	"html/template"
 	"io/ioutil"
-	"log"
 	"path/filepath"
 	"strings"
 )
@@ -59,11 +58,11 @@ func generateFilename(path string, t *Type) string {
 	)
 }
 
-func Generate(dir string) {
+func Generate(dir string) error {
 	pattern := fmt.Sprintf("%s/*%s", dir, tmplFileExtension)
 	paths, err := filepath.Glob(pattern)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("error during glob pattern matching: %w", err)
 	}
 
 	types := getTypes()
@@ -71,7 +70,7 @@ func Generate(dir string) {
 		source := filepath.Base(p)
 		tmpl, err := createTemplate(source, p)
 		if err != nil {
-			log.Fatal(err)
+			return fmt.Errorf("error during template creation: %w", err)
 		}
 		for _, t := range types {
 			data := &Data{
@@ -79,11 +78,15 @@ func Generate(dir string) {
 				Source: source,
 			}
 			code, err := generateCode(tmpl, data)
+			if err != nil {
+				return fmt.Errorf("error during code generation: %w", err)
+			}
 			filename := generateFilename(p, t)
 			err = ioutil.WriteFile(filename, code, 0644)
 			if err != nil {
-				log.Fatal(err)
+				return fmt.Errorf("error during file %s writing: %w", filename, err)
 			}
 		}
 	}
+	return nil
 }
