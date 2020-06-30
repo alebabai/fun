@@ -7,10 +7,6 @@ package supplier
 // BoolSliceSupplier represents a supplier of results or an error.
 type BoolSliceSupplier func() ([]bool, error)
 
-// SilentBoolSliceSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentBoolSliceSupplier func() []bool
-
 // ToSupplier transforms BoolSliceSupplier into Supplier
 func (s BoolSliceSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s BoolSliceSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentBoolSliceSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentBoolSliceSupplier func() []bool
+
 // ToSilentBoolSliceSupplier transforms BoolSliceSupplier into SilentBoolSliceSupplier
 func (s BoolSliceSupplier) ToSilentBoolSliceSupplier() SilentBoolSliceSupplier {
 	return func() []bool {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentBoolSliceSupplier into SilentSupplier
+func (ss SilentBoolSliceSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s BoolSliceSupplier) ToMustBoolSliceSupplier() MustBoolSliceSupplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustBoolSliceSupplier into MustSupplier
+func (ms MustBoolSliceSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

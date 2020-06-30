@@ -7,10 +7,6 @@ package supplier
 // Float64PtrSupplier represents a supplier of results or an error.
 type Float64PtrSupplier func() (*float64, error)
 
-// SilentFloat64PtrSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentFloat64PtrSupplier func() *float64
-
 // ToSupplier transforms Float64PtrSupplier into Supplier
 func (s Float64PtrSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Float64PtrSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentFloat64PtrSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentFloat64PtrSupplier func() *float64
+
 // ToSilentFloat64PtrSupplier transforms Float64PtrSupplier into SilentFloat64PtrSupplier
 func (s Float64PtrSupplier) ToSilentFloat64PtrSupplier() SilentFloat64PtrSupplier {
 	return func() *float64 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentFloat64PtrSupplier into SilentSupplier
+func (ss SilentFloat64PtrSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Float64PtrSupplier) ToMustFloat64PtrSupplier() MustFloat64PtrSupplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustFloat64PtrSupplier into MustSupplier
+func (ms MustFloat64PtrSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

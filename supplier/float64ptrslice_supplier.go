@@ -7,10 +7,6 @@ package supplier
 // Float64PtrSliceSupplier represents a supplier of results or an error.
 type Float64PtrSliceSupplier func() ([]*float64, error)
 
-// SilentFloat64PtrSliceSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentFloat64PtrSliceSupplier func() []*float64
-
 // ToSupplier transforms Float64PtrSliceSupplier into Supplier
 func (s Float64PtrSliceSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Float64PtrSliceSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentFloat64PtrSliceSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentFloat64PtrSliceSupplier func() []*float64
+
 // ToSilentFloat64PtrSliceSupplier transforms Float64PtrSliceSupplier into SilentFloat64PtrSliceSupplier
 func (s Float64PtrSliceSupplier) ToSilentFloat64PtrSliceSupplier() SilentFloat64PtrSliceSupplier {
 	return func() []*float64 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentFloat64PtrSliceSupplier into SilentSupplier
+func (ss SilentFloat64PtrSliceSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Float64PtrSliceSupplier) ToMustFloat64PtrSliceSupplier() MustFloat64PtrS
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustFloat64PtrSliceSupplier into MustSupplier
+func (ms MustFloat64PtrSliceSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

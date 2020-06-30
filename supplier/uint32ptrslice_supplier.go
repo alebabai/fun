@@ -7,10 +7,6 @@ package supplier
 // Uint32PtrSliceSupplier represents a supplier of results or an error.
 type Uint32PtrSliceSupplier func() ([]*uint32, error)
 
-// SilentUint32PtrSliceSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentUint32PtrSliceSupplier func() []*uint32
-
 // ToSupplier transforms Uint32PtrSliceSupplier into Supplier
 func (s Uint32PtrSliceSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Uint32PtrSliceSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentUint32PtrSliceSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentUint32PtrSliceSupplier func() []*uint32
+
 // ToSilentUint32PtrSliceSupplier transforms Uint32PtrSliceSupplier into SilentUint32PtrSliceSupplier
 func (s Uint32PtrSliceSupplier) ToSilentUint32PtrSliceSupplier() SilentUint32PtrSliceSupplier {
 	return func() []*uint32 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentUint32PtrSliceSupplier into SilentSupplier
+func (ss SilentUint32PtrSliceSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Uint32PtrSliceSupplier) ToMustUint32PtrSliceSupplier() MustUint32PtrSlic
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustUint32PtrSliceSupplier into MustSupplier
+func (ms MustUint32PtrSliceSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

@@ -164,6 +164,42 @@ func TestSilentRuneSliceSupplier(t *testing.T) {
 	require.Equal(t, testRuneSliceSupplierResult, v)
 }
 
+func TestSilentRuneSliceSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    RuneSliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testRuneSliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testRuneSliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentRuneSliceSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testRuneSliceSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustRuneSliceSupplier(t *testing.T) {
 	var ms MustRuneSliceSupplier = func() []rune {
 		return testRuneSliceSupplierResult
@@ -171,6 +207,45 @@ func TestMustRuneSliceSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testRuneSliceSupplierResult, v)
+}
+
+func TestMustRuneSliceSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    RuneSliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testRuneSliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testRuneSliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustRuneSliceSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testRuneSliceSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testRuneSliceSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustRuneSliceSupplier_ToSilentRuneSliceSupplier(t *testing.T) {

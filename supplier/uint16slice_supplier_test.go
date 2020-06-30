@@ -164,6 +164,42 @@ func TestSilentUint16SliceSupplier(t *testing.T) {
 	require.Equal(t, testUint16SliceSupplierResult, v)
 }
 
+func TestSilentUint16SliceSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Uint16SliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testUint16SliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testUint16SliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentUint16SliceSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testUint16SliceSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustUint16SliceSupplier(t *testing.T) {
 	var ms MustUint16SliceSupplier = func() []uint16 {
 		return testUint16SliceSupplierResult
@@ -171,6 +207,45 @@ func TestMustUint16SliceSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testUint16SliceSupplierResult, v)
+}
+
+func TestMustUint16SliceSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Uint16SliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testUint16SliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testUint16SliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustUint16SliceSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testUint16SliceSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testUint16SliceSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustUint16SliceSupplier_ToSilentUint16SliceSupplier(t *testing.T) {

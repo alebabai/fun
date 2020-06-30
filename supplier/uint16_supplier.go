@@ -7,10 +7,6 @@ package supplier
 // Uint16Supplier represents a supplier of results or an error.
 type Uint16Supplier func() (uint16, error)
 
-// SilentUint16Supplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentUint16Supplier func() uint16
-
 // ToSupplier transforms Uint16Supplier into Supplier
 func (s Uint16Supplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Uint16Supplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentUint16Supplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentUint16Supplier func() uint16
+
 // ToSilentUint16Supplier transforms Uint16Supplier into SilentUint16Supplier
 func (s Uint16Supplier) ToSilentUint16Supplier() SilentUint16Supplier {
 	return func() uint16 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentUint16Supplier into SilentSupplier
+func (ss SilentUint16Supplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Uint16Supplier) ToMustUint16Supplier() MustUint16Supplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustUint16Supplier into MustSupplier
+func (ms MustUint16Supplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

@@ -164,6 +164,42 @@ func TestSilentInt32PtrSupplier(t *testing.T) {
 	require.Equal(t, testInt32PtrSupplierResult, v)
 }
 
+func TestSilentInt32PtrSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Int32PtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testInt32PtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testInt32PtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentInt32PtrSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testInt32PtrSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustInt32PtrSupplier(t *testing.T) {
 	var ms MustInt32PtrSupplier = func() *int32 {
 		return testInt32PtrSupplierResult
@@ -171,6 +207,45 @@ func TestMustInt32PtrSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testInt32PtrSupplierResult, v)
+}
+
+func TestMustInt32PtrSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Int32PtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testInt32PtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testInt32PtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustInt32PtrSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testInt32PtrSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testInt32PtrSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustInt32PtrSupplier_ToSilentInt32PtrSupplier(t *testing.T) {

@@ -164,6 +164,42 @@ func TestSilentUint8Supplier(t *testing.T) {
 	require.Equal(t, testUint8SupplierResult, v)
 }
 
+func TestSilentUint8Supplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Uint8Supplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testUint8Supplier,
+		},
+		{
+			name: "with_error",
+			s:    testUint8SupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentUint8Supplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testUint8SupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustUint8Supplier(t *testing.T) {
 	var ms MustUint8Supplier = func() uint8 {
 		return testUint8SupplierResult
@@ -171,6 +207,45 @@ func TestMustUint8Supplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testUint8SupplierResult, v)
+}
+
+func TestMustUint8Supplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Uint8Supplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testUint8Supplier,
+		},
+		{
+			name: "with_error",
+			s:    testUint8SupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustUint8Supplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testUint8SupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testUint8SupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustUint8Supplier_ToSilentUint8Supplier(t *testing.T) {

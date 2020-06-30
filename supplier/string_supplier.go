@@ -7,10 +7,6 @@ package supplier
 // StringSupplier represents a supplier of results or an error.
 type StringSupplier func() (string, error)
 
-// SilentStringSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentStringSupplier func() string
-
 // ToSupplier transforms StringSupplier into Supplier
 func (s StringSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s StringSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentStringSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentStringSupplier func() string
+
 // ToSilentStringSupplier transforms StringSupplier into SilentStringSupplier
 func (s StringSupplier) ToSilentStringSupplier() SilentStringSupplier {
 	return func() string {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentStringSupplier into SilentSupplier
+func (ss SilentStringSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s StringSupplier) ToMustStringSupplier() MustStringSupplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustStringSupplier into MustSupplier
+func (ms MustStringSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

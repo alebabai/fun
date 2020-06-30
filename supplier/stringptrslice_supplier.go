@@ -7,10 +7,6 @@ package supplier
 // StringPtrSliceSupplier represents a supplier of results or an error.
 type StringPtrSliceSupplier func() ([]*string, error)
 
-// SilentStringPtrSliceSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentStringPtrSliceSupplier func() []*string
-
 // ToSupplier transforms StringPtrSliceSupplier into Supplier
 func (s StringPtrSliceSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s StringPtrSliceSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentStringPtrSliceSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentStringPtrSliceSupplier func() []*string
+
 // ToSilentStringPtrSliceSupplier transforms StringPtrSliceSupplier into SilentStringPtrSliceSupplier
 func (s StringPtrSliceSupplier) ToSilentStringPtrSliceSupplier() SilentStringPtrSliceSupplier {
 	return func() []*string {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentStringPtrSliceSupplier into SilentSupplier
+func (ss SilentStringPtrSliceSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s StringPtrSliceSupplier) ToMustStringPtrSliceSupplier() MustStringPtrSlic
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustStringPtrSliceSupplier into MustSupplier
+func (ms MustStringPtrSliceSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

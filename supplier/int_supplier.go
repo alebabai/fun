@@ -7,10 +7,6 @@ package supplier
 // IntSupplier represents a supplier of results or an error.
 type IntSupplier func() (int, error)
 
-// SilentIntSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentIntSupplier func() int
-
 // ToSupplier transforms IntSupplier into Supplier
 func (s IntSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s IntSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentIntSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentIntSupplier func() int
+
 // ToSilentIntSupplier transforms IntSupplier into SilentIntSupplier
 func (s IntSupplier) ToSilentIntSupplier() SilentIntSupplier {
 	return func() int {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentIntSupplier into SilentSupplier
+func (ss SilentIntSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s IntSupplier) ToMustIntSupplier() MustIntSupplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustIntSupplier into MustSupplier
+func (ms MustIntSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

@@ -7,10 +7,6 @@ package supplier
 // Uint32Supplier represents a supplier of results or an error.
 type Uint32Supplier func() (uint32, error)
 
-// SilentUint32Supplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentUint32Supplier func() uint32
-
 // ToSupplier transforms Uint32Supplier into Supplier
 func (s Uint32Supplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Uint32Supplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentUint32Supplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentUint32Supplier func() uint32
+
 // ToSilentUint32Supplier transforms Uint32Supplier into SilentUint32Supplier
 func (s Uint32Supplier) ToSilentUint32Supplier() SilentUint32Supplier {
 	return func() uint32 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentUint32Supplier into SilentSupplier
+func (ss SilentUint32Supplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Uint32Supplier) ToMustUint32Supplier() MustUint32Supplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustUint32Supplier into MustSupplier
+func (ms MustUint32Supplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

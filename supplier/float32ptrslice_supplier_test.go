@@ -164,6 +164,42 @@ func TestSilentFloat32PtrSliceSupplier(t *testing.T) {
 	require.Equal(t, testFloat32PtrSliceSupplierResult, v)
 }
 
+func TestSilentFloat32PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Float32PtrSliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testFloat32PtrSliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testFloat32PtrSliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentFloat32PtrSliceSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testFloat32PtrSliceSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustFloat32PtrSliceSupplier(t *testing.T) {
 	var ms MustFloat32PtrSliceSupplier = func() []*float32 {
 		return testFloat32PtrSliceSupplierResult
@@ -171,6 +207,45 @@ func TestMustFloat32PtrSliceSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testFloat32PtrSliceSupplierResult, v)
+}
+
+func TestMustFloat32PtrSliceSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Float32PtrSliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testFloat32PtrSliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testFloat32PtrSliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustFloat32PtrSliceSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testFloat32PtrSliceSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testFloat32PtrSliceSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustFloat32PtrSliceSupplier_ToSilentFloat32PtrSliceSupplier(t *testing.T) {

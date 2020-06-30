@@ -164,6 +164,42 @@ func TestSilentInt64PtrSliceSupplier(t *testing.T) {
 	require.Equal(t, testInt64PtrSliceSupplierResult, v)
 }
 
+func TestSilentInt64PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Int64PtrSliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testInt64PtrSliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testInt64PtrSliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentInt64PtrSliceSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testInt64PtrSliceSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustInt64PtrSliceSupplier(t *testing.T) {
 	var ms MustInt64PtrSliceSupplier = func() []*int64 {
 		return testInt64PtrSliceSupplierResult
@@ -171,6 +207,45 @@ func TestMustInt64PtrSliceSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testInt64PtrSliceSupplierResult, v)
+}
+
+func TestMustInt64PtrSliceSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Int64PtrSliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testInt64PtrSliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testInt64PtrSliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustInt64PtrSliceSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testInt64PtrSliceSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testInt64PtrSliceSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustInt64PtrSliceSupplier_ToSilentInt64PtrSliceSupplier(t *testing.T) {

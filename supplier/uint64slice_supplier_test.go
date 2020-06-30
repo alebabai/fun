@@ -164,6 +164,42 @@ func TestSilentUint64SliceSupplier(t *testing.T) {
 	require.Equal(t, testUint64SliceSupplierResult, v)
 }
 
+func TestSilentUint64SliceSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Uint64SliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testUint64SliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testUint64SliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentUint64SliceSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testUint64SliceSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustUint64SliceSupplier(t *testing.T) {
 	var ms MustUint64SliceSupplier = func() []uint64 {
 		return testUint64SliceSupplierResult
@@ -171,6 +207,45 @@ func TestMustUint64SliceSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testUint64SliceSupplierResult, v)
+}
+
+func TestMustUint64SliceSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Uint64SliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testUint64SliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testUint64SliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustUint64SliceSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testUint64SliceSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testUint64SliceSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustUint64SliceSupplier_ToSilentUint64SliceSupplier(t *testing.T) {

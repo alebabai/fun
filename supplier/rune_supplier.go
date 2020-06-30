@@ -7,10 +7,6 @@ package supplier
 // RuneSupplier represents a supplier of results or an error.
 type RuneSupplier func() (rune, error)
 
-// SilentRuneSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentRuneSupplier func() rune
-
 // ToSupplier transforms RuneSupplier into Supplier
 func (s RuneSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s RuneSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentRuneSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentRuneSupplier func() rune
+
 // ToSilentRuneSupplier transforms RuneSupplier into SilentRuneSupplier
 func (s RuneSupplier) ToSilentRuneSupplier() SilentRuneSupplier {
 	return func() rune {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentRuneSupplier into SilentSupplier
+func (ss SilentRuneSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s RuneSupplier) ToMustRuneSupplier() MustRuneSupplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustRuneSupplier into MustSupplier
+func (ms MustRuneSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

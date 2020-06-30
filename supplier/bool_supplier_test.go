@@ -164,6 +164,42 @@ func TestSilentBoolSupplier(t *testing.T) {
 	require.Equal(t, testBoolSupplierResult, v)
 }
 
+func TestSilentBoolSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testBoolSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentBoolSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testBoolSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustBoolSupplier(t *testing.T) {
 	var ms MustBoolSupplier = func() bool {
 		return testBoolSupplierResult
@@ -171,6 +207,45 @@ func TestMustBoolSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testBoolSupplierResult, v)
+}
+
+func TestMustBoolSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testBoolSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustBoolSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testBoolSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testBoolSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustBoolSupplier_ToSilentBoolSupplier(t *testing.T) {

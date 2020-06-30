@@ -164,6 +164,42 @@ func TestSilentFloat64PtrSupplier(t *testing.T) {
 	require.Equal(t, testFloat64PtrSupplierResult, v)
 }
 
+func TestSilentFloat64PtrSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Float64PtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testFloat64PtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testFloat64PtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentFloat64PtrSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testFloat64PtrSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustFloat64PtrSupplier(t *testing.T) {
 	var ms MustFloat64PtrSupplier = func() *float64 {
 		return testFloat64PtrSupplierResult
@@ -171,6 +207,45 @@ func TestMustFloat64PtrSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testFloat64PtrSupplierResult, v)
+}
+
+func TestMustFloat64PtrSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Float64PtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testFloat64PtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testFloat64PtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustFloat64PtrSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testFloat64PtrSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testFloat64PtrSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustFloat64PtrSupplier_ToSilentFloat64PtrSupplier(t *testing.T) {

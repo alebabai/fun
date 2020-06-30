@@ -164,6 +164,42 @@ func TestSilentByteSupplier(t *testing.T) {
 	require.Equal(t, testByteSupplierResult, v)
 }
 
+func TestSilentByteSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    ByteSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testByteSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testByteSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentByteSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testByteSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustByteSupplier(t *testing.T) {
 	var ms MustByteSupplier = func() byte {
 		return testByteSupplierResult
@@ -171,6 +207,45 @@ func TestMustByteSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testByteSupplierResult, v)
+}
+
+func TestMustByteSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    ByteSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testByteSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testByteSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustByteSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testByteSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testByteSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustByteSupplier_ToSilentByteSupplier(t *testing.T) {

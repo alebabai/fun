@@ -7,10 +7,6 @@ package supplier
 // BytePtrSupplier represents a supplier of results or an error.
 type BytePtrSupplier func() (*byte, error)
 
-// SilentBytePtrSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentBytePtrSupplier func() *byte
-
 // ToSupplier transforms BytePtrSupplier into Supplier
 func (s BytePtrSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s BytePtrSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentBytePtrSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentBytePtrSupplier func() *byte
+
 // ToSilentBytePtrSupplier transforms BytePtrSupplier into SilentBytePtrSupplier
 func (s BytePtrSupplier) ToSilentBytePtrSupplier() SilentBytePtrSupplier {
 	return func() *byte {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentBytePtrSupplier into SilentSupplier
+func (ss SilentBytePtrSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s BytePtrSupplier) ToMustBytePtrSupplier() MustBytePtrSupplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustBytePtrSupplier into MustSupplier
+func (ms MustBytePtrSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

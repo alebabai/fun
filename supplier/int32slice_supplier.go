@@ -7,10 +7,6 @@ package supplier
 // Int32SliceSupplier represents a supplier of results or an error.
 type Int32SliceSupplier func() ([]int32, error)
 
-// SilentInt32SliceSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentInt32SliceSupplier func() []int32
-
 // ToSupplier transforms Int32SliceSupplier into Supplier
 func (s Int32SliceSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Int32SliceSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentInt32SliceSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentInt32SliceSupplier func() []int32
+
 // ToSilentInt32SliceSupplier transforms Int32SliceSupplier into SilentInt32SliceSupplier
 func (s Int32SliceSupplier) ToSilentInt32SliceSupplier() SilentInt32SliceSupplier {
 	return func() []int32 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentInt32SliceSupplier into SilentSupplier
+func (ss SilentInt32SliceSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Int32SliceSupplier) ToMustInt32SliceSupplier() MustInt32SliceSupplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustInt32SliceSupplier into MustSupplier
+func (ms MustInt32SliceSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

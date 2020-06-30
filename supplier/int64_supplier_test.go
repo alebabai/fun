@@ -164,6 +164,42 @@ func TestSilentInt64Supplier(t *testing.T) {
 	require.Equal(t, testInt64SupplierResult, v)
 }
 
+func TestSilentInt64Supplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Int64Supplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testInt64Supplier,
+		},
+		{
+			name: "with_error",
+			s:    testInt64SupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentInt64Supplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testInt64SupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustInt64Supplier(t *testing.T) {
 	var ms MustInt64Supplier = func() int64 {
 		return testInt64SupplierResult
@@ -171,6 +207,45 @@ func TestMustInt64Supplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testInt64SupplierResult, v)
+}
+
+func TestMustInt64Supplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Int64Supplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testInt64Supplier,
+		},
+		{
+			name: "with_error",
+			s:    testInt64SupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustInt64Supplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testInt64SupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testInt64SupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustInt64Supplier_ToSilentInt64Supplier(t *testing.T) {

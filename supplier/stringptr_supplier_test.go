@@ -164,6 +164,42 @@ func TestSilentStringPtrSupplier(t *testing.T) {
 	require.Equal(t, testStringPtrSupplierResult, v)
 }
 
+func TestSilentStringPtrSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    StringPtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testStringPtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testStringPtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentStringPtrSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testStringPtrSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustStringPtrSupplier(t *testing.T) {
 	var ms MustStringPtrSupplier = func() *string {
 		return testStringPtrSupplierResult
@@ -171,6 +207,45 @@ func TestMustStringPtrSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testStringPtrSupplierResult, v)
+}
+
+func TestMustStringPtrSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    StringPtrSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testStringPtrSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testStringPtrSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustStringPtrSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testStringPtrSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testStringPtrSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustStringPtrSupplier_ToSilentStringPtrSupplier(t *testing.T) {

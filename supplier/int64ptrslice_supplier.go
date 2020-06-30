@@ -7,10 +7,6 @@ package supplier
 // Int64PtrSliceSupplier represents a supplier of results or an error.
 type Int64PtrSliceSupplier func() ([]*int64, error)
 
-// SilentInt64PtrSliceSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentInt64PtrSliceSupplier func() []*int64
-
 // ToSupplier transforms Int64PtrSliceSupplier into Supplier
 func (s Int64PtrSliceSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Int64PtrSliceSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentInt64PtrSliceSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentInt64PtrSliceSupplier func() []*int64
+
 // ToSilentInt64PtrSliceSupplier transforms Int64PtrSliceSupplier into SilentInt64PtrSliceSupplier
 func (s Int64PtrSliceSupplier) ToSilentInt64PtrSliceSupplier() SilentInt64PtrSliceSupplier {
 	return func() []*int64 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentInt64PtrSliceSupplier into SilentSupplier
+func (ss SilentInt64PtrSliceSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Int64PtrSliceSupplier) ToMustInt64PtrSliceSupplier() MustInt64PtrSliceSu
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustInt64PtrSliceSupplier into MustSupplier
+func (ms MustInt64PtrSliceSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

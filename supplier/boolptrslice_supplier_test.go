@@ -164,6 +164,42 @@ func TestSilentBoolPtrSliceSupplier(t *testing.T) {
 	require.Equal(t, testBoolPtrSliceSupplierResult, v)
 }
 
+func TestSilentBoolPtrSliceSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolPtrSliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testBoolPtrSliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolPtrSliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentBoolPtrSliceSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testBoolPtrSliceSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustBoolPtrSliceSupplier(t *testing.T) {
 	var ms MustBoolPtrSliceSupplier = func() []*bool {
 		return testBoolPtrSliceSupplierResult
@@ -171,6 +207,45 @@ func TestMustBoolPtrSliceSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testBoolPtrSliceSupplierResult, v)
+}
+
+func TestMustBoolPtrSliceSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    BoolPtrSliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testBoolPtrSliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testBoolPtrSliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustBoolPtrSliceSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testBoolPtrSliceSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testBoolPtrSliceSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustBoolPtrSliceSupplier_ToSilentBoolPtrSliceSupplier(t *testing.T) {

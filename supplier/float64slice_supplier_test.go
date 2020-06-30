@@ -164,6 +164,42 @@ func TestSilentFloat64SliceSupplier(t *testing.T) {
 	require.Equal(t, testFloat64SliceSupplierResult, v)
 }
 
+func TestSilentFloat64SliceSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Float64SliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testFloat64SliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testFloat64SliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tss := tt.s.ToSilentFloat64SliceSupplier()
+			r.NotNil(tss)
+
+			ss := tss.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.err {
+				r.Empty(v)
+			} else {
+				r.Equal(testFloat64SliceSupplierResult, v)
+			}
+		})
+	}
+}
+
 func TestMustFloat64SliceSupplier(t *testing.T) {
 	var ms MustFloat64SliceSupplier = func() []float64 {
 		return testFloat64SliceSupplierResult
@@ -171,6 +207,45 @@ func TestMustFloat64SliceSupplier(t *testing.T) {
 
 	v := ms()
 	require.Equal(t, testFloat64SliceSupplierResult, v)
+}
+
+func TestMustFloat64SliceSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Float64SliceSupplier
+		err  bool
+	}{
+		{
+			name: "ok",
+			s:    testFloat64SliceSupplier,
+		},
+		{
+			name: "with_error",
+			s:    testFloat64SliceSupplierWithError,
+			err:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tms := tt.s.ToMustFloat64SliceSupplier()
+			r.NotNil(tms)
+
+			ms := tms.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.err {
+				r.PanicsWithError(testFloat64SliceSupplierError.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(testFloat64SliceSupplierResult, v)
+			}
+		})
+	}
 }
 
 func TestMustFloat64SliceSupplier_ToSilentFloat64SliceSupplier(t *testing.T) {

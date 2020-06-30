@@ -7,10 +7,6 @@ package supplier
 // Int32PtrSupplier represents a supplier of results or an error.
 type Int32PtrSupplier func() (*int32, error)
 
-// SilentInt32PtrSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentInt32PtrSupplier func() *int32
-
 // ToSupplier transforms Int32PtrSupplier into Supplier
 func (s Int32PtrSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Int32PtrSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentInt32PtrSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentInt32PtrSupplier func() *int32
+
 // ToSilentInt32PtrSupplier transforms Int32PtrSupplier into SilentInt32PtrSupplier
 func (s Int32PtrSupplier) ToSilentInt32PtrSupplier() SilentInt32PtrSupplier {
 	return func() *int32 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentInt32PtrSupplier into SilentSupplier
+func (ss SilentInt32PtrSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Int32PtrSupplier) ToMustInt32PtrSupplier() MustInt32PtrSupplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustInt32PtrSupplier into MustSupplier
+func (ms MustInt32PtrSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

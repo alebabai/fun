@@ -7,10 +7,6 @@ package supplier
 // Float32SliceSupplier represents a supplier of results or an error.
 type Float32SliceSupplier func() ([]float32, error)
 
-// SilentFloat32SliceSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentFloat32SliceSupplier func() []float32
-
 // ToSupplier transforms Float32SliceSupplier into Supplier
 func (s Float32SliceSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Float32SliceSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentFloat32SliceSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentFloat32SliceSupplier func() []float32
+
 // ToSilentFloat32SliceSupplier transforms Float32SliceSupplier into SilentFloat32SliceSupplier
 func (s Float32SliceSupplier) ToSilentFloat32SliceSupplier() SilentFloat32SliceSupplier {
 	return func() []float32 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentFloat32SliceSupplier into SilentSupplier
+func (ss SilentFloat32SliceSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Float32SliceSupplier) ToMustFloat32SliceSupplier() MustFloat32SliceSuppl
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustFloat32SliceSupplier into MustSupplier
+func (ms MustFloat32SliceSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 

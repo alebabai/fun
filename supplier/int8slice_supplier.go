@@ -7,10 +7,6 @@ package supplier
 // Int8SliceSupplier represents a supplier of results or an error.
 type Int8SliceSupplier func() ([]int8, error)
 
-// SilentInt8SliceSupplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type SilentInt8SliceSupplier func() []int8
-
 // ToSupplier transforms Int8SliceSupplier into Supplier
 func (s Int8SliceSupplier) ToSupplier() Supplier {
 	return func() (interface{}, error) {
@@ -18,11 +14,22 @@ func (s Int8SliceSupplier) ToSupplier() Supplier {
 	}
 }
 
+// SilentInt8SliceSupplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type SilentInt8SliceSupplier func() []int8
+
 // ToSilentInt8SliceSupplier transforms Int8SliceSupplier into SilentInt8SliceSupplier
 func (s Int8SliceSupplier) ToSilentInt8SliceSupplier() SilentInt8SliceSupplier {
 	return func() []int8 {
 		v, _ := s()
 		return v
+	}
+}
+
+// ToSilentSupplier transforms SilentInt8SliceSupplier into SilentSupplier
+func (ss SilentInt8SliceSupplier) ToSilentSupplier() SilentSupplier {
+	return func() interface{} {
+		return ss()
 	}
 }
 
@@ -38,6 +45,13 @@ func (s Int8SliceSupplier) ToMustInt8SliceSupplier() MustInt8SliceSupplier {
 			panic(err)
 		}
 		return v
+	}
+}
+
+// ToMustSupplier transforms MustInt8SliceSupplier into MustSupplier
+func (ms MustInt8SliceSupplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
 	}
 }
 
