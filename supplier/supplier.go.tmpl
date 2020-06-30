@@ -3,10 +3,6 @@ package supplier
 // {{.Type.Title}}Supplier represents a supplier of results or an error.
 type {{.Type.Title}}Supplier func() ({{.Type.Name}}, error)
 
-// Silent{{.Type.Title}}Supplier represents a supplier of results without returning an error.
-// In case of an error it should just return the default value of the type.
-type Silent{{.Type.Title}}Supplier func() {{.Type.Name}}
-
 {{if ne .Type.Name "interface{}" }}
 // ToSupplier transforms {{.Type.Title}}Supplier into Supplier
 func (s {{.Type.Title}}Supplier) ToSupplier() Supplier {
@@ -16,6 +12,10 @@ func (s {{.Type.Title}}Supplier) ToSupplier() Supplier {
 }
 {{end}}
 
+// Silent{{.Type.Title}}Supplier represents a supplier of results without returning an error.
+// In case of an error it should just return the default value of the type.
+type Silent{{.Type.Title}}Supplier func() {{.Type.Name}}
+
 // ToSilent{{.Type.Title}}Supplier transforms {{.Type.Title}}Supplier into Silent{{.Type.Title}}Supplier
 func (s {{.Type.Title}}Supplier) ToSilent{{.Type.Title}}Supplier() Silent{{.Type.Title}}Supplier {
 	return func() {{.Type.Name}} {
@@ -23,6 +23,15 @@ func (s {{.Type.Title}}Supplier) ToSilent{{.Type.Title}}Supplier() Silent{{.Type
 		return v
 	}
 }
+
+{{if ne .Type.Name "interface{}" }}
+// ToSilentSupplier transforms Silent{{.Type.Title}}Supplier into SilentSupplier
+func (ss Silent{{.Type.Title}}Supplier) ToSilentSupplier() SilentSupplier {
+	return func() (interface{}) {
+		return ss()
+	}
+}
+{{end}}
 
 // Must{{.Type.Title}}Supplier represents a supplier of results without returning an error.
 // In case of an error it should panic with error value.
@@ -38,6 +47,15 @@ func (s {{.Type.Title}}Supplier) ToMust{{.Type.Title}}Supplier() Must{{.Type.Tit
 		return v
 	}
 }
+
+{{if ne .Type.Name "interface{}" }}
+// ToMustSupplier transforms Must{{.Type.Title}}Supplier into MustSupplier
+func (ms Must{{.Type.Title}}Supplier) ToMustSupplier() MustSupplier {
+	return func() interface{} {
+		return ms()
+	}
+}
+{{end}}
 
 // To{{.Type.Title}}Supplier transforms Must{{.Type.Title}}Supplier into {{.Type.Title}}Supplier
 func (ms Must{{.Type.Title}}Supplier) To{{.Type.Title}}Supplier() {{.Type.Title}}Supplier {
