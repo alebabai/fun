@@ -39,6 +39,15 @@ func (c {{.Type.Title}}Consumer) ToSilent{{.Type.Title}}Consumer() Silent{{.Type
 	}
 }
 
+{{if ne .Type.Name "interface{}" }}
+// ToSilentConsumer transforms Silent{{.Type.Title}}Consumer into SilentConsumer
+func (sc Silent{{.Type.Title}}Consumer) ToSilentConsumer() SilentConsumer {
+	return func(v interface{}) {
+		sc(v.({{.Type.Name}}))
+	}
+}
+{{end}}
+
 // AndThen returns a composed Silent{{.Type.Title}}Consumer that performs, in sequence, this operation followed by the after operation.
 // If after is nil, it returns original consumer.
 func (sc Silent{{.Type.Title}}Consumer) AndThen(after Silent{{.Type.Title}}Consumer) Silent{{.Type.Title}}Consumer {
@@ -65,6 +74,15 @@ func (c {{.Type.Title}}Consumer) ToMust{{.Type.Title}}Consumer() Must{{.Type.Tit
 		return
 	}
 }
+
+{{if ne .Type.Name "interface{}" }}
+// ToMustConsumer transforms Must{{.Type.Title}}Consumer into MustConsumer
+func (mc Must{{.Type.Title}}Consumer) ToMustConsumer() MustConsumer {
+	return func(v interface{}) {
+		mc(v.({{.Type.Name}}))
+	}
+}
+{{end}}
 
 // AndThen returns a composed Must{{.Type.Title}}Consumer that performs, in sequence, this operation followed by the after operation.
 // If performing this operation returns an error, the after operation will not be performed.

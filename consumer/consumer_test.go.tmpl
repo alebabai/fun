@@ -54,7 +54,7 @@ func Test{{.Type.Title}}Consumer(t *testing.T) {
 }
 
 {{if ne .Type.Name "interface{}" }}
-func Test{{.Type.Title}}Supplier_ToSupplier(t *testing.T) {
+func Test{{.Type.Title}}Consumer_ToConsumer(t *testing.T) {
 	tests := []struct {
 		name string
 		cf   test{{.Type.Title}}ConsumerFactory
@@ -273,6 +273,48 @@ func TestSilent{{.Type.Title}}Consumer(t *testing.T) {
 	sc(valTest{{.Type.Title}}Consumer)
 }
 
+{{if ne .Type.Name "interface{}" }}
+func TestSilent{{.Type.Title}}Consumer_ToSilentConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   test{{.Type.Title}}ConsumerFactory
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) {{.Type.Title}}Consumer {
+				return func(v {{.Type.Name}}) error {
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) {{.Type.Title}}Consumer {
+				return func(v {{.Type.Name}}) error {
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return errTest{{.Type.Title}}Consumer
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tsc := tc.ToSilent{{.Type.Title}}Consumer()
+			r.NotNil(tsc)
+
+			sc := tsc.ToSilentConsumer()
+			r.NotNil(sc)
+
+			sc(valTest{{.Type.Title}}Consumer)
+		})
+	}
+}
+{{end}}
+
 func TestSilent{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
@@ -363,12 +405,62 @@ func TestSilent{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 }
 
 func TestMust{{.Type.Title}}Consumer(t *testing.T) {
-	var sc Silent{{.Type.Title}}Consumer = func(v {{.Type.Name}}) {
+	var mc Must{{.Type.Title}}Consumer = func(v {{.Type.Name}}) {
 		require.Equal(t, valTest{{.Type.Title}}Consumer, v)
 		return
 	}
-	sc(valTest{{.Type.Title}}Consumer)
+	mc(valTest{{.Type.Title}}Consumer)
 }
+
+{{if ne .Type.Name "interface{}" }}
+func TestMust{{.Type.Title}}Consumer_ToMustConsumer(t *testing.T) {
+	tests := []struct {
+		name string
+		cf   test{{.Type.Title}}ConsumerFactory
+		err  bool
+	}{
+		{
+			name: "ok",
+			cf: func(t *testing.T) {{.Type.Title}}Consumer {
+				return func(v {{.Type.Name}}) error {
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return nil
+				}
+			},
+		},
+		{
+			name: "with_error",
+			cf: func(t *testing.T) {{.Type.Title}}Consumer {
+				return func(v {{.Type.Name}}) error {
+					require.Equal(t, valTest{{.Type.Title}}Consumer, v)
+					return errTest{{.Type.Title}}Consumer
+				}
+			},
+			err: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			tc := tt.cf(t)
+			tmc := tc.ToMust{{.Type.Title}}Consumer()
+			r.NotNil(tmc)
+
+			mc := tmc.ToMustConsumer()
+			r.NotNil(mc)
+
+			if tt.err {
+				r.PanicsWithError(errTest{{.Type.Title}}Consumer.Error(), func() {
+					mc(valTest{{.Type.Title}}Consumer)
+				})
+			} else {
+				mc(valTest{{.Type.Title}}Consumer)
+			}
+		})
+	}
+}
+{{end}}
 
 func TestMust{{.Type.Title}}Consumer_AndThen(t *testing.T) {
 	var calls int
