@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"strings"
+	"text/template"
 )
 
 const headerTemplate = `// CODE GENERATED AUTOMATICALLY

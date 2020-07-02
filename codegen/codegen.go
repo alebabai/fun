@@ -2,15 +2,16 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"go/format"
-	"html/template"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+	"text/template"
 )
 
-const tmplFileExtension = ".go.tmpl"
+const tmplFileExtension = ".tmpl"
 
 type Data struct {
 	Type   *Type
@@ -19,7 +20,7 @@ type Data struct {
 
 func generateCode(tmpl *template.Template, data *Data) ([]byte, error) {
 	if tmpl == nil {
-		return nil, fmt.Errorf("template is required")
+		return nil, errors.New("template is required")
 	}
 
 	codeBuff := new(bytes.Buffer)
@@ -36,13 +37,16 @@ func generateCode(tmpl *template.Template, data *Data) ([]byte, error) {
 	return fmtBytes, nil
 }
 
-func generateFilename(path string, t *Type) string {
-	if t == nil {
-		return path
+func generateFilename(tmplFilename string, t *Type) (string, error) {
+	if len(tmplFilename) <= len(tmplFileExtension) || !strings.HasSuffix(tmplFilename, tmplFileExtension) {
+		return "", errors.New("template filename is invalid")
+	}
+	if t == nil || t.Name == "" {
+		return "", errors.New("type is invalid")
 	}
 
 	var typePrefix string
-	if t.Name != "interface{}" {
+	if t.Name != "interface{}" && t.Title != "" {
 		lt := strings.ToLower(t.Title)
 		typePrefix = fmt.Sprintf(
 			"%s_",
@@ -50,12 +54,12 @@ func generateFilename(path string, t *Type) string {
 		)
 	}
 
-	return fmt.Sprintf(
-		"%s/%s%s.go",
-		filepath.Dir(path),
+	fn := fmt.Sprintf(
+		"%s%s",
 		typePrefix,
-		strings.TrimSuffix(filepath.Base(path), tmplFileExtension),
+		strings.TrimRight(tmplFilename, tmplFileExtension),
 	)
+	return fn, nil
 }
 
 func Generate(dir string) error {
@@ -67,24 +71,30 @@ func Generate(dir string) error {
 
 	types := getTypes()
 	for _, p := range paths {
-		source := filepath.Base(p)
-		tmpl, err := createTemplate(source, p)
+		tmplFilename := filepath.Base(p)
+		tmpl, err := createTemplate(tmplFilename, p)
 		if err != nil {
 			return fmt.Errorf("error during template creation: %w", err)
 		}
 		for _, t := range types {
 			data := &Data{
 				Type:   t,
-				Source: source,
+				Source: tmplFilename,
 			}
 			code, err := generateCode(tmpl, data)
 			if err != nil {
 				return fmt.Errorf("error during code generation: %w", err)
 			}
-			filename := generateFilename(p, t)
-			err = ioutil.WriteFile(filename, code, 0644)
+
+			fn, err := generateFilename(tmplFilename, t)
 			if err != nil {
-				return fmt.Errorf("error during file %s writing: %w", filename, err)
+				return fmt.Errorf("error generating filename: %w", err)
+			}
+
+			fp := filepath.Join(dir, fn)
+			err = ioutil.WriteFile(fp, code, 0644)
+			if err != nil {
+				return fmt.Errorf("error during file %s writing: %w", fn, err)
 			}
 		}
 	}
