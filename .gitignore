@@ -121,5 +121,5 @@ modules.xml
 
 # End of https://www.gitignore.io/api/go,intellij+all,visualstudiocode
 
-codegen/codegen
-codegen/_test/*.go
+_codegen/codegen
+_codegen/_test/*.go
