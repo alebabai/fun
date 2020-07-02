@@ -7,17 +7,19 @@ import (
 )
 
 func main() {
-	wd, err := os.Getwd()
+	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
-	dir := flag.String(
-		"dir",
-		wd,
-		"specify directory to process",
-	)
+
 	flag.Parse()
-	err = Generate(*dir)
+	if flag.NArg() == 1 {
+		dir = flag.Arg(0)
+	} else if flag.NArg() > 1 {
+		log.Fatal("too many arguments")
+	}
+
+	err = Generate(dir)
 	if err != nil {
 		log.Fatal(err)
 	}
