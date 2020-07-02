@@ -6,12 +6,13 @@ import (
 )
 
 const (
-	PtrPrefix      = "*"
-	SlicePrefix    = "[]"
-	PtrSlicePrefix = "[]*"
+	ptrPrefix      = "*"
+	slicePrefix    = "[]"
+	ptrSlicePrefix = "[]*"
 )
 
 var (
+	// BuiltinTypes represents golang builtin types
 	BuiltinTypes = []string{
 		"interface{}",
 		"string",
@@ -24,12 +25,16 @@ var (
 	}
 )
 
+// Type holds type specific information
 type Type struct {
 	Name  string
 	Title string
 }
 
 func generateComplexTypes(builtinType string) []string {
+	if builtinType == "" {
+		return make([]string, 0)
+	}
 	return []string{
 		fmt.Sprintf("*%s", builtinType),
 		fmt.Sprintf("[]%s", builtinType),
@@ -39,19 +44,22 @@ func generateComplexTypes(builtinType string) []string {
 
 func getComplexTypeTitle(complexType string) string {
 	title := strings.Title(complexType)
-	if strings.HasPrefix(complexType, PtrPrefix) {
-		title = fmt.Sprintf("%sPtr", strings.TrimLeft(title, PtrPrefix))
-	} else if strings.HasPrefix(complexType, PtrSlicePrefix) {
-		title = fmt.Sprintf("%sPtrSlice", strings.TrimLeft(title, PtrSlicePrefix))
-	} else if strings.HasPrefix(complexType, SlicePrefix) {
-		title = fmt.Sprintf("%sSlice", strings.TrimLeft(title, SlicePrefix))
+	if strings.HasPrefix(complexType, ptrPrefix) {
+		title = fmt.Sprintf("%sPtr", strings.TrimLeft(title, ptrPrefix))
+	} else if strings.HasPrefix(complexType, ptrSlicePrefix) {
+		title = fmt.Sprintf("%sPtrSlice", strings.TrimLeft(title, ptrSlicePrefix))
+	} else if strings.HasPrefix(complexType, slicePrefix) {
+		title = fmt.Sprintf("%sSlice", strings.TrimLeft(title, slicePrefix))
 	}
 	return title
 }
 
-func getTypes() []*Type {
+func getTypes(builtinTypes []string) []*Type {
 	types := make([]*Type, 0)
-	for _, bt := range BuiltinTypes {
+	for _, bt := range builtinTypes {
+		if bt == "" {
+			continue
+		}
 		if bt != "interface{}" {
 			t := &Type{
 				Name:  bt,

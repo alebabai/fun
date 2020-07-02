@@ -13,6 +13,7 @@ import (
 
 const tmplFileExtension = ".tmpl"
 
+// Data represent all needed data for code generation
 type Data struct {
 	Type   *Type
 	Source string
@@ -62,6 +63,7 @@ func generateFilename(tmplFilename string, t *Type) (string, error) {
 	return fn, nil
 }
 
+// Generate encapsulates code generation flow
 func Generate(dir string) error {
 	pattern := fmt.Sprintf("%s/*%s", dir, tmplFileExtension)
 	paths, err := filepath.Glob(pattern)
@@ -69,7 +71,7 @@ func Generate(dir string) error {
 		return fmt.Errorf("error during glob pattern matching: %w", err)
 	}
 
-	types := getTypes()
+	types := getTypes(BuiltinTypes)
 	for _, p := range paths {
 		tmplFilename := filepath.Base(p)
 		tmpl, err := createTemplate(tmplFilename, p)
