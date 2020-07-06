@@ -15,10 +15,10 @@
     - [ ] BiFunction
     - [ ] UnaryOperator
     - [ ] BinaryOperator
-  - [ ] Code generation for any type
-    - [ ] Choose engine
-    - [ ] Develop templates
-    - [ ] Develop data structure
+  - [x] Code generation for any type
+    - [x] Choose engine
+    - [x] Develop templates
+    - [x] Develop data structure
 - [ ] Infrastructure  
   - [ ] Makefile
   - [ ] CI/CD
