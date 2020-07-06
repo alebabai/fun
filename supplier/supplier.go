@@ -1,3 +1,7 @@
+// CODE GENERATED AUTOMATICALLY
+// SOURCE: supplier.go.tmpl
+// DO NOT EDIT
+
 package supplier
 
 // Supplier represents a supplier of results or an error.

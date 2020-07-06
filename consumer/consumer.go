@@ -1,3 +1,7 @@
+// CODE GENERATED AUTOMATICALLY
+// SOURCE: consumer.go.tmpl
+// DO NOT EDIT
+
 package consumer
 
 // Consumer represents an operation that accepts a single input argument or returns an error.
@@ -83,7 +87,7 @@ func (mc MustConsumer) ToConsumer() Consumer {
 	}
 }
 
-// SilentConsumer transforms MustConsumer into SilentConsumer
+// ToSilentConsumer transforms MustConsumer into SilentConsumer
 func (mc MustConsumer) ToSilentConsumer() SilentConsumer {
 	c := mc.ToConsumer()
 	return c.ToSilentConsumer()

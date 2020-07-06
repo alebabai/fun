@@ -1,3 +1,7 @@
+// CODE GENERATED AUTOMATICALLY
+// SOURCE: supplier_test.go.tmpl
+// DO NOT EDIT
+
 package supplier
 
 import (
@@ -8,16 +12,16 @@ import (
 )
 
 var (
-	testResult = "result"
-	testError  = errors.New("error")
+	resTestSupplier interface{}
+	errTestSupplier = errors.New("error")
 )
 
-func supplier() (interface{}, error) {
-	return testResult, nil
+func testSupplier() (interface{}, error) {
+	return resTestSupplier, nil
 }
 
-func supplierWithError() (interface{}, error) {
-	return nil, testError
+func testSupplierWithError() (interface{}, error) {
+	return resTestSupplier, errTestSupplier
 }
 
 func TestSupplier(t *testing.T) {
@@ -27,11 +31,11 @@ func TestSupplier(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			s:    supplier,
+			s:    testSupplier,
 		},
 		{
 			name: "with_error",
-			s:    supplierWithError,
+			s:    testSupplierWithError,
 		},
 	}
 	for _, tt := range tests {
@@ -41,9 +45,9 @@ func TestSupplier(t *testing.T) {
 			v, err := tt.s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testError.Error())
+				r.EqualError(err, errTestSupplier.Error())
 			} else {
-				r.Equal(testResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}
@@ -57,11 +61,11 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			s:    supplier,
+			s:    testSupplier,
 		},
 		{
 			name: "with_error",
-			s:    supplierWithError,
+			s:    testSupplierWithError,
 			err:  true,
 		},
 	}
@@ -76,7 +80,7 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}
@@ -90,11 +94,11 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			s:    supplier,
+			s:    testSupplier,
 		},
 		{
 			name: "with_error",
-			s:    supplierWithError,
+			s:    testSupplierWithError,
 			err:  true,
 		},
 	}
@@ -106,13 +110,13 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.err {
-				r.PanicsWithError(testError.Error(), func() {
+				r.PanicsWithError(errTestSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}
@@ -120,19 +124,19 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 
 func TestSilentSupplier(t *testing.T) {
 	var ss SilentSupplier = func() interface{} {
-		return testResult
+		return resTestSupplier
 	}
 	v := ss()
-	require.Equal(t, testResult, v)
+	require.Equal(t, resTestSupplier, v)
 }
 
 func TestMustSupplier(t *testing.T) {
 	var ms MustSupplier = func() interface{} {
-		return testResult
+		return resTestSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testResult, v)
+	require.Equal(t, resTestSupplier, v)
 }
 
 func TestMustSupplier_ToSilentSupplier(t *testing.T) {
@@ -143,11 +147,11 @@ func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			s:    supplier,
+			s:    testSupplier,
 		},
 		{
 			name: "with_error",
-			s:    supplierWithError,
+			s:    testSupplierWithError,
 			err:  true,
 		},
 	}
@@ -165,7 +169,7 @@ func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.err {
 				r.Empty(v)
 			} else {
-				r.Equal(testResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}
@@ -178,11 +182,11 @@ func TestMustSupplier_ToSupplier(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			s:    supplier,
+			s:    testSupplier,
 		},
 		{
 			name: "with_error",
-			s:    supplierWithError,
+			s:    testSupplierWithError,
 		},
 	}
 	for _, tt := range tests {
@@ -198,9 +202,9 @@ func TestMustSupplier_ToSupplier(t *testing.T) {
 			v, err := s()
 			if err != nil {
 				r.Empty(v)
-				r.EqualError(err, testError.Error())
+				r.EqualError(err, errTestSupplier.Error())
 			} else {
-				r.Equal(testResult, v)
+				r.Equal(resTestSupplier, v)
 			}
 		})
 	}
