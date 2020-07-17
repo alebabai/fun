@@ -20,7 +20,7 @@
     - [x] Develop templates
     - [x] Develop data structure
 - [ ] Infrastructure  
-  - [ ] Makefile
+  - [x] Makefile
   - [ ] CI/CD
     - [ ] Test codegen
     - [ ] Run lints
