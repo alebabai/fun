@@ -23,5 +23,5 @@ install: prepare
 	go install -v $(PACKAGES)
 
 .PHONY: test
-test: deps
+test: prepare
 	go test -v -race $(PACKAGES)
