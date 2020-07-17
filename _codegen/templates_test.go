@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
-	"text/template"
+
+	"github.com/stretchr/testify/require"
 )
 
 func Test_createTemplate(t *testing.T) {
@@ -14,7 +14,6 @@ func Test_createTemplate(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    *template.Template
 		wantErr bool
 	}{
 		{
