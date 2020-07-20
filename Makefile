@@ -25,7 +25,12 @@ install: prepare
 
 .PHONY: test
 test: prepare
-	go test -v -race $(PACKAGES)
+	go test -v -race -coverprofile=coverage.out $(PACKAGES)
+
+.PHONY: coverage
+coverage: test
+	go tool cover -func=coverage.out -o coverage.txt
+	go tool cover -html=coverage.out -o coverage.html
 
 .PHONY: lint
 lint: prepare
