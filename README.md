@@ -2,9 +2,12 @@
 
 > Functional types for Golang
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/alebabai/fun/CI?style=flat)](https://github.com/alebabai/fun/actions?query=workflow%3ACI)
+[![Build](https://img.shields.io/github/workflow/status/alebabai/fun/CI)](https://github.com/alebabai/fun/actions?query=workflow%3ACI)
+[![Go version](https://img.shields.io/github/go-mod/go-version/alebabai/fun)](https://github.com/alebabai/fun/actions?query=workflow%3ACI)
 [![Go Report Card](https://goreportcard.com/badge/github.com/alebabai/fun)](https://goreportcard.com/report/github.com/alebabai/fun)
-[![codecov.io](https://img.shields.io/codecov/c/github/alebabai/fun?style=flat)](https://codecov.io/github/alebabai/fun)
+[![Coverage](https://img.shields.io/codecov/c/github/alebabai/fun)](https://codecov.io/github/alebabai/fun)
+[![Release](https://img.shields.io/github/release/alebabai/fun.svg)](https://github.com/alebabai/fun/releases)
+
 ## The Roadmap
 
 - [ ] Basic functional types
