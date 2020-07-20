@@ -1,5 +1,5 @@
 PACKAGES				:= ./...
-GOLANGCI_LINT_VERSION	:= v1.28.3
+GOLANGCI_LINT_VERSION	:= v1.28.0
 
 .PHONY: all
 all: install test
