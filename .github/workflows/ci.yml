@@ -6,7 +6,18 @@ on:
 
 jobs:
   pipeline:
+    name: pipiline(${{ matrix.module.name }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module:
+          - name: codegen
+            directory: ./_codegen
+          - name: fun
+            directory: .
+    defaults:
+      run:
+        working-directory: ${{ matrix.module.directory }}
 
     steps:
       - uses: actions/checkout@v2
