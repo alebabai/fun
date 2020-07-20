@@ -1,5 +1,5 @@
 PACKAGES				:= ./...
-GO_COVER_REPORT			:= coverage.out
+GO_COVER_PROFILE		:= coverage.out
 GOLANGCI_LINT_VERSION	:= v1.28.0
 
 .PHONY: all
@@ -31,7 +31,7 @@ test: prepare
 .PHONY: coverage
 coverage: test
 	go tool cover -func=$(GO_COVER_PROFILE) -o coverage.txt
-	go tool cover -html=$GO_COVER_PROFILEE) -o coverage.html
+	go tool cover -html=$(GO_COVER_PROFILE) -o coverage.html
 
 .PHONY: lint
 lint: prepare
