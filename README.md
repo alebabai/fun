@@ -26,10 +26,11 @@
     - [x] Run lints
     - [x] Build artifacts
     - [x] Run tests
-    - [ ] Coverage report (codecov)
-  - [ ] Documentation
-    - [ ] Review codebase docs
-    - [ ] Deploy to docs hub (https://pkg.go.dev/)
-  - [ ] Prettify README (structure/badges/etc)
+    - [x] Coverage report (codecov)
+    - [ ] Add badges to the README
+- [ ] Documentation
+  - [ ] Review codebase docs
+  - [ ] Deploy to docs hub (https://pkg.go.dev/)
+  - [ ] Add examples to the README
 - [ ] Complex function types
   - [ ] Optional
