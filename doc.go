@@ -2,6 +2,6 @@
 Package fun contains functional types with useful helper methods.
 
 
-For a full information visit https://github.com/alebabai/fun
+For more information, please visit https://github.com/alebabai/fun
 */
 package fun
