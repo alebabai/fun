@@ -12,7 +12,7 @@ jobs:
       matrix:
         module:
           - name: codegen
-            directory: ./_codegen
+            directory: ./codegen
           - name: fun
             directory: .
     defaults:
