@@ -123,3 +123,6 @@ modules.xml
 
 _codegen/codegen
 _codegen/_test/*.go
+
+coverage.txt
+coverage.html
