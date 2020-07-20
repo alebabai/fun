@@ -22,7 +22,7 @@
     - [x] Choose engine
     - [x] Develop templates
     - [x] Develop data structure
-- [ ] Infrastructure  
+- [x] Infrastructure  
   - [x] Makefile
   - [x] CI/CD
     - [x] Test codegen
@@ -33,7 +33,7 @@
     - [x] Add badges to the README
 - [ ] Documentation
   - [ ] Review codebase docs
-  - [ ] Deploy to docs hub (https://pkg.go.dev/)
+  - [x] Deploy to docs hub (https://pkg.go.dev/)
   - [ ] Add examples to the README
 - [ ] Complex function types
   - [ ] Optional
