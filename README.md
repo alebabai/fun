@@ -7,6 +7,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/alebabai/fun)](https://goreportcard.com/report/github.com/alebabai/fun)
 [![Coverage](https://img.shields.io/codecov/c/github/alebabai/fun)](https://codecov.io/github/alebabai/fun)
 [![Release](https://img.shields.io/github/release/alebabai/fun.svg)](https://github.com/alebabai/fun/releases)
+[![GoDoc](https://godoc.org/github.com/alebabai/fun?status.svg)](https://pkg.go.dev/mod/github.com/alebabai/fun)
 
 ## The Roadmap
 
