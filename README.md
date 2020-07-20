@@ -21,13 +21,12 @@
     - [x] Develop data structure
 - [ ] Infrastructure  
   - [x] Makefile
-  - [ ] CI/CD
-    - [ ] Test codegen
-    - [ ] Run lints
-    - [ ] Run tests
+  - [x] CI/CD
+    - [x] Test codegen
+    - [x] Run lints
+    - [x] Build artifacts
+    - [x] Run tests
     - [ ] Coverage report (codecov)
-    - [ ] Build artifacts
-    - [ ] Release artifacts
   - [ ] Documentation
     - [ ] Review codebase docs
     - [ ] Deploy to docs hub (https://pkg.go.dev/)
