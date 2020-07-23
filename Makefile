@@ -5,8 +5,8 @@ GOLANGCI_LINT_VERSION	:= v1.28.0
 .PHONY: all
 all: install test
 
-.PNONY: codegen
-codegen:
+.PNONY: generate
+generate:
 	go generate -v $(PACKAGES)
 
 .PNONY: fmt
@@ -18,7 +18,7 @@ deps:
 	go mod tidy -v
 
 .PHONY: prepare
-prepare: deps codegen fmt
+prepare: deps generate fmt
 
 .PHONY: install
 install: prepare
