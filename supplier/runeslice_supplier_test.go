@@ -26,16 +26,18 @@ func testRuneSliceSupplierWithError() ([]rune, error) {
 
 func TestRuneSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RuneSliceSupplier
+		name    string
+		s       RuneSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRuneSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRuneSliceSupplierWithError,
+			name:    "with error",
+			s:       testRuneSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestRuneSliceSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestRuneSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestRuneSliceSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestRuneSliceSupplier(t *testing.T) {
 
 func TestRuneSliceSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RuneSliceSupplier
-		err  bool
+		name    string
+		s       RuneSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRuneSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRuneSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRuneSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestRuneSliceSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestRuneSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestRuneSliceSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestRuneSliceSupplier_ToSupplier(t *testing.T) {
 
 func TestRuneSliceSupplier_ToSilentRuneSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RuneSliceSupplier
-		err  bool
+		name    string
+		s       RuneSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRuneSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRuneSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRuneSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestRuneSliceSupplier_ToSilentRuneSliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestRuneSliceSupplier, v)
@@ -122,18 +124,18 @@ func TestRuneSliceSupplier_ToSilentRuneSliceSupplier(t *testing.T) {
 
 func TestRuneSliceSupplier_ToMustRuneSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RuneSliceSupplier
-		err  bool
+		name    string
+		s       RuneSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRuneSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRuneSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRuneSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestRuneSliceSupplier_ToMustRuneSliceSupplier(t *testing.T) {
 			ms := tt.s.ToMustRuneSliceSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestRuneSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentRuneSliceSupplier(t *testing.T) {
 
 func TestSilentRuneSliceSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RuneSliceSupplier
-		err  bool
+		name    string
+		s       RuneSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRuneSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRuneSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRuneSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentRuneSliceSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestRuneSliceSupplier, v)
@@ -211,18 +213,18 @@ func TestMustRuneSliceSupplier(t *testing.T) {
 
 func TestMustRuneSliceSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RuneSliceSupplier
-		err  bool
+		name    string
+		s       RuneSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRuneSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRuneSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRuneSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustRuneSliceSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestRuneSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustRuneSliceSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustRuneSliceSupplier_ToSilentRuneSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RuneSliceSupplier
-		err  bool
+		name    string
+		s       RuneSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRuneSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRuneSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRuneSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustRuneSliceSupplier_ToSilentRuneSliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestRuneSliceSupplier, v)
@@ -286,16 +288,18 @@ func TestMustRuneSliceSupplier_ToSilentRuneSliceSupplier(t *testing.T) {
 
 func TestMustRuneSliceSupplier_ToRuneSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RuneSliceSupplier
+		name    string
+		s       RuneSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRuneSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRuneSliceSupplierWithError,
+			name:    "with error",
+			s:       testRuneSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustRuneSliceSupplier_ToRuneSliceSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestRuneSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestRuneSliceSupplier, v)
 			}

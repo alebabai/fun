@@ -26,16 +26,18 @@ func testRunePtrSupplierWithError() (*rune, error) {
 
 func TestRunePtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RunePtrSupplier
+		name    string
+		s       RunePtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRunePtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRunePtrSupplierWithError,
+			name:    "with error",
+			s:       testRunePtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestRunePtrSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestRunePtrSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestRunePtrSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestRunePtrSupplier(t *testing.T) {
 
 func TestRunePtrSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RunePtrSupplier
-		err  bool
+		name    string
+		s       RunePtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRunePtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRunePtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRunePtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestRunePtrSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestRunePtrSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestRunePtrSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestRunePtrSupplier_ToSupplier(t *testing.T) {
 
 func TestRunePtrSupplier_ToSilentRunePtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RunePtrSupplier
-		err  bool
+		name    string
+		s       RunePtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRunePtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRunePtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRunePtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestRunePtrSupplier_ToSilentRunePtrSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestRunePtrSupplier, v)
@@ -122,18 +124,18 @@ func TestRunePtrSupplier_ToSilentRunePtrSupplier(t *testing.T) {
 
 func TestRunePtrSupplier_ToMustRunePtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RunePtrSupplier
-		err  bool
+		name    string
+		s       RunePtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRunePtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRunePtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRunePtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestRunePtrSupplier_ToMustRunePtrSupplier(t *testing.T) {
 			ms := tt.s.ToMustRunePtrSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestRunePtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentRunePtrSupplier(t *testing.T) {
 
 func TestSilentRunePtrSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RunePtrSupplier
-		err  bool
+		name    string
+		s       RunePtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRunePtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRunePtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRunePtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentRunePtrSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestRunePtrSupplier, v)
@@ -211,18 +213,18 @@ func TestMustRunePtrSupplier(t *testing.T) {
 
 func TestMustRunePtrSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RunePtrSupplier
-		err  bool
+		name    string
+		s       RunePtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRunePtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRunePtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRunePtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustRunePtrSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestRunePtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustRunePtrSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustRunePtrSupplier_ToSilentRunePtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RunePtrSupplier
-		err  bool
+		name    string
+		s       RunePtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRunePtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRunePtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testRunePtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustRunePtrSupplier_ToSilentRunePtrSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestRunePtrSupplier, v)
@@ -286,16 +288,18 @@ func TestMustRunePtrSupplier_ToSilentRunePtrSupplier(t *testing.T) {
 
 func TestMustRunePtrSupplier_ToRunePtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    RunePtrSupplier
+		name    string
+		s       RunePtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testRunePtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testRunePtrSupplierWithError,
+			name:    "with error",
+			s:       testRunePtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustRunePtrSupplier_ToRunePtrSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestRunePtrSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestRunePtrSupplier, v)
 			}

@@ -20,8 +20,9 @@ type testStringPtrSliceConsumerFactory func(t *testing.T) StringPtrSliceConsumer
 
 func TestStringPtrSliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testStringPtrSliceConsumerFactory
+		name    string
+		cf      testStringPtrSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestStringPtrSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					require.Equal(t, valTestStringPtrSliceConsumer, v)
 					return errTestStringPtrSliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestStringPtrSliceConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestStringPtrSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestStringPtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestStringPtrSliceConsumer(t *testing.T) {
 
 func TestStringPtrSliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testStringPtrSliceConsumerFactory
+		name    string
+		cf      testStringPtrSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestStringPtrSliceConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					require.Equal(t, valTestStringPtrSliceConsumer, v)
 					return errTestStringPtrSliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestStringPtrSliceConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestStringPtrSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestStringPtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestStringPtrSliceConsumer_ToConsumer(t *testing.T) {
 func TestStringPtrSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testStringPtrSliceConsumerFactory
-		cf2   testStringPtrSliceConsumerFactory
-		calls int
+		name    string
+		cf1     testStringPtrSliceConsumerFactory
+		cf2     testStringPtrSliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestStringPtrSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					calls++
@@ -145,7 +150,8 @@ func TestStringPtrSliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestStringPtrSliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestStringPtrSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestStringPtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestStringPtrSliceConsumer_ToSilentStringPtrSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					require.Equal(t, valTestStringPtrSliceConsumer, v)
@@ -238,7 +244,7 @@ func TestStringPtrSliceConsumer_ToMustStringPtrSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					require.Equal(t, valTestStringPtrSliceConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentStringPtrSliceConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					require.Equal(t, valTestStringPtrSliceConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentStringPtrSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustStringPtrSliceConsumer(t *testing.T) {
 
 func TestMustStringPtrSliceConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testStringPtrSliceConsumerFactory
-		err  bool
+		name    string
+		cf      testStringPtrSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustStringPtrSliceConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					require.Equal(t, valTestStringPtrSliceConsumer, v)
 					return errTestStringPtrSliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustStringPtrSliceConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestStringPtrSliceConsumer.Error(), func() {
 					mc(valTestStringPtrSliceConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustStringPtrSliceConsumer_ToMustConsumer(t *testing.T) {
 func TestMustStringPtrSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testStringPtrSliceConsumerFactory
-		cf2   testStringPtrSliceConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testStringPtrSliceConsumerFactory
+		cf2     testStringPtrSliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustStringPtrSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustStringPtrSliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustStringPtrSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestStringPtrSliceConsumer.Error(), func() {
 					cmc(valTestStringPtrSliceConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustStringPtrSliceConsumer_ToSilentStringPtrSliceConsumer(t *testing.T)
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					require.Equal(t, valTestStringPtrSliceConsumer, v)
@@ -600,9 +606,9 @@ func TestMustStringPtrSliceConsumer_ToSilentStringPtrSliceConsumer(t *testing.T)
 
 func TestMustStringPtrSliceConsumer_ToStringPtrSliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testStringPtrSliceConsumerFactory
-		err  bool
+		name    string
+		cf      testStringPtrSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustStringPtrSliceConsumer_ToStringPtrSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrSliceConsumer {
 				return func(v []*string) error {
 					require.Equal(t, valTestStringPtrSliceConsumer, v)
 					return errTestStringPtrSliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustStringPtrSliceConsumer_ToStringPtrSliceConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestStringPtrSliceConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestStringPtrSliceConsumer.Error())
 			}
 		})

@@ -20,8 +20,9 @@ type testByteSliceConsumerFactory func(t *testing.T) ByteSliceConsumer
 
 func TestByteSliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testByteSliceConsumerFactory
+		name    string
+		cf      testByteSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestByteSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					require.Equal(t, valTestByteSliceConsumer, v)
 					return errTestByteSliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestByteSliceConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestByteSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestByteSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestByteSliceConsumer(t *testing.T) {
 
 func TestByteSliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testByteSliceConsumerFactory
+		name    string
+		cf      testByteSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestByteSliceConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					require.Equal(t, valTestByteSliceConsumer, v)
 					return errTestByteSliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestByteSliceConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestByteSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestByteSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestByteSliceConsumer_ToConsumer(t *testing.T) {
 func TestByteSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testByteSliceConsumerFactory
-		cf2   testByteSliceConsumerFactory
-		calls int
+		name    string
+		cf1     testByteSliceConsumerFactory
+		cf2     testByteSliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestByteSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					calls++
@@ -145,7 +150,8 @@ func TestByteSliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestByteSliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestByteSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestByteSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestByteSliceConsumer_ToSilentByteSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					require.Equal(t, valTestByteSliceConsumer, v)
@@ -238,7 +244,7 @@ func TestByteSliceConsumer_ToMustByteSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					require.Equal(t, valTestByteSliceConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentByteSliceConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					require.Equal(t, valTestByteSliceConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentByteSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustByteSliceConsumer(t *testing.T) {
 
 func TestMustByteSliceConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testByteSliceConsumerFactory
-		err  bool
+		name    string
+		cf      testByteSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustByteSliceConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					require.Equal(t, valTestByteSliceConsumer, v)
 					return errTestByteSliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustByteSliceConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestByteSliceConsumer.Error(), func() {
 					mc(valTestByteSliceConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustByteSliceConsumer_ToMustConsumer(t *testing.T) {
 func TestMustByteSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testByteSliceConsumerFactory
-		cf2   testByteSliceConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testByteSliceConsumerFactory
+		cf2     testByteSliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustByteSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustByteSliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustByteSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestByteSliceConsumer.Error(), func() {
 					cmc(valTestByteSliceConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustByteSliceConsumer_ToSilentByteSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					require.Equal(t, valTestByteSliceConsumer, v)
@@ -600,9 +606,9 @@ func TestMustByteSliceConsumer_ToSilentByteSliceConsumer(t *testing.T) {
 
 func TestMustByteSliceConsumer_ToByteSliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testByteSliceConsumerFactory
-		err  bool
+		name    string
+		cf      testByteSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustByteSliceConsumer_ToByteSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteSliceConsumer {
 				return func(v []byte) error {
 					require.Equal(t, valTestByteSliceConsumer, v)
 					return errTestByteSliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustByteSliceConsumer_ToByteSliceConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestByteSliceConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestByteSliceConsumer.Error())
 			}
 		})

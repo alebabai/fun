@@ -26,16 +26,18 @@ func testInt8PtrSupplierWithError() (*int8, error) {
 
 func TestInt8PtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8PtrSupplier
+		name    string
+		s       Int8PtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8PtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8PtrSupplierWithError,
+			name:    "with error",
+			s:       testInt8PtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestInt8PtrSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8PtrSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8PtrSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestInt8PtrSupplier(t *testing.T) {
 
 func TestInt8PtrSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8PtrSupplier
-		err  bool
+		name    string
+		s       Int8PtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8PtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8PtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8PtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestInt8PtrSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8PtrSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8PtrSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestInt8PtrSupplier_ToSupplier(t *testing.T) {
 
 func TestInt8PtrSupplier_ToSilentInt8PtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8PtrSupplier
-		err  bool
+		name    string
+		s       Int8PtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8PtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8PtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8PtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestInt8PtrSupplier_ToSilentInt8PtrSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8PtrSupplier, v)
@@ -122,18 +124,18 @@ func TestInt8PtrSupplier_ToSilentInt8PtrSupplier(t *testing.T) {
 
 func TestInt8PtrSupplier_ToMustInt8PtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8PtrSupplier
-		err  bool
+		name    string
+		s       Int8PtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8PtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8PtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8PtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestInt8PtrSupplier_ToMustInt8PtrSupplier(t *testing.T) {
 			ms := tt.s.ToMustInt8PtrSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestInt8PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentInt8PtrSupplier(t *testing.T) {
 
 func TestSilentInt8PtrSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8PtrSupplier
-		err  bool
+		name    string
+		s       Int8PtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8PtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8PtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8PtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentInt8PtrSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8PtrSupplier, v)
@@ -211,18 +213,18 @@ func TestMustInt8PtrSupplier(t *testing.T) {
 
 func TestMustInt8PtrSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8PtrSupplier
-		err  bool
+		name    string
+		s       Int8PtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8PtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8PtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8PtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustInt8PtrSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestInt8PtrSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustInt8PtrSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustInt8PtrSupplier_ToSilentInt8PtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8PtrSupplier
-		err  bool
+		name    string
+		s       Int8PtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8PtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8PtrSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8PtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustInt8PtrSupplier_ToSilentInt8PtrSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8PtrSupplier, v)
@@ -286,16 +288,18 @@ func TestMustInt8PtrSupplier_ToSilentInt8PtrSupplier(t *testing.T) {
 
 func TestMustInt8PtrSupplier_ToInt8PtrSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8PtrSupplier
+		name    string
+		s       Int8PtrSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8PtrSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8PtrSupplierWithError,
+			name:    "with error",
+			s:       testInt8PtrSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustInt8PtrSupplier_ToInt8PtrSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8PtrSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8PtrSupplier, v)
 			}

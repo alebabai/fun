@@ -20,8 +20,9 @@ type testUintConsumerFactory func(t *testing.T) UintConsumer
 
 func TestUintConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUintConsumerFactory
+		name    string
+		cf      testUintConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestUintConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					require.Equal(t, valTestUintConsumer, v)
 					return errTestUintConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestUintConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestUintConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestUintConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestUintConsumer(t *testing.T) {
 
 func TestUintConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUintConsumerFactory
+		name    string
+		cf      testUintConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestUintConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					require.Equal(t, valTestUintConsumer, v)
 					return errTestUintConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestUintConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestUintConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestUintConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestUintConsumer_ToConsumer(t *testing.T) {
 func TestUintConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testUintConsumerFactory
-		cf2   testUintConsumerFactory
-		calls int
+		name    string
+		cf1     testUintConsumerFactory
+		cf2     testUintConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestUintConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					calls++
@@ -145,7 +150,8 @@ func TestUintConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestUintConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestUintConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestUintConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestUintConsumer_ToSilentUintConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					require.Equal(t, valTestUintConsumer, v)
@@ -238,7 +244,7 @@ func TestUintConsumer_ToMustUintConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					require.Equal(t, valTestUintConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentUintConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					require.Equal(t, valTestUintConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentUintConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustUintConsumer(t *testing.T) {
 
 func TestMustUintConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUintConsumerFactory
-		err  bool
+		name    string
+		cf      testUintConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustUintConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					require.Equal(t, valTestUintConsumer, v)
 					return errTestUintConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustUintConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUintConsumer.Error(), func() {
 					mc(valTestUintConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustUintConsumer_ToMustConsumer(t *testing.T) {
 func TestMustUintConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testUintConsumerFactory
-		cf2   testUintConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testUintConsumerFactory
+		cf2     testUintConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustUintConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustUintConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustUintConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUintConsumer.Error(), func() {
 					cmc(valTestUintConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustUintConsumer_ToSilentUintConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					require.Equal(t, valTestUintConsumer, v)
@@ -600,9 +606,9 @@ func TestMustUintConsumer_ToSilentUintConsumer(t *testing.T) {
 
 func TestMustUintConsumer_ToUintConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUintConsumerFactory
-		err  bool
+		name    string
+		cf      testUintConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustUintConsumer_ToUintConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintConsumer {
 				return func(v uint) error {
 					require.Equal(t, valTestUintConsumer, v)
 					return errTestUintConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustUintConsumer_ToUintConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestUintConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestUintConsumer.Error())
 			}
 		})

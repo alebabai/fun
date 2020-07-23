@@ -20,8 +20,9 @@ type testStringPtrConsumerFactory func(t *testing.T) StringPtrConsumer
 
 func TestStringPtrConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testStringPtrConsumerFactory
+		name    string
+		cf      testStringPtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestStringPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					require.Equal(t, valTestStringPtrConsumer, v)
 					return errTestStringPtrConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestStringPtrConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestStringPtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestStringPtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestStringPtrConsumer(t *testing.T) {
 
 func TestStringPtrConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testStringPtrConsumerFactory
+		name    string
+		cf      testStringPtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestStringPtrConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					require.Equal(t, valTestStringPtrConsumer, v)
 					return errTestStringPtrConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestStringPtrConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestStringPtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestStringPtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestStringPtrConsumer_ToConsumer(t *testing.T) {
 func TestStringPtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testStringPtrConsumerFactory
-		cf2   testStringPtrConsumerFactory
-		calls int
+		name    string
+		cf1     testStringPtrConsumerFactory
+		cf2     testStringPtrConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestStringPtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
@@ -145,7 +150,8 @@ func TestStringPtrConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestStringPtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestStringPtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestStringPtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestStringPtrConsumer_ToSilentStringPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					require.Equal(t, valTestStringPtrConsumer, v)
@@ -238,7 +244,7 @@ func TestStringPtrConsumer_ToMustStringPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					require.Equal(t, valTestStringPtrConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentStringPtrConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					require.Equal(t, valTestStringPtrConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentStringPtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustStringPtrConsumer(t *testing.T) {
 
 func TestMustStringPtrConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testStringPtrConsumerFactory
-		err  bool
+		name    string
+		cf      testStringPtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustStringPtrConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					require.Equal(t, valTestStringPtrConsumer, v)
 					return errTestStringPtrConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustStringPtrConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestStringPtrConsumer.Error(), func() {
 					mc(valTestStringPtrConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustStringPtrConsumer_ToMustConsumer(t *testing.T) {
 func TestMustStringPtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testStringPtrConsumerFactory
-		cf2   testStringPtrConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testStringPtrConsumerFactory
+		cf2     testStringPtrConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustStringPtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustStringPtrConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustStringPtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestStringPtrConsumer.Error(), func() {
 					cmc(valTestStringPtrConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustStringPtrConsumer_ToSilentStringPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					require.Equal(t, valTestStringPtrConsumer, v)
@@ -600,9 +606,9 @@ func TestMustStringPtrConsumer_ToSilentStringPtrConsumer(t *testing.T) {
 
 func TestMustStringPtrConsumer_ToStringPtrConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testStringPtrConsumerFactory
-		err  bool
+		name    string
+		cf      testStringPtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustStringPtrConsumer_ToStringPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) StringPtrConsumer {
 				return func(v *string) error {
 					require.Equal(t, valTestStringPtrConsumer, v)
 					return errTestStringPtrConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustStringPtrConsumer_ToStringPtrConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestStringPtrConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestStringPtrConsumer.Error())
 			}
 		})

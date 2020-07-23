@@ -26,16 +26,18 @@ func testSupplierWithError() (interface{}, error) {
 
 func TestSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Supplier
+		name    string
+		s       Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testSupplierWithError,
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestSupplier(t *testing.T) {
 
 func TestSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Supplier
-		err  bool
+		name    string
+		s       Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,7 +79,7 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestSupplier, v)
@@ -88,18 +90,18 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Supplier
-		err  bool
+		name    string
+		s       Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -109,7 +111,7 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 			ms := tt.s.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -141,18 +143,18 @@ func TestMustSupplier(t *testing.T) {
 
 func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Supplier
-		err  bool
+		name    string
+		s       Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -166,7 +168,7 @@ func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestSupplier, v)
@@ -177,16 +179,18 @@ func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 
 func TestMustSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Supplier
+		name    string
+		s       Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testSupplierWithError,
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -200,9 +204,9 @@ func TestMustSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestSupplier, v)
 			}

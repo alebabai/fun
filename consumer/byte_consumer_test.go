@@ -20,8 +20,9 @@ type testByteConsumerFactory func(t *testing.T) ByteConsumer
 
 func TestByteConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testByteConsumerFactory
+		name    string
+		cf      testByteConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestByteConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					require.Equal(t, valTestByteConsumer, v)
 					return errTestByteConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestByteConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestByteConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestByteConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestByteConsumer(t *testing.T) {
 
 func TestByteConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testByteConsumerFactory
+		name    string
+		cf      testByteConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestByteConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					require.Equal(t, valTestByteConsumer, v)
 					return errTestByteConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestByteConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestByteConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestByteConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestByteConsumer_ToConsumer(t *testing.T) {
 func TestByteConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testByteConsumerFactory
-		cf2   testByteConsumerFactory
-		calls int
+		name    string
+		cf1     testByteConsumerFactory
+		cf2     testByteConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestByteConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					calls++
@@ -145,7 +150,8 @@ func TestByteConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestByteConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestByteConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestByteConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestByteConsumer_ToSilentByteConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					require.Equal(t, valTestByteConsumer, v)
@@ -238,7 +244,7 @@ func TestByteConsumer_ToMustByteConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					require.Equal(t, valTestByteConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentByteConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					require.Equal(t, valTestByteConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentByteConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustByteConsumer(t *testing.T) {
 
 func TestMustByteConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testByteConsumerFactory
-		err  bool
+		name    string
+		cf      testByteConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustByteConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					require.Equal(t, valTestByteConsumer, v)
 					return errTestByteConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustByteConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestByteConsumer.Error(), func() {
 					mc(valTestByteConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustByteConsumer_ToMustConsumer(t *testing.T) {
 func TestMustByteConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testByteConsumerFactory
-		cf2   testByteConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testByteConsumerFactory
+		cf2     testByteConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustByteConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustByteConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustByteConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestByteConsumer.Error(), func() {
 					cmc(valTestByteConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustByteConsumer_ToSilentByteConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					require.Equal(t, valTestByteConsumer, v)
@@ -600,9 +606,9 @@ func TestMustByteConsumer_ToSilentByteConsumer(t *testing.T) {
 
 func TestMustByteConsumer_ToByteConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testByteConsumerFactory
-		err  bool
+		name    string
+		cf      testByteConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustByteConsumer_ToByteConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) ByteConsumer {
 				return func(v byte) error {
 					require.Equal(t, valTestByteConsumer, v)
 					return errTestByteConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustByteConsumer_ToByteConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestByteConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestByteConsumer.Error())
 			}
 		})

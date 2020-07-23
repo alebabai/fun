@@ -26,16 +26,18 @@ func testInt8SliceSupplierWithError() ([]int8, error) {
 
 func TestInt8SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8SliceSupplier
+		name    string
+		s       Int8SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8SliceSupplierWithError,
+			name:    "with error",
+			s:       testInt8SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestInt8SliceSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8SliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8SliceSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestInt8SliceSupplier(t *testing.T) {
 
 func TestInt8SliceSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8SliceSupplier
-		err  bool
+		name    string
+		s       Int8SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestInt8SliceSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8SliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8SliceSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestInt8SliceSupplier_ToSupplier(t *testing.T) {
 
 func TestInt8SliceSupplier_ToSilentInt8SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8SliceSupplier
-		err  bool
+		name    string
+		s       Int8SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestInt8SliceSupplier_ToSilentInt8SliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8SliceSupplier, v)
@@ -122,18 +124,18 @@ func TestInt8SliceSupplier_ToSilentInt8SliceSupplier(t *testing.T) {
 
 func TestInt8SliceSupplier_ToMustInt8SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8SliceSupplier
-		err  bool
+		name    string
+		s       Int8SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestInt8SliceSupplier_ToMustInt8SliceSupplier(t *testing.T) {
 			ms := tt.s.ToMustInt8SliceSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestInt8SliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentInt8SliceSupplier(t *testing.T) {
 
 func TestSilentInt8SliceSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8SliceSupplier
-		err  bool
+		name    string
+		s       Int8SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentInt8SliceSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8SliceSupplier, v)
@@ -211,18 +213,18 @@ func TestMustInt8SliceSupplier(t *testing.T) {
 
 func TestMustInt8SliceSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8SliceSupplier
-		err  bool
+		name    string
+		s       Int8SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustInt8SliceSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestInt8SliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustInt8SliceSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustInt8SliceSupplier_ToSilentInt8SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8SliceSupplier
-		err  bool
+		name    string
+		s       Int8SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testInt8SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustInt8SliceSupplier_ToSilentInt8SliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8SliceSupplier, v)
@@ -286,16 +288,18 @@ func TestMustInt8SliceSupplier_ToSilentInt8SliceSupplier(t *testing.T) {
 
 func TestMustInt8SliceSupplier_ToInt8SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Int8SliceSupplier
+		name    string
+		s       Int8SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testInt8SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testInt8SliceSupplierWithError,
+			name:    "with error",
+			s:       testInt8SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustInt8SliceSupplier_ToInt8SliceSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8SliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestInt8SliceSupplier, v)
 			}

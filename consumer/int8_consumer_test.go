@@ -20,8 +20,9 @@ type testInt8ConsumerFactory func(t *testing.T) Int8Consumer
 
 func TestInt8Consumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testInt8ConsumerFactory
+		name    string
+		cf      testInt8ConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestInt8Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					require.Equal(t, valTestInt8Consumer, v)
 					return errTestInt8Consumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestInt8Consumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestInt8Consumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8Consumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestInt8Consumer(t *testing.T) {
 
 func TestInt8Consumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testInt8ConsumerFactory
+		name    string
+		cf      testInt8ConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestInt8Consumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					require.Equal(t, valTestInt8Consumer, v)
 					return errTestInt8Consumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestInt8Consumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestInt8Consumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8Consumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestInt8Consumer_ToConsumer(t *testing.T) {
 func TestInt8Consumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testInt8ConsumerFactory
-		cf2   testInt8ConsumerFactory
-		calls int
+		name    string
+		cf1     testInt8ConsumerFactory
+		cf2     testInt8ConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestInt8Consumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					calls++
@@ -145,7 +150,8 @@ func TestInt8Consumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestInt8Consumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestInt8Consumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8Consumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestInt8Consumer_ToSilentInt8Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					require.Equal(t, valTestInt8Consumer, v)
@@ -238,7 +244,7 @@ func TestInt8Consumer_ToMustInt8Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					require.Equal(t, valTestInt8Consumer, v)
@@ -290,7 +296,7 @@ func TestSilentInt8Consumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					require.Equal(t, valTestInt8Consumer, v)
@@ -344,7 +350,7 @@ func TestSilentInt8Consumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustInt8Consumer(t *testing.T) {
 
 func TestMustInt8Consumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testInt8ConsumerFactory
-		err  bool
+		name    string
+		cf      testInt8ConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustInt8Consumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					require.Equal(t, valTestInt8Consumer, v)
 					return errTestInt8Consumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustInt8Consumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestInt8Consumer.Error(), func() {
 					mc(valTestInt8Consumer)
 				})
@@ -463,11 +469,11 @@ func TestMustInt8Consumer_ToMustConsumer(t *testing.T) {
 func TestMustInt8Consumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testInt8ConsumerFactory
-		cf2   testInt8ConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testInt8ConsumerFactory
+		cf2     testInt8ConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustInt8Consumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustInt8Consumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustInt8Consumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestInt8Consumer.Error(), func() {
 					cmc(valTestInt8Consumer)
 				})
@@ -572,7 +578,7 @@ func TestMustInt8Consumer_ToSilentInt8Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					require.Equal(t, valTestInt8Consumer, v)
@@ -600,9 +606,9 @@ func TestMustInt8Consumer_ToSilentInt8Consumer(t *testing.T) {
 
 func TestMustInt8Consumer_ToInt8Consumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testInt8ConsumerFactory
-		err  bool
+		name    string
+		cf      testInt8ConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustInt8Consumer_ToInt8Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Int8Consumer {
 				return func(v int8) error {
 					require.Equal(t, valTestInt8Consumer, v)
 					return errTestInt8Consumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustInt8Consumer_ToInt8Consumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestInt8Consumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestInt8Consumer.Error())
 			}
 		})

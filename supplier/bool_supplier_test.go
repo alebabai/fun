@@ -26,16 +26,18 @@ func testBoolSupplierWithError() (bool, error) {
 
 func TestBoolSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BoolSupplier
+		name    string
+		s       BoolSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBoolSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBoolSupplierWithError,
+			name:    "with error",
+			s:       testBoolSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestBoolSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestBoolSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestBoolSupplier(t *testing.T) {
 
 func TestBoolSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BoolSupplier
-		err  bool
+		name    string
+		s       BoolSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBoolSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBoolSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBoolSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestBoolSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestBoolSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestBoolSupplier_ToSupplier(t *testing.T) {
 
 func TestBoolSupplier_ToSilentBoolSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BoolSupplier
-		err  bool
+		name    string
+		s       BoolSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBoolSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBoolSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBoolSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestBoolSupplier_ToSilentBoolSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestBoolSupplier, v)
@@ -122,18 +124,18 @@ func TestBoolSupplier_ToSilentBoolSupplier(t *testing.T) {
 
 func TestBoolSupplier_ToMustBoolSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BoolSupplier
-		err  bool
+		name    string
+		s       BoolSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBoolSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBoolSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBoolSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestBoolSupplier_ToMustBoolSupplier(t *testing.T) {
 			ms := tt.s.ToMustBoolSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBoolSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentBoolSupplier(t *testing.T) {
 
 func TestSilentBoolSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BoolSupplier
-		err  bool
+		name    string
+		s       BoolSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBoolSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBoolSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBoolSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentBoolSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestBoolSupplier, v)
@@ -211,18 +213,18 @@ func TestMustBoolSupplier(t *testing.T) {
 
 func TestMustBoolSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BoolSupplier
-		err  bool
+		name    string
+		s       BoolSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBoolSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBoolSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBoolSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustBoolSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBoolSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustBoolSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustBoolSupplier_ToSilentBoolSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BoolSupplier
-		err  bool
+		name    string
+		s       BoolSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBoolSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBoolSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBoolSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustBoolSupplier_ToSilentBoolSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestBoolSupplier, v)
@@ -286,16 +288,18 @@ func TestMustBoolSupplier_ToSilentBoolSupplier(t *testing.T) {
 
 func TestMustBoolSupplier_ToBoolSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BoolSupplier
+		name    string
+		s       BoolSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBoolSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBoolSupplierWithError,
+			name:    "with error",
+			s:       testBoolSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustBoolSupplier_ToBoolSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestBoolSupplier, v)
 			}

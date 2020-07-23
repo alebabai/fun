@@ -26,16 +26,18 @@ func testUint8SupplierWithError() (uint8, error) {
 
 func TestUint8Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint8Supplier
+		name    string
+		s       Uint8Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint8Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint8SupplierWithError,
+			name:    "with error",
+			s:       testUint8SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestUint8Supplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestUint8Supplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestUint8Supplier, v)
 			}
@@ -55,18 +57,18 @@ func TestUint8Supplier(t *testing.T) {
 
 func TestUint8Supplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint8Supplier
-		err  bool
+		name    string
+		s       Uint8Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint8Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint8SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint8SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestUint8Supplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestUint8Supplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestUint8Supplier, v)
 			}
@@ -89,18 +91,18 @@ func TestUint8Supplier_ToSupplier(t *testing.T) {
 
 func TestUint8Supplier_ToSilentUint8Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint8Supplier
-		err  bool
+		name    string
+		s       Uint8Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint8Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint8SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint8SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestUint8Supplier_ToSilentUint8Supplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestUint8Supplier, v)
@@ -122,18 +124,18 @@ func TestUint8Supplier_ToSilentUint8Supplier(t *testing.T) {
 
 func TestUint8Supplier_ToMustUint8Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint8Supplier
-		err  bool
+		name    string
+		s       Uint8Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint8Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint8SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint8SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestUint8Supplier_ToMustUint8Supplier(t *testing.T) {
 			ms := tt.s.ToMustUint8Supplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUint8Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentUint8Supplier(t *testing.T) {
 
 func TestSilentUint8Supplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint8Supplier
-		err  bool
+		name    string
+		s       Uint8Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint8Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint8SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint8SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentUint8Supplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestUint8Supplier, v)
@@ -211,18 +213,18 @@ func TestMustUint8Supplier(t *testing.T) {
 
 func TestMustUint8Supplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint8Supplier
-		err  bool
+		name    string
+		s       Uint8Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint8Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint8SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint8SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustUint8Supplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUint8Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustUint8Supplier_ToMustSupplier(t *testing.T) {
 
 func TestMustUint8Supplier_ToSilentUint8Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint8Supplier
-		err  bool
+		name    string
+		s       Uint8Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint8Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint8SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint8SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustUint8Supplier_ToSilentUint8Supplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestUint8Supplier, v)
@@ -286,16 +288,18 @@ func TestMustUint8Supplier_ToSilentUint8Supplier(t *testing.T) {
 
 func TestMustUint8Supplier_ToUint8Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint8Supplier
+		name    string
+		s       Uint8Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint8Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint8SupplierWithError,
+			name:    "with error",
+			s:       testUint8SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustUint8Supplier_ToUint8Supplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestUint8Supplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestUint8Supplier, v)
 			}

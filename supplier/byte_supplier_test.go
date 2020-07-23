@@ -26,16 +26,18 @@ func testByteSupplierWithError() (byte, error) {
 
 func TestByteSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    ByteSupplier
+		name    string
+		s       ByteSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testByteSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testByteSupplierWithError,
+			name:    "with error",
+			s:       testByteSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestByteSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestByteSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestByteSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestByteSupplier(t *testing.T) {
 
 func TestByteSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    ByteSupplier
-		err  bool
+		name    string
+		s       ByteSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testByteSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testByteSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testByteSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestByteSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestByteSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestByteSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestByteSupplier_ToSupplier(t *testing.T) {
 
 func TestByteSupplier_ToSilentByteSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    ByteSupplier
-		err  bool
+		name    string
+		s       ByteSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testByteSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testByteSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testByteSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestByteSupplier_ToSilentByteSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestByteSupplier, v)
@@ -122,18 +124,18 @@ func TestByteSupplier_ToSilentByteSupplier(t *testing.T) {
 
 func TestByteSupplier_ToMustByteSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    ByteSupplier
-		err  bool
+		name    string
+		s       ByteSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testByteSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testByteSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testByteSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestByteSupplier_ToMustByteSupplier(t *testing.T) {
 			ms := tt.s.ToMustByteSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestByteSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentByteSupplier(t *testing.T) {
 
 func TestSilentByteSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    ByteSupplier
-		err  bool
+		name    string
+		s       ByteSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testByteSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testByteSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testByteSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentByteSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestByteSupplier, v)
@@ -211,18 +213,18 @@ func TestMustByteSupplier(t *testing.T) {
 
 func TestMustByteSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    ByteSupplier
-		err  bool
+		name    string
+		s       ByteSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testByteSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testByteSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testByteSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustByteSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestByteSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustByteSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustByteSupplier_ToSilentByteSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    ByteSupplier
-		err  bool
+		name    string
+		s       ByteSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testByteSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testByteSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testByteSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustByteSupplier_ToSilentByteSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestByteSupplier, v)
@@ -286,16 +288,18 @@ func TestMustByteSupplier_ToSilentByteSupplier(t *testing.T) {
 
 func TestMustByteSupplier_ToByteSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    ByteSupplier
+		name    string
+		s       ByteSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testByteSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testByteSupplierWithError,
+			name:    "with error",
+			s:       testByteSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustByteSupplier_ToByteSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestByteSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestByteSupplier, v)
 			}

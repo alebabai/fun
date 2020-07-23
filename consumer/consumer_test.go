@@ -20,8 +20,9 @@ type testConsumerFactory func(t *testing.T) Consumer
 
 func TestConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testConsumerFactory
+		name    string
+		cf      testConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					require.Equal(t, valTestConsumer, v)
 					return errTestConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -60,10 +62,11 @@ func TestConsumer(t *testing.T) {
 func TestConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testConsumerFactory
-		cf2   testConsumerFactory
-		calls int
+		name    string
+		cf1     testConsumerFactory
+		cf2     testConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -86,7 +89,7 @@ func TestConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
@@ -103,7 +106,8 @@ func TestConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -133,7 +137,7 @@ func TestConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -158,7 +162,7 @@ func TestConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					require.Equal(t, valTestConsumer, v)
@@ -196,7 +200,7 @@ func TestConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					require.Equal(t, valTestConsumer, v)
@@ -262,7 +266,7 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
@@ -333,11 +337,11 @@ func TestMustConsumer(t *testing.T) {
 func TestMustConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testConsumerFactory
-		cf2   testConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testConsumerFactory
+		cf2     testConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -360,7 +364,7 @@ func TestMustConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
@@ -377,8 +381,8 @@ func TestMustConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -415,7 +419,7 @@ func TestMustConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestConsumer.Error(), func() {
 					cmc(valTestConsumer)
 				})
@@ -442,7 +446,7 @@ func TestMustConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					require.Equal(t, valTestConsumer, v)
@@ -470,9 +474,9 @@ func TestMustConsumer_ToSilentConsumer(t *testing.T) {
 
 func TestMustConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testConsumerFactory
-		err  bool
+		name    string
+		cf      testConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -484,14 +488,14 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					require.Equal(t, valTestConsumer, v)
 					return errTestConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -507,7 +511,7 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestConsumer.Error())
 			}
 		})

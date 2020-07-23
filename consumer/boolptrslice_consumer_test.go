@@ -20,8 +20,9 @@ type testBoolPtrSliceConsumerFactory func(t *testing.T) BoolPtrSliceConsumer
 
 func TestBoolPtrSliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBoolPtrSliceConsumerFactory
+		name    string
+		cf      testBoolPtrSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestBoolPtrSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					require.Equal(t, valTestBoolPtrSliceConsumer, v)
 					return errTestBoolPtrSliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestBoolPtrSliceConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestBoolPtrSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolPtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestBoolPtrSliceConsumer(t *testing.T) {
 
 func TestBoolPtrSliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBoolPtrSliceConsumerFactory
+		name    string
+		cf      testBoolPtrSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestBoolPtrSliceConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					require.Equal(t, valTestBoolPtrSliceConsumer, v)
 					return errTestBoolPtrSliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestBoolPtrSliceConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestBoolPtrSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolPtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestBoolPtrSliceConsumer_ToConsumer(t *testing.T) {
 func TestBoolPtrSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testBoolPtrSliceConsumerFactory
-		cf2   testBoolPtrSliceConsumerFactory
-		calls int
+		name    string
+		cf1     testBoolPtrSliceConsumerFactory
+		cf2     testBoolPtrSliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestBoolPtrSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					calls++
@@ -145,7 +150,8 @@ func TestBoolPtrSliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestBoolPtrSliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestBoolPtrSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolPtrSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestBoolPtrSliceConsumer_ToSilentBoolPtrSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					require.Equal(t, valTestBoolPtrSliceConsumer, v)
@@ -238,7 +244,7 @@ func TestBoolPtrSliceConsumer_ToMustBoolPtrSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					require.Equal(t, valTestBoolPtrSliceConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentBoolPtrSliceConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					require.Equal(t, valTestBoolPtrSliceConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentBoolPtrSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustBoolPtrSliceConsumer(t *testing.T) {
 
 func TestMustBoolPtrSliceConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBoolPtrSliceConsumerFactory
-		err  bool
+		name    string
+		cf      testBoolPtrSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustBoolPtrSliceConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					require.Equal(t, valTestBoolPtrSliceConsumer, v)
 					return errTestBoolPtrSliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustBoolPtrSliceConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBoolPtrSliceConsumer.Error(), func() {
 					mc(valTestBoolPtrSliceConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustBoolPtrSliceConsumer_ToMustConsumer(t *testing.T) {
 func TestMustBoolPtrSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testBoolPtrSliceConsumerFactory
-		cf2   testBoolPtrSliceConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testBoolPtrSliceConsumerFactory
+		cf2     testBoolPtrSliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustBoolPtrSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustBoolPtrSliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustBoolPtrSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBoolPtrSliceConsumer.Error(), func() {
 					cmc(valTestBoolPtrSliceConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustBoolPtrSliceConsumer_ToSilentBoolPtrSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					require.Equal(t, valTestBoolPtrSliceConsumer, v)
@@ -600,9 +606,9 @@ func TestMustBoolPtrSliceConsumer_ToSilentBoolPtrSliceConsumer(t *testing.T) {
 
 func TestMustBoolPtrSliceConsumer_ToBoolPtrSliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBoolPtrSliceConsumerFactory
-		err  bool
+		name    string
+		cf      testBoolPtrSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustBoolPtrSliceConsumer_ToBoolPtrSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrSliceConsumer {
 				return func(v []*bool) error {
 					require.Equal(t, valTestBoolPtrSliceConsumer, v)
 					return errTestBoolPtrSliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustBoolPtrSliceConsumer_ToBoolPtrSliceConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestBoolPtrSliceConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolPtrSliceConsumer.Error())
 			}
 		})

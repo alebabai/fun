@@ -20,8 +20,9 @@ type testBoolPtrConsumerFactory func(t *testing.T) BoolPtrConsumer
 
 func TestBoolPtrConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBoolPtrConsumerFactory
+		name    string
+		cf      testBoolPtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestBoolPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					require.Equal(t, valTestBoolPtrConsumer, v)
 					return errTestBoolPtrConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestBoolPtrConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestBoolPtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolPtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestBoolPtrConsumer(t *testing.T) {
 
 func TestBoolPtrConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBoolPtrConsumerFactory
+		name    string
+		cf      testBoolPtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestBoolPtrConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					require.Equal(t, valTestBoolPtrConsumer, v)
 					return errTestBoolPtrConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestBoolPtrConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestBoolPtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolPtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestBoolPtrConsumer_ToConsumer(t *testing.T) {
 func TestBoolPtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testBoolPtrConsumerFactory
-		cf2   testBoolPtrConsumerFactory
-		calls int
+		name    string
+		cf1     testBoolPtrConsumerFactory
+		cf2     testBoolPtrConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestBoolPtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
@@ -145,7 +150,8 @@ func TestBoolPtrConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestBoolPtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestBoolPtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolPtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestBoolPtrConsumer_ToSilentBoolPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					require.Equal(t, valTestBoolPtrConsumer, v)
@@ -238,7 +244,7 @@ func TestBoolPtrConsumer_ToMustBoolPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					require.Equal(t, valTestBoolPtrConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentBoolPtrConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					require.Equal(t, valTestBoolPtrConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentBoolPtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustBoolPtrConsumer(t *testing.T) {
 
 func TestMustBoolPtrConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBoolPtrConsumerFactory
-		err  bool
+		name    string
+		cf      testBoolPtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustBoolPtrConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					require.Equal(t, valTestBoolPtrConsumer, v)
 					return errTestBoolPtrConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustBoolPtrConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBoolPtrConsumer.Error(), func() {
 					mc(valTestBoolPtrConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustBoolPtrConsumer_ToMustConsumer(t *testing.T) {
 func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testBoolPtrConsumerFactory
-		cf2   testBoolPtrConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testBoolPtrConsumerFactory
+		cf2     testBoolPtrConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustBoolPtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBoolPtrConsumer.Error(), func() {
 					cmc(valTestBoolPtrConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustBoolPtrConsumer_ToSilentBoolPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					require.Equal(t, valTestBoolPtrConsumer, v)
@@ -600,9 +606,9 @@ func TestMustBoolPtrConsumer_ToSilentBoolPtrConsumer(t *testing.T) {
 
 func TestMustBoolPtrConsumer_ToBoolPtrConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBoolPtrConsumerFactory
-		err  bool
+		name    string
+		cf      testBoolPtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustBoolPtrConsumer_ToBoolPtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BoolPtrConsumer {
 				return func(v *bool) error {
 					require.Equal(t, valTestBoolPtrConsumer, v)
 					return errTestBoolPtrConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustBoolPtrConsumer_ToBoolPtrConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestBoolPtrConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestBoolPtrConsumer.Error())
 			}
 		})

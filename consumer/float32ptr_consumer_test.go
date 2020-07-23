@@ -20,8 +20,9 @@ type testFloat32PtrConsumerFactory func(t *testing.T) Float32PtrConsumer
 
 func TestFloat32PtrConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testFloat32PtrConsumerFactory
+		name    string
+		cf      testFloat32PtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestFloat32PtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					require.Equal(t, valTestFloat32PtrConsumer, v)
 					return errTestFloat32PtrConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestFloat32PtrConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestFloat32PtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat32PtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestFloat32PtrConsumer(t *testing.T) {
 
 func TestFloat32PtrConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testFloat32PtrConsumerFactory
+		name    string
+		cf      testFloat32PtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestFloat32PtrConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					require.Equal(t, valTestFloat32PtrConsumer, v)
 					return errTestFloat32PtrConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestFloat32PtrConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestFloat32PtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat32PtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestFloat32PtrConsumer_ToConsumer(t *testing.T) {
 func TestFloat32PtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testFloat32PtrConsumerFactory
-		cf2   testFloat32PtrConsumerFactory
-		calls int
+		name    string
+		cf1     testFloat32PtrConsumerFactory
+		cf2     testFloat32PtrConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestFloat32PtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					calls++
@@ -145,7 +150,8 @@ func TestFloat32PtrConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestFloat32PtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestFloat32PtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat32PtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestFloat32PtrConsumer_ToSilentFloat32PtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					require.Equal(t, valTestFloat32PtrConsumer, v)
@@ -238,7 +244,7 @@ func TestFloat32PtrConsumer_ToMustFloat32PtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					require.Equal(t, valTestFloat32PtrConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentFloat32PtrConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					require.Equal(t, valTestFloat32PtrConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentFloat32PtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustFloat32PtrConsumer(t *testing.T) {
 
 func TestMustFloat32PtrConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testFloat32PtrConsumerFactory
-		err  bool
+		name    string
+		cf      testFloat32PtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustFloat32PtrConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					require.Equal(t, valTestFloat32PtrConsumer, v)
 					return errTestFloat32PtrConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustFloat32PtrConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestFloat32PtrConsumer.Error(), func() {
 					mc(valTestFloat32PtrConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustFloat32PtrConsumer_ToMustConsumer(t *testing.T) {
 func TestMustFloat32PtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testFloat32PtrConsumerFactory
-		cf2   testFloat32PtrConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testFloat32PtrConsumerFactory
+		cf2     testFloat32PtrConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustFloat32PtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustFloat32PtrConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustFloat32PtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestFloat32PtrConsumer.Error(), func() {
 					cmc(valTestFloat32PtrConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustFloat32PtrConsumer_ToSilentFloat32PtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					require.Equal(t, valTestFloat32PtrConsumer, v)
@@ -600,9 +606,9 @@ func TestMustFloat32PtrConsumer_ToSilentFloat32PtrConsumer(t *testing.T) {
 
 func TestMustFloat32PtrConsumer_ToFloat32PtrConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testFloat32PtrConsumerFactory
-		err  bool
+		name    string
+		cf      testFloat32PtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustFloat32PtrConsumer_ToFloat32PtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float32PtrConsumer {
 				return func(v *float32) error {
 					require.Equal(t, valTestFloat32PtrConsumer, v)
 					return errTestFloat32PtrConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustFloat32PtrConsumer_ToFloat32PtrConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestFloat32PtrConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat32PtrConsumer.Error())
 			}
 		})

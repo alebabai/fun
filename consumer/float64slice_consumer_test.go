@@ -20,8 +20,9 @@ type testFloat64SliceConsumerFactory func(t *testing.T) Float64SliceConsumer
 
 func TestFloat64SliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testFloat64SliceConsumerFactory
+		name    string
+		cf      testFloat64SliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestFloat64SliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return errTestFloat64SliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestFloat64SliceConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestFloat64SliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat64SliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestFloat64SliceConsumer(t *testing.T) {
 
 func TestFloat64SliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testFloat64SliceConsumerFactory
+		name    string
+		cf      testFloat64SliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestFloat64SliceConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return errTestFloat64SliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestFloat64SliceConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestFloat64SliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat64SliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestFloat64SliceConsumer_ToConsumer(t *testing.T) {
 func TestFloat64SliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testFloat64SliceConsumerFactory
-		cf2   testFloat64SliceConsumerFactory
-		calls int
+		name    string
+		cf1     testFloat64SliceConsumerFactory
+		cf2     testFloat64SliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestFloat64SliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
@@ -145,7 +150,8 @@ func TestFloat64SliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestFloat64SliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestFloat64SliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat64SliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestFloat64SliceConsumer_ToSilentFloat64SliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					require.Equal(t, valTestFloat64SliceConsumer, v)
@@ -238,7 +244,7 @@ func TestFloat64SliceConsumer_ToMustFloat64SliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					require.Equal(t, valTestFloat64SliceConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentFloat64SliceConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					require.Equal(t, valTestFloat64SliceConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentFloat64SliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustFloat64SliceConsumer(t *testing.T) {
 
 func TestMustFloat64SliceConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testFloat64SliceConsumerFactory
-		err  bool
+		name    string
+		cf      testFloat64SliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustFloat64SliceConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return errTestFloat64SliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustFloat64SliceConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestFloat64SliceConsumer.Error(), func() {
 					mc(valTestFloat64SliceConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustFloat64SliceConsumer_ToMustConsumer(t *testing.T) {
 func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testFloat64SliceConsumerFactory
-		cf2   testFloat64SliceConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testFloat64SliceConsumerFactory
+		cf2     testFloat64SliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustFloat64SliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestFloat64SliceConsumer.Error(), func() {
 					cmc(valTestFloat64SliceConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustFloat64SliceConsumer_ToSilentFloat64SliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					require.Equal(t, valTestFloat64SliceConsumer, v)
@@ -600,9 +606,9 @@ func TestMustFloat64SliceConsumer_ToSilentFloat64SliceConsumer(t *testing.T) {
 
 func TestMustFloat64SliceConsumer_ToFloat64SliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testFloat64SliceConsumerFactory
-		err  bool
+		name    string
+		cf      testFloat64SliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustFloat64SliceConsumer_ToFloat64SliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Float64SliceConsumer {
 				return func(v []float64) error {
 					require.Equal(t, valTestFloat64SliceConsumer, v)
 					return errTestFloat64SliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustFloat64SliceConsumer_ToFloat64SliceConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestFloat64SliceConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat64SliceConsumer.Error())
 			}
 		})

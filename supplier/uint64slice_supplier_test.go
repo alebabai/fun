@@ -26,16 +26,18 @@ func testUint64SliceSupplierWithError() ([]uint64, error) {
 
 func TestUint64SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint64SliceSupplier
+		name    string
+		s       Uint64SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint64SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint64SliceSupplierWithError,
+			name:    "with error",
+			s:       testUint64SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestUint64SliceSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestUint64SliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestUint64SliceSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestUint64SliceSupplier(t *testing.T) {
 
 func TestUint64SliceSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint64SliceSupplier
-		err  bool
+		name    string
+		s       Uint64SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint64SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint64SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint64SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestUint64SliceSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestUint64SliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestUint64SliceSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestUint64SliceSupplier_ToSupplier(t *testing.T) {
 
 func TestUint64SliceSupplier_ToSilentUint64SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint64SliceSupplier
-		err  bool
+		name    string
+		s       Uint64SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint64SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint64SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint64SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestUint64SliceSupplier_ToSilentUint64SliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestUint64SliceSupplier, v)
@@ -122,18 +124,18 @@ func TestUint64SliceSupplier_ToSilentUint64SliceSupplier(t *testing.T) {
 
 func TestUint64SliceSupplier_ToMustUint64SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint64SliceSupplier
-		err  bool
+		name    string
+		s       Uint64SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint64SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint64SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint64SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestUint64SliceSupplier_ToMustUint64SliceSupplier(t *testing.T) {
 			ms := tt.s.ToMustUint64SliceSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUint64SliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentUint64SliceSupplier(t *testing.T) {
 
 func TestSilentUint64SliceSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint64SliceSupplier
-		err  bool
+		name    string
+		s       Uint64SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint64SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint64SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint64SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentUint64SliceSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestUint64SliceSupplier, v)
@@ -211,18 +213,18 @@ func TestMustUint64SliceSupplier(t *testing.T) {
 
 func TestMustUint64SliceSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint64SliceSupplier
-		err  bool
+		name    string
+		s       Uint64SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint64SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint64SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint64SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustUint64SliceSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUint64SliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustUint64SliceSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustUint64SliceSupplier_ToSilentUint64SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint64SliceSupplier
-		err  bool
+		name    string
+		s       Uint64SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint64SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint64SliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint64SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustUint64SliceSupplier_ToSilentUint64SliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestUint64SliceSupplier, v)
@@ -286,16 +288,18 @@ func TestMustUint64SliceSupplier_ToSilentUint64SliceSupplier(t *testing.T) {
 
 func TestMustUint64SliceSupplier_ToUint64SliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint64SliceSupplier
+		name    string
+		s       Uint64SliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint64SliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint64SliceSupplierWithError,
+			name:    "with error",
+			s:       testUint64SliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustUint64SliceSupplier_ToUint64SliceSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestUint64SliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestUint64SliceSupplier, v)
 			}

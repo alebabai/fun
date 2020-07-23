@@ -20,8 +20,9 @@ type testRuneConsumerFactory func(t *testing.T) RuneConsumer
 
 func TestRuneConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testRuneConsumerFactory
+		name    string
+		cf      testRuneConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestRuneConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					require.Equal(t, valTestRuneConsumer, v)
 					return errTestRuneConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestRuneConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestRuneConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestRuneConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestRuneConsumer(t *testing.T) {
 
 func TestRuneConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testRuneConsumerFactory
+		name    string
+		cf      testRuneConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestRuneConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					require.Equal(t, valTestRuneConsumer, v)
 					return errTestRuneConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestRuneConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestRuneConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestRuneConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestRuneConsumer_ToConsumer(t *testing.T) {
 func TestRuneConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testRuneConsumerFactory
-		cf2   testRuneConsumerFactory
-		calls int
+		name    string
+		cf1     testRuneConsumerFactory
+		cf2     testRuneConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestRuneConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					calls++
@@ -145,7 +150,8 @@ func TestRuneConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestRuneConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestRuneConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestRuneConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestRuneConsumer_ToSilentRuneConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					require.Equal(t, valTestRuneConsumer, v)
@@ -238,7 +244,7 @@ func TestRuneConsumer_ToMustRuneConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					require.Equal(t, valTestRuneConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentRuneConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					require.Equal(t, valTestRuneConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentRuneConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustRuneConsumer(t *testing.T) {
 
 func TestMustRuneConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testRuneConsumerFactory
-		err  bool
+		name    string
+		cf      testRuneConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustRuneConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					require.Equal(t, valTestRuneConsumer, v)
 					return errTestRuneConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustRuneConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestRuneConsumer.Error(), func() {
 					mc(valTestRuneConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustRuneConsumer_ToMustConsumer(t *testing.T) {
 func TestMustRuneConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testRuneConsumerFactory
-		cf2   testRuneConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testRuneConsumerFactory
+		cf2     testRuneConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustRuneConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustRuneConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustRuneConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestRuneConsumer.Error(), func() {
 					cmc(valTestRuneConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustRuneConsumer_ToSilentRuneConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					require.Equal(t, valTestRuneConsumer, v)
@@ -600,9 +606,9 @@ func TestMustRuneConsumer_ToSilentRuneConsumer(t *testing.T) {
 
 func TestMustRuneConsumer_ToRuneConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testRuneConsumerFactory
-		err  bool
+		name    string
+		cf      testRuneConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustRuneConsumer_ToRuneConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) RuneConsumer {
 				return func(v rune) error {
 					require.Equal(t, valTestRuneConsumer, v)
 					return errTestRuneConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustRuneConsumer_ToRuneConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestRuneConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestRuneConsumer.Error())
 			}
 		})

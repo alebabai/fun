@@ -26,16 +26,18 @@ func testUint16SupplierWithError() (uint16, error) {
 
 func TestUint16Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint16Supplier
+		name    string
+		s       Uint16Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint16Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint16SupplierWithError,
+			name:    "with error",
+			s:       testUint16SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestUint16Supplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestUint16Supplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestUint16Supplier, v)
 			}
@@ -55,18 +57,18 @@ func TestUint16Supplier(t *testing.T) {
 
 func TestUint16Supplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint16Supplier
-		err  bool
+		name    string
+		s       Uint16Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint16Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint16SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint16SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestUint16Supplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestUint16Supplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestUint16Supplier, v)
 			}
@@ -89,18 +91,18 @@ func TestUint16Supplier_ToSupplier(t *testing.T) {
 
 func TestUint16Supplier_ToSilentUint16Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint16Supplier
-		err  bool
+		name    string
+		s       Uint16Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint16Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint16SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint16SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestUint16Supplier_ToSilentUint16Supplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestUint16Supplier, v)
@@ -122,18 +124,18 @@ func TestUint16Supplier_ToSilentUint16Supplier(t *testing.T) {
 
 func TestUint16Supplier_ToMustUint16Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint16Supplier
-		err  bool
+		name    string
+		s       Uint16Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint16Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint16SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint16SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestUint16Supplier_ToMustUint16Supplier(t *testing.T) {
 			ms := tt.s.ToMustUint16Supplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUint16Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentUint16Supplier(t *testing.T) {
 
 func TestSilentUint16Supplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint16Supplier
-		err  bool
+		name    string
+		s       Uint16Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint16Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint16SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint16SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentUint16Supplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestUint16Supplier, v)
@@ -211,18 +213,18 @@ func TestMustUint16Supplier(t *testing.T) {
 
 func TestMustUint16Supplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint16Supplier
-		err  bool
+		name    string
+		s       Uint16Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint16Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint16SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint16SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustUint16Supplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUint16Supplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustUint16Supplier_ToMustSupplier(t *testing.T) {
 
 func TestMustUint16Supplier_ToSilentUint16Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint16Supplier
-		err  bool
+		name    string
+		s       Uint16Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint16Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint16SupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testUint16SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustUint16Supplier_ToSilentUint16Supplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestUint16Supplier, v)
@@ -286,16 +288,18 @@ func TestMustUint16Supplier_ToSilentUint16Supplier(t *testing.T) {
 
 func TestMustUint16Supplier_ToUint16Supplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Uint16Supplier
+		name    string
+		s       Uint16Supplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testUint16Supplier,
 		},
 		{
-			name: "with_error",
-			s:    testUint16SupplierWithError,
+			name:    "with error",
+			s:       testUint16SupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustUint16Supplier_ToUint16Supplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestUint16Supplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestUint16Supplier, v)
 			}

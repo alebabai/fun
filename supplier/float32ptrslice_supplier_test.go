@@ -26,16 +26,18 @@ func testFloat32PtrSliceSupplierWithError() ([]*float32, error) {
 
 func TestFloat32PtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Float32PtrSliceSupplier
+		name    string
+		s       Float32PtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testFloat32PtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testFloat32PtrSliceSupplierWithError,
+			name:    "with error",
+			s:       testFloat32PtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestFloat32PtrSliceSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat32PtrSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestFloat32PtrSliceSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestFloat32PtrSliceSupplier(t *testing.T) {
 
 func TestFloat32PtrSliceSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Float32PtrSliceSupplier
-		err  bool
+		name    string
+		s       Float32PtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testFloat32PtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testFloat32PtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testFloat32PtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestFloat32PtrSliceSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat32PtrSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestFloat32PtrSliceSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestFloat32PtrSliceSupplier_ToSupplier(t *testing.T) {
 
 func TestFloat32PtrSliceSupplier_ToSilentFloat32PtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Float32PtrSliceSupplier
-		err  bool
+		name    string
+		s       Float32PtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testFloat32PtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testFloat32PtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testFloat32PtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestFloat32PtrSliceSupplier_ToSilentFloat32PtrSliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestFloat32PtrSliceSupplier, v)
@@ -122,18 +124,18 @@ func TestFloat32PtrSliceSupplier_ToSilentFloat32PtrSliceSupplier(t *testing.T) {
 
 func TestFloat32PtrSliceSupplier_ToMustFloat32PtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Float32PtrSliceSupplier
-		err  bool
+		name    string
+		s       Float32PtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testFloat32PtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testFloat32PtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testFloat32PtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestFloat32PtrSliceSupplier_ToMustFloat32PtrSliceSupplier(t *testing.T) {
 			ms := tt.s.ToMustFloat32PtrSliceSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestFloat32PtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentFloat32PtrSliceSupplier(t *testing.T) {
 
 func TestSilentFloat32PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Float32PtrSliceSupplier
-		err  bool
+		name    string
+		s       Float32PtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testFloat32PtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testFloat32PtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testFloat32PtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentFloat32PtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestFloat32PtrSliceSupplier, v)
@@ -211,18 +213,18 @@ func TestMustFloat32PtrSliceSupplier(t *testing.T) {
 
 func TestMustFloat32PtrSliceSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Float32PtrSliceSupplier
-		err  bool
+		name    string
+		s       Float32PtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testFloat32PtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testFloat32PtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testFloat32PtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustFloat32PtrSliceSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestFloat32PtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustFloat32PtrSliceSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustFloat32PtrSliceSupplier_ToSilentFloat32PtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Float32PtrSliceSupplier
-		err  bool
+		name    string
+		s       Float32PtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testFloat32PtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testFloat32PtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testFloat32PtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustFloat32PtrSliceSupplier_ToSilentFloat32PtrSliceSupplier(t *testing.
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestFloat32PtrSliceSupplier, v)
@@ -286,16 +288,18 @@ func TestMustFloat32PtrSliceSupplier_ToSilentFloat32PtrSliceSupplier(t *testing.
 
 func TestMustFloat32PtrSliceSupplier_ToFloat32PtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    Float32PtrSliceSupplier
+		name    string
+		s       Float32PtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testFloat32PtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testFloat32PtrSliceSupplierWithError,
+			name:    "with error",
+			s:       testFloat32PtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustFloat32PtrSliceSupplier_ToFloat32PtrSliceSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestFloat32PtrSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestFloat32PtrSliceSupplier, v)
 			}

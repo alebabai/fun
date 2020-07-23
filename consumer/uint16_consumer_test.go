@@ -20,8 +20,9 @@ type testUint16ConsumerFactory func(t *testing.T) Uint16Consumer
 
 func TestUint16Consumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUint16ConsumerFactory
+		name    string
+		cf      testUint16ConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestUint16Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					require.Equal(t, valTestUint16Consumer, v)
 					return errTestUint16Consumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestUint16Consumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestUint16Consumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestUint16Consumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestUint16Consumer(t *testing.T) {
 
 func TestUint16Consumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUint16ConsumerFactory
+		name    string
+		cf      testUint16ConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestUint16Consumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					require.Equal(t, valTestUint16Consumer, v)
 					return errTestUint16Consumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestUint16Consumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestUint16Consumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestUint16Consumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestUint16Consumer_ToConsumer(t *testing.T) {
 func TestUint16Consumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testUint16ConsumerFactory
-		cf2   testUint16ConsumerFactory
-		calls int
+		name    string
+		cf1     testUint16ConsumerFactory
+		cf2     testUint16ConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestUint16Consumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					calls++
@@ -145,7 +150,8 @@ func TestUint16Consumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestUint16Consumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestUint16Consumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestUint16Consumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestUint16Consumer_ToSilentUint16Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					require.Equal(t, valTestUint16Consumer, v)
@@ -238,7 +244,7 @@ func TestUint16Consumer_ToMustUint16Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					require.Equal(t, valTestUint16Consumer, v)
@@ -290,7 +296,7 @@ func TestSilentUint16Consumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					require.Equal(t, valTestUint16Consumer, v)
@@ -344,7 +350,7 @@ func TestSilentUint16Consumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustUint16Consumer(t *testing.T) {
 
 func TestMustUint16Consumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUint16ConsumerFactory
-		err  bool
+		name    string
+		cf      testUint16ConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustUint16Consumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					require.Equal(t, valTestUint16Consumer, v)
 					return errTestUint16Consumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustUint16Consumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUint16Consumer.Error(), func() {
 					mc(valTestUint16Consumer)
 				})
@@ -463,11 +469,11 @@ func TestMustUint16Consumer_ToMustConsumer(t *testing.T) {
 func TestMustUint16Consumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testUint16ConsumerFactory
-		cf2   testUint16ConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testUint16ConsumerFactory
+		cf2     testUint16ConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustUint16Consumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustUint16Consumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustUint16Consumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUint16Consumer.Error(), func() {
 					cmc(valTestUint16Consumer)
 				})
@@ -572,7 +578,7 @@ func TestMustUint16Consumer_ToSilentUint16Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					require.Equal(t, valTestUint16Consumer, v)
@@ -600,9 +606,9 @@ func TestMustUint16Consumer_ToSilentUint16Consumer(t *testing.T) {
 
 func TestMustUint16Consumer_ToUint16Consumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUint16ConsumerFactory
-		err  bool
+		name    string
+		cf      testUint16ConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustUint16Consumer_ToUint16Consumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) Uint16Consumer {
 				return func(v uint16) error {
 					require.Equal(t, valTestUint16Consumer, v)
 					return errTestUint16Consumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustUint16Consumer_ToUint16Consumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestUint16Consumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestUint16Consumer.Error())
 			}
 		})

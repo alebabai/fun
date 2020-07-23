@@ -20,8 +20,9 @@ type testBytePtrConsumerFactory func(t *testing.T) BytePtrConsumer
 
 func TestBytePtrConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBytePtrConsumerFactory
+		name    string
+		cf      testBytePtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestBytePtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					require.Equal(t, valTestBytePtrConsumer, v)
 					return errTestBytePtrConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestBytePtrConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestBytePtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestBytePtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestBytePtrConsumer(t *testing.T) {
 
 func TestBytePtrConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBytePtrConsumerFactory
+		name    string
+		cf      testBytePtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestBytePtrConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					require.Equal(t, valTestBytePtrConsumer, v)
 					return errTestBytePtrConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestBytePtrConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestBytePtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestBytePtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestBytePtrConsumer_ToConsumer(t *testing.T) {
 func TestBytePtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testBytePtrConsumerFactory
-		cf2   testBytePtrConsumerFactory
-		calls int
+		name    string
+		cf1     testBytePtrConsumerFactory
+		cf2     testBytePtrConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestBytePtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
@@ -145,7 +150,8 @@ func TestBytePtrConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestBytePtrConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestBytePtrConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestBytePtrConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestBytePtrConsumer_ToSilentBytePtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					require.Equal(t, valTestBytePtrConsumer, v)
@@ -238,7 +244,7 @@ func TestBytePtrConsumer_ToMustBytePtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					require.Equal(t, valTestBytePtrConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentBytePtrConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					require.Equal(t, valTestBytePtrConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentBytePtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustBytePtrConsumer(t *testing.T) {
 
 func TestMustBytePtrConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBytePtrConsumerFactory
-		err  bool
+		name    string
+		cf      testBytePtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustBytePtrConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					require.Equal(t, valTestBytePtrConsumer, v)
 					return errTestBytePtrConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustBytePtrConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBytePtrConsumer.Error(), func() {
 					mc(valTestBytePtrConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustBytePtrConsumer_ToMustConsumer(t *testing.T) {
 func TestMustBytePtrConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testBytePtrConsumerFactory
-		cf2   testBytePtrConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testBytePtrConsumerFactory
+		cf2     testBytePtrConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustBytePtrConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustBytePtrConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustBytePtrConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBytePtrConsumer.Error(), func() {
 					cmc(valTestBytePtrConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustBytePtrConsumer_ToSilentBytePtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					require.Equal(t, valTestBytePtrConsumer, v)
@@ -600,9 +606,9 @@ func TestMustBytePtrConsumer_ToSilentBytePtrConsumer(t *testing.T) {
 
 func TestMustBytePtrConsumer_ToBytePtrConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testBytePtrConsumerFactory
-		err  bool
+		name    string
+		cf      testBytePtrConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustBytePtrConsumer_ToBytePtrConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) BytePtrConsumer {
 				return func(v *byte) error {
 					require.Equal(t, valTestBytePtrConsumer, v)
 					return errTestBytePtrConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustBytePtrConsumer_ToBytePtrConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestBytePtrConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestBytePtrConsumer.Error())
 			}
 		})

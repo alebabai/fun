@@ -20,8 +20,9 @@ type testUintSliceConsumerFactory func(t *testing.T) UintSliceConsumer
 
 func TestUintSliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUintSliceConsumerFactory
+		name    string
+		cf      testUintSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -33,13 +34,14 @@ func TestUintSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					require.Equal(t, valTestUintSliceConsumer, v)
 					return errTestUintSliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -48,7 +50,7 @@ func TestUintSliceConsumer(t *testing.T) {
 
 			c := tt.cf(t)
 			err := c(valTestUintSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestUintSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -59,8 +61,9 @@ func TestUintSliceConsumer(t *testing.T) {
 
 func TestUintSliceConsumer_ToConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUintSliceConsumerFactory
+		name    string
+		cf      testUintSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -72,13 +75,14 @@ func TestUintSliceConsumer_ToConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					require.Equal(t, valTestUintSliceConsumer, v)
 					return errTestUintSliceConsumer
 				}
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -90,7 +94,7 @@ func TestUintSliceConsumer_ToConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestUintSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestUintSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -102,10 +106,11 @@ func TestUintSliceConsumer_ToConsumer(t *testing.T) {
 func TestUintSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testUintSliceConsumerFactory
-		cf2   testUintSliceConsumerFactory
-		calls int
+		name    string
+		cf1     testUintSliceConsumerFactory
+		cf2     testUintSliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -128,7 +133,7 @@ func TestUintSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					calls++
@@ -145,7 +150,8 @@ func TestUintSliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -175,7 +181,7 @@ func TestUintSliceConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			err := cc(valTestUintSliceConsumer)
-			if err != nil {
+			if tt.wantErr {
 				r.EqualError(err, errTestUintSliceConsumer.Error())
 			} else {
 				r.NoError(err)
@@ -200,7 +206,7 @@ func TestUintSliceConsumer_ToSilentUintSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					require.Equal(t, valTestUintSliceConsumer, v)
@@ -238,7 +244,7 @@ func TestUintSliceConsumer_ToMustUintSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					require.Equal(t, valTestUintSliceConsumer, v)
@@ -290,7 +296,7 @@ func TestSilentUintSliceConsumer_ToSilentConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					require.Equal(t, valTestUintSliceConsumer, v)
@@ -344,7 +350,7 @@ func TestSilentUintSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					calls++
@@ -414,9 +420,9 @@ func TestMustUintSliceConsumer(t *testing.T) {
 
 func TestMustUintSliceConsumer_ToMustConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUintSliceConsumerFactory
-		err  bool
+		name    string
+		cf      testUintSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -428,14 +434,14 @@ func TestMustUintSliceConsumer_ToMustConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					require.Equal(t, valTestUintSliceConsumer, v)
 					return errTestUintSliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -449,7 +455,7 @@ func TestMustUintSliceConsumer_ToMustConsumer(t *testing.T) {
 			mc := tmc.ToMustConsumer()
 			r.NotNil(mc)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUintSliceConsumer.Error(), func() {
 					mc(valTestUintSliceConsumer)
 				})
@@ -463,11 +469,11 @@ func TestMustUintSliceConsumer_ToMustConsumer(t *testing.T) {
 func TestMustUintSliceConsumer_AndThen(t *testing.T) {
 	var calls int
 	tests := []struct {
-		name  string
-		cf1   testUintSliceConsumerFactory
-		cf2   testUintSliceConsumerFactory
-		calls int
-		err   bool
+		name    string
+		cf1     testUintSliceConsumerFactory
+		cf2     testUintSliceConsumerFactory
+		calls   int
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -490,7 +496,7 @@ func TestMustUintSliceConsumer_AndThen(t *testing.T) {
 			calls: 2,
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf1: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					calls++
@@ -507,8 +513,8 @@ func TestMustUintSliceConsumer_AndThen(t *testing.T) {
 					return nil
 				}
 			},
-			calls: 1,
-			err:   true,
+			calls:   1,
+			wantErr: true,
 		},
 		{
 			name: "nil after",
@@ -545,7 +551,7 @@ func TestMustUintSliceConsumer_AndThen(t *testing.T) {
 			r.NotNil(cmc)
 
 			calls = 0
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestUintSliceConsumer.Error(), func() {
 					cmc(valTestUintSliceConsumer)
 				})
@@ -572,7 +578,7 @@ func TestMustUintSliceConsumer_ToSilentUintSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					require.Equal(t, valTestUintSliceConsumer, v)
@@ -600,9 +606,9 @@ func TestMustUintSliceConsumer_ToSilentUintSliceConsumer(t *testing.T) {
 
 func TestMustUintSliceConsumer_ToUintSliceConsumer(t *testing.T) {
 	tests := []struct {
-		name string
-		cf   testUintSliceConsumerFactory
-		err  bool
+		name    string
+		cf      testUintSliceConsumerFactory
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -614,14 +620,14 @@ func TestMustUintSliceConsumer_ToUintSliceConsumer(t *testing.T) {
 			},
 		},
 		{
-			name: "with_error",
+			name: "with error",
 			cf: func(t *testing.T) UintSliceConsumer {
 				return func(v []uint) error {
 					require.Equal(t, valTestUintSliceConsumer, v)
 					return errTestUintSliceConsumer
 				}
 			},
-			err: true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -637,7 +643,7 @@ func TestMustUintSliceConsumer_ToUintSliceConsumer(t *testing.T) {
 			r.NotNil(c)
 
 			err := c(valTestUintSliceConsumer)
-			if tt.err {
+			if tt.wantErr {
 				r.EqualError(err, errTestUintSliceConsumer.Error())
 			}
 		})

@@ -26,16 +26,18 @@ func testStringSliceSupplierWithError() ([]string, error) {
 
 func TestStringSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    StringSliceSupplier
+		name    string
+		s       StringSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testStringSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testStringSliceSupplierWithError,
+			name:    "with error",
+			s:       testStringSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestStringSliceSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestStringSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestStringSliceSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestStringSliceSupplier(t *testing.T) {
 
 func TestStringSliceSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    StringSliceSupplier
-		err  bool
+		name    string
+		s       StringSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testStringSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testStringSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testStringSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestStringSliceSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestStringSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestStringSliceSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestStringSliceSupplier_ToSupplier(t *testing.T) {
 
 func TestStringSliceSupplier_ToSilentStringSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    StringSliceSupplier
-		err  bool
+		name    string
+		s       StringSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testStringSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testStringSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testStringSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestStringSliceSupplier_ToSilentStringSliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestStringSliceSupplier, v)
@@ -122,18 +124,18 @@ func TestStringSliceSupplier_ToSilentStringSliceSupplier(t *testing.T) {
 
 func TestStringSliceSupplier_ToMustStringSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    StringSliceSupplier
-		err  bool
+		name    string
+		s       StringSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testStringSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testStringSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testStringSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestStringSliceSupplier_ToMustStringSliceSupplier(t *testing.T) {
 			ms := tt.s.ToMustStringSliceSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestStringSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentStringSliceSupplier(t *testing.T) {
 
 func TestSilentStringSliceSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    StringSliceSupplier
-		err  bool
+		name    string
+		s       StringSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testStringSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testStringSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testStringSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentStringSliceSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestStringSliceSupplier, v)
@@ -211,18 +213,18 @@ func TestMustStringSliceSupplier(t *testing.T) {
 
 func TestMustStringSliceSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    StringSliceSupplier
-		err  bool
+		name    string
+		s       StringSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testStringSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testStringSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testStringSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustStringSliceSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestStringSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustStringSliceSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustStringSliceSupplier_ToSilentStringSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    StringSliceSupplier
-		err  bool
+		name    string
+		s       StringSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testStringSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testStringSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testStringSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustStringSliceSupplier_ToSilentStringSliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestStringSliceSupplier, v)
@@ -286,16 +288,18 @@ func TestMustStringSliceSupplier_ToSilentStringSliceSupplier(t *testing.T) {
 
 func TestMustStringSliceSupplier_ToStringSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    StringSliceSupplier
+		name    string
+		s       StringSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testStringSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testStringSliceSupplierWithError,
+			name:    "with error",
+			s:       testStringSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustStringSliceSupplier_ToStringSliceSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestStringSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestStringSliceSupplier, v)
 			}

@@ -1,322 +1,326 @@
 package supplier
 
 import (
-	"errors"
-	"testing"
+    "errors"
+    "testing"
 
-	"github.com/stretchr/testify/require"
+    "github.com/stretchr/testify/require"
 )
 
 var (
-	resTest{{.Type.Title}}Supplier {{.Type.Name}}
-	errTest{{.Type.Title}}Supplier  = errors.New("error")
+    resTest{{.Type.Title}}Supplier {{.Type.Name}}
+    errTest{{.Type.Title}}Supplier = errors.New("error")
 )
 
 func test{{.Type.Title}}Supplier() ({{.Type.Name}}, error) {
-	return resTest{{.Type.Title}}Supplier, nil
+    return resTest{{.Type.Title}}Supplier, nil
 }
 
 func test{{.Type.Title}}SupplierWithError() ({{.Type.Name}}, error) {
-	return resTest{{.Type.Title}}Supplier, errTest{{.Type.Title}}Supplier
+    return resTest{{.Type.Title}}Supplier, errTest{{.Type.Title}}Supplier
 }
 
 func Test{{.Type.Title}}Supplier(t *testing.T) {
-	tests := []struct {
-		name string
-		s    {{.Type.Title}}Supplier
-	}{
-		{
-			name: "ok",
-			s:    test{{.Type.Title}}Supplier,
-		},
-		{
-			name: "with_error",
-			s:    test{{.Type.Title}}SupplierWithError,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := require.New(t)
+    tests := []struct {
+        name    string
+        s       {{.Type.Title}}Supplier
+        wantErr bool
+    }{
+        {
+            name: "ok",
+            s:    test{{.Type.Title}}Supplier,
+        },
+        {
+            name:    "with error",
+            s:       test{{.Type.Title}}SupplierWithError,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            r := require.New(t)
 
-			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
-				r.EqualError(err, errTest{{.Type.Title}}Supplier.Error())
-			} else {
-				r.Equal(resTest{{.Type.Title}}Supplier, v)
-			}
-		})
-	}
+            v, err := tt.s()
+            if tt.wantErr {
+                r.EqualError(err, errTest{{.Type.Title}}Supplier.Error())
+                r.Empty(v)
+            } else {
+                r.Equal(resTest{{.Type.Title}}Supplier, v)
+            }
+        })
+    }
 }
 
 {{if ne .Type.Name "interface{}" }}
 func Test{{.Type.Title}}Supplier_ToSupplier(t *testing.T) {
-	tests := []struct {
-		name string
-		s    {{.Type.Title}}Supplier
-		err  bool
-	}{
-		{
-			name: "ok",
-			s:    test{{.Type.Title}}Supplier,
-		},
-		{
-			name: "with_error",
-			s:    test{{.Type.Title}}SupplierWithError,
-			err:  true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := require.New(t)
+    tests := []struct {
+        name    string
+        s       {{.Type.Title}}Supplier
+        wantErr bool
+    }{
+        {
+            name: "ok",
+            s:    test{{.Type.Title}}Supplier,
+        },
+        {
+            name:    "with error",
+            s:       test{{.Type.Title}}SupplierWithError,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            r := require.New(t)
 
-			s := tt.s.ToSupplier()
-			r.NotNil(s)
+            s := tt.s.ToSupplier()
+            r.NotNil(s)
 
-			v, err := s()
-			if err != nil {
-				r.Empty(v)
-				r.EqualError(err, errTest{{.Type.Title}}Supplier.Error())
-			} else {
-				r.Equal(resTest{{.Type.Title}}Supplier, v)
-			}
-		})
-	}
+            v, err := s()
+            if tt.wantErr {
+                r.EqualError(err, errTest{{.Type.Title}}Supplier.Error())
+                r.Empty(v)
+            } else {
+                r.Equal(resTest{{.Type.Title}}Supplier, v)
+            }
+        })
+    }
 }
 {{end}}
 
 func Test{{.Type.Title}}Supplier_ToSilent{{.Type.Title}}Supplier(t *testing.T) {
-	tests := []struct {
-		name string
-		s    {{.Type.Title}}Supplier
-		err  bool
-	}{
-		{
-			name: "ok",
-			s:    test{{.Type.Title}}Supplier,
-		},
-		{
-			name: "with_error",
-			s:    test{{.Type.Title}}SupplierWithError,
-			err:  true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := require.New(t)
+    tests := []struct {
+        name    string
+        s       {{.Type.Title}}Supplier
+        wantErr bool
+    }{
+        {
+            name: "ok",
+            s:    test{{.Type.Title}}Supplier,
+        },
+        {
+            name:    "with error",
+            s:       test{{.Type.Title}}SupplierWithError,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            r := require.New(t)
 
-			ss := tt.s.ToSilent{{.Type.Title}}Supplier()
-			r.NotNil(ss)
+            ss := tt.s.ToSilent{{.Type.Title}}Supplier()
+            r.NotNil(ss)
 
-			v := ss()
-			if tt.err {
-				r.Empty(v)
-			} else {
-				r.Equal(resTest{{.Type.Title}}Supplier, v)
-			}
-		})
-	}
+            v := ss()
+            if tt.wantErr {
+                r.Empty(v)
+            } else {
+                r.Equal(resTest{{.Type.Title}}Supplier, v)
+            }
+        })
+    }
 }
 
 func Test{{.Type.Title}}Supplier_ToMust{{.Type.Title}}Supplier(t *testing.T) {
-	tests := []struct {
-		name string
-		s    {{.Type.Title}}Supplier
-		err  bool
-	}{
-		{
-			name: "ok",
-			s:    test{{.Type.Title}}Supplier,
-		},
-		{
-			name: "with_error",
-			s:    test{{.Type.Title}}SupplierWithError,
-			err:  true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := require.New(t)
+    tests := []struct {
+        name    string
+        s       {{.Type.Title}}Supplier
+        wantErr bool
+    }{
+        {
+            name: "ok",
+            s:    test{{.Type.Title}}Supplier,
+        },
+        {
+            name:    "with error",
+            s:       test{{.Type.Title}}SupplierWithError,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            r := require.New(t)
 
-			ms := tt.s.ToMust{{.Type.Title}}Supplier()
-			r.NotNil(ms)
+            ms := tt.s.ToMust{{.Type.Title}}Supplier()
+            r.NotNil(ms)
 
-			if tt.err {
-				r.PanicsWithError(errTest{{.Type.Title}}Supplier.Error(), func() {
-					v := ms()
-					r.Empty(v)
-				})
-			} else {
-				v := ms()
-				r.Equal(resTest{{.Type.Title}}Supplier, v)
-			}
-		})
-	}
+            if tt.wantErr {
+                r.PanicsWithError(errTest{{.Type.Title}}Supplier.Error(), func() {
+                    v := ms()
+                    r.Empty(v)
+                })
+            } else {
+                v := ms()
+                r.Equal(resTest{{.Type.Title}}Supplier, v)
+            }
+        })
+    }
 }
 
 func TestSilent{{.Type.Title}}Supplier(t *testing.T) {
-	var ss Silent{{.Type.Title}}Supplier = func() {{.Type.Name}} {
-		return resTest{{.Type.Title}}Supplier
-	}
-	v := ss()
-	require.Equal(t, resTest{{.Type.Title}}Supplier, v)
+    var ss Silent{{.Type.Title}}Supplier = func() {{.Type.Name}} {
+        return resTest{{.Type.Title}}Supplier
+    }
+    v := ss()
+    require.Equal(t, resTest{{.Type.Title}}Supplier, v)
 }
 
 {{if ne .Type.Name "interface{}" }}
 func TestSilent{{.Type.Title}}Supplier_ToSilentSupplier(t *testing.T) {
-	tests := []struct {
-		name string
-		s    {{.Type.Title}}Supplier
-		err  bool
-	}{
-		{
-			name: "ok",
-			s:    test{{.Type.Title}}Supplier,
-		},
-		{
-			name: "with_error",
-			s:    test{{.Type.Title}}SupplierWithError,
-			err:  true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := require.New(t)
+    tests := []struct {
+        name    string
+        s       {{.Type.Title}}Supplier
+        wantErr bool
+    }{
+        {
+            name: "ok",
+            s:    test{{.Type.Title}}Supplier,
+        },
+        {
+            name:    "with error",
+            s:       test{{.Type.Title}}SupplierWithError,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            r := require.New(t)
 
-			tss := tt.s.ToSilent{{.Type.Title}}Supplier()
-			r.NotNil(tss)
+            tss := tt.s.ToSilent{{.Type.Title}}Supplier()
+            r.NotNil(tss)
 
-			ss := tss.ToSilentSupplier()
-			r.NotNil(ss)
+            ss := tss.ToSilentSupplier()
+            r.NotNil(ss)
 
-			v := ss()
-			if tt.err {
-				r.Empty(v)
-			} else {
-				r.Equal(resTest{{.Type.Title}}Supplier, v)
-			}
-		})
-	}
+            v := ss()
+            if tt.wantErr {
+                r.Empty(v)
+            } else {
+                r.Equal(resTest{{.Type.Title}}Supplier, v)
+            }
+        })
+    }
 }
 {{end}}
 
 func TestMust{{.Type.Title}}Supplier(t *testing.T) {
-	var ms Must{{.Type.Title}}Supplier = func() {{.Type.Name}} {
-		return resTest{{.Type.Title}}Supplier
-	}
+    var ms Must{{.Type.Title}}Supplier = func() {{.Type.Name}} {
+        return resTest{{.Type.Title}}Supplier
+    }
 
-	v := ms()
-	require.Equal(t, resTest{{.Type.Title}}Supplier, v)
+    v := ms()
+    require.Equal(t, resTest{{.Type.Title}}Supplier, v)
 }
 
 {{if ne .Type.Name "interface{}" }}
 func TestMust{{.Type.Title}}Supplier_ToMustSupplier(t *testing.T) {
-	tests := []struct {
-		name string
-		s    {{.Type.Title}}Supplier
-		err  bool
-	}{
-		{
-			name: "ok",
-			s:    test{{.Type.Title}}Supplier,
-		},
-		{
-			name: "with_error",
-			s:    test{{.Type.Title}}SupplierWithError,
-			err:  true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := require.New(t)
+    tests := []struct {
+        name    string
+        s       {{.Type.Title}}Supplier
+        wantErr bool
+    }{
+        {
+            name: "ok",
+            s:    test{{.Type.Title}}Supplier,
+        },
+        {
+            name:    "with error",
+            s:       test{{.Type.Title}}SupplierWithError,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            r := require.New(t)
 
-			tms := tt.s.ToMust{{.Type.Title}}Supplier()
-			r.NotNil(tms)
+            tms := tt.s.ToMust{{.Type.Title}}Supplier()
+            r.NotNil(tms)
 
-			ms := tms.ToMustSupplier()
-			r.NotNil(ms)
+            ms := tms.ToMustSupplier()
+            r.NotNil(ms)
 
-			if tt.err {
-				r.PanicsWithError(errTest{{.Type.Title}}Supplier.Error(), func() {
-					v := ms()
-					r.Empty(v)
-				})
-			} else {
-				v := ms()
-				r.Equal(resTest{{.Type.Title}}Supplier, v)
-			}
-		})
-	}
+            if tt.wantErr {
+                r.PanicsWithError(errTest{{.Type.Title}}Supplier.Error(), func() {
+                    v := ms()
+                    r.Empty(v)
+                })
+            } else {
+                v := ms()
+                r.Equal(resTest{{.Type.Title}}Supplier, v)
+            }
+        })
+    }
 }
 {{end}}
 
 func TestMust{{.Type.Title}}Supplier_ToSilent{{.Type.Title}}Supplier(t *testing.T) {
-	tests := []struct {
-		name string
-		s    {{.Type.Title}}Supplier
-		err  bool
-	}{
-		{
-			name: "ok",
-			s:    test{{.Type.Title}}Supplier,
-		},
-		{
-			name: "with_error",
-			s:    test{{.Type.Title}}SupplierWithError,
-			err:  true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := require.New(t)
+    tests := []struct {
+        name    string
+        s       {{.Type.Title}}Supplier
+        wantErr bool
+    }{
+        {
+            name: "ok",
+            s:    test{{.Type.Title}}Supplier,
+        },
+        {
+            name:    "with error",
+            s:       test{{.Type.Title}}SupplierWithError,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            r := require.New(t)
 
-			ms := tt.s.ToMust{{.Type.Title}}Supplier()
-			r.NotNil(ms)
+            ms := tt.s.ToMust{{.Type.Title}}Supplier()
+            r.NotNil(ms)
 
-			ss := ms.ToSilent{{.Type.Title}}Supplier()
-			r.NotNil(ss)
+            ss := ms.ToSilent{{.Type.Title}}Supplier()
+            r.NotNil(ss)
 
-			v := ss()
-			if tt.err {
-				r.Empty(v)
-			} else {
-				r.Equal(resTest{{.Type.Title}}Supplier, v)
-			}
-		})
-	}
+            v := ss()
+            if tt.wantErr {
+                r.Empty(v)
+            } else {
+                r.Equal(resTest{{.Type.Title}}Supplier, v)
+            }
+        })
+    }
 }
 
 func TestMust{{.Type.Title}}Supplier_To{{.Type.Title}}Supplier(t *testing.T) {
-	tests := []struct {
-		name string
-		s    {{.Type.Title}}Supplier
-	}{
-		{
-			name: "ok",
-			s:    test{{.Type.Title}}Supplier,
-		},
-		{
-			name: "with_error",
-			s:    test{{.Type.Title}}SupplierWithError,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := require.New(t)
+    tests := []struct {
+        name    string
+        s       {{.Type.Title}}Supplier
+        wantErr bool
+    }{
+        {
+            name: "ok",
+            s:    test{{.Type.Title}}Supplier,
+        },
+        {
+            name:    "with error",
+            s:       test{{.Type.Title}}SupplierWithError,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            r := require.New(t)
 
-			ms := tt.s.ToMust{{.Type.Title}}Supplier()
-			r.NotNil(ms)
+            ms := tt.s.ToMust{{.Type.Title}}Supplier()
+            r.NotNil(ms)
 
-			s := ms.To{{.Type.Title}}Supplier()
-			r.NotNil(s)
+            s := ms.To{{.Type.Title}}Supplier()
+            r.NotNil(s)
 
-			v, err := s()
-			if err != nil {
-				r.Empty(v)
-				r.EqualError(err, errTest{{.Type.Title}}Supplier.Error())
-			} else {
-				r.Equal(resTest{{.Type.Title}}Supplier, v)
-			}
-		})
-	}
+            v, err := s()
+            if tt.wantErr {
+                r.EqualError(err, errTest{{.Type.Title}}Supplier.Error())
+                r.Empty(v)
+            } else {
+                r.Equal(resTest{{.Type.Title}}Supplier, v)
+            }
+        })
+    }
 }

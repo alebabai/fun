@@ -26,16 +26,18 @@ func testBytePtrSliceSupplierWithError() ([]*byte, error) {
 
 func TestBytePtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BytePtrSliceSupplier
+		name    string
+		s       BytePtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBytePtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBytePtrSliceSupplierWithError,
+			name:    "with error",
+			s:       testBytePtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -43,9 +45,9 @@ func TestBytePtrSliceSupplier(t *testing.T) {
 			r := require.New(t)
 
 			v, err := tt.s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestBytePtrSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestBytePtrSliceSupplier, v)
 			}
@@ -55,18 +57,18 @@ func TestBytePtrSliceSupplier(t *testing.T) {
 
 func TestBytePtrSliceSupplier_ToSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BytePtrSliceSupplier
-		err  bool
+		name    string
+		s       BytePtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBytePtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBytePtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBytePtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -77,9 +79,9 @@ func TestBytePtrSliceSupplier_ToSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestBytePtrSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestBytePtrSliceSupplier, v)
 			}
@@ -89,18 +91,18 @@ func TestBytePtrSliceSupplier_ToSupplier(t *testing.T) {
 
 func TestBytePtrSliceSupplier_ToSilentBytePtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BytePtrSliceSupplier
-		err  bool
+		name    string
+		s       BytePtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBytePtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBytePtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBytePtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -111,7 +113,7 @@ func TestBytePtrSliceSupplier_ToSilentBytePtrSliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestBytePtrSliceSupplier, v)
@@ -122,18 +124,18 @@ func TestBytePtrSliceSupplier_ToSilentBytePtrSliceSupplier(t *testing.T) {
 
 func TestBytePtrSliceSupplier_ToMustBytePtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BytePtrSliceSupplier
-		err  bool
+		name    string
+		s       BytePtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBytePtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBytePtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBytePtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -143,7 +145,7 @@ func TestBytePtrSliceSupplier_ToMustBytePtrSliceSupplier(t *testing.T) {
 			ms := tt.s.ToMustBytePtrSliceSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBytePtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -166,18 +168,18 @@ func TestSilentBytePtrSliceSupplier(t *testing.T) {
 
 func TestSilentBytePtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BytePtrSliceSupplier
-		err  bool
+		name    string
+		s       BytePtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBytePtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBytePtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBytePtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +193,7 @@ func TestSilentBytePtrSliceSupplier_ToSilentSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestBytePtrSliceSupplier, v)
@@ -211,18 +213,18 @@ func TestMustBytePtrSliceSupplier(t *testing.T) {
 
 func TestMustBytePtrSliceSupplier_ToMustSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BytePtrSliceSupplier
-		err  bool
+		name    string
+		s       BytePtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBytePtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBytePtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBytePtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,7 +237,7 @@ func TestMustBytePtrSliceSupplier_ToMustSupplier(t *testing.T) {
 			ms := tms.ToMustSupplier()
 			r.NotNil(ms)
 
-			if tt.err {
+			if tt.wantErr {
 				r.PanicsWithError(errTestBytePtrSliceSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
@@ -250,18 +252,18 @@ func TestMustBytePtrSliceSupplier_ToMustSupplier(t *testing.T) {
 
 func TestMustBytePtrSliceSupplier_ToSilentBytePtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BytePtrSliceSupplier
-		err  bool
+		name    string
+		s       BytePtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBytePtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBytePtrSliceSupplierWithError,
-			err:  true,
+			name:    "with error",
+			s:       testBytePtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -275,7 +277,7 @@ func TestMustBytePtrSliceSupplier_ToSilentBytePtrSliceSupplier(t *testing.T) {
 			r.NotNil(ss)
 
 			v := ss()
-			if tt.err {
+			if tt.wantErr {
 				r.Empty(v)
 			} else {
 				r.Equal(resTestBytePtrSliceSupplier, v)
@@ -286,16 +288,18 @@ func TestMustBytePtrSliceSupplier_ToSilentBytePtrSliceSupplier(t *testing.T) {
 
 func TestMustBytePtrSliceSupplier_ToBytePtrSliceSupplier(t *testing.T) {
 	tests := []struct {
-		name string
-		s    BytePtrSliceSupplier
+		name    string
+		s       BytePtrSliceSupplier
+		wantErr bool
 	}{
 		{
 			name: "ok",
 			s:    testBytePtrSliceSupplier,
 		},
 		{
-			name: "with_error",
-			s:    testBytePtrSliceSupplierWithError,
+			name:    "with error",
+			s:       testBytePtrSliceSupplierWithError,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -309,9 +313,9 @@ func TestMustBytePtrSliceSupplier_ToBytePtrSliceSupplier(t *testing.T) {
 			r.NotNil(s)
 
 			v, err := s()
-			if err != nil {
-				r.Empty(v)
+			if tt.wantErr {
 				r.EqualError(err, errTestBytePtrSliceSupplier.Error())
+				r.Empty(v)
 			} else {
 				r.Equal(resTestBytePtrSliceSupplier, v)
 			}
