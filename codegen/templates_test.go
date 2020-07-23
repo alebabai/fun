@@ -24,7 +24,7 @@ func Test_createTemplate(t *testing.T) {
 			},
 		},
 		{
-			name:    "with_error__empty_args",
+			name:    "with error  empty args",
 			wantErr: true,
 		},
 	}

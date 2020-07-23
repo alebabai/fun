@@ -101,11 +101,11 @@ func test() {
 `),
 		},
 		{
-			name:    "with_err__empty template",
+			name:    "with error  empty template",
 			wantErr: true,
 		},
 		{
-			name: "with_err__invalid_data",
+			name: "with err  invalid data",
 			args: args{
 				tmpl: testTmpl,
 				data: &Data{
@@ -116,7 +116,7 @@ func test() {
 			wantErr: true,
 		},
 		{
-			name: "with_err__code_parsing_failure",
+			name: "with error  code parsing failure",
 			args: args{
 				tmpl: testTmpl,
 				data: &Data{
@@ -167,7 +167,7 @@ func Test_generateFilename(t *testing.T) {
 			res: "string_supplier.go",
 		},
 		{
-			name: "ok__type__empty_title",
+			name: "ok  type  empty title",
 			args: args{
 				templatePath: "supplier.go.tmpl",
 				t: &Type{
@@ -178,7 +178,7 @@ func Test_generateFilename(t *testing.T) {
 			res: "supplier.go",
 		},
 		{
-			name: "ok__type__name_equal_interface{}",
+			name: "ok  type  name equal interface{}",
 			args: args{
 				templatePath: "supplier.go.tmpl",
 				t: &Type{
@@ -189,12 +189,12 @@ func Test_generateFilename(t *testing.T) {
 			res: "supplier.go",
 		},
 		{
-			name: "with_error__invalid_template_filename__empty",
+			name: "with error  invalid template filename  empty",
 			res:  "",
 			err:  errors.New("template filename is invalid"),
 		},
 		{
-			name: "with_error__invalid_template_filename__without_extension",
+			name: "with error  invalid template filename  without_extension",
 			args: args{
 				templatePath: "supplier.go",
 			},
@@ -202,7 +202,7 @@ func Test_generateFilename(t *testing.T) {
 			err: errors.New("template filename is invalid"),
 		},
 		{
-			name: "with_error__invalid_template_filename__only_extension",
+			name: "with error  invalid template filename  only extension",
 			args: args{
 				templatePath: tmplFileExtension,
 			},
@@ -210,7 +210,7 @@ func Test_generateFilename(t *testing.T) {
 			err: errors.New("template filename is invalid"),
 		},
 		{
-			name: "with_error__invalid_type__nil",
+			name: "with error  invalid type  nil",
 			args: args{
 				templatePath: "supplier.go.tmpl",
 			},
@@ -218,7 +218,7 @@ func Test_generateFilename(t *testing.T) {
 			err: errors.New("type is invalid"),
 		},
 		{
-			name: "with_error__invalid_type__empty_name",
+			name: "with error  invalid type  empty_name",
 			args: args{
 				templatePath: "supplier.go.tmpl",
 				t: &Type{

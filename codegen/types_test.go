@@ -26,7 +26,7 @@ func Test_generateComplexTypes(t *testing.T) {
 			},
 		},
 		{
-			name: "builtin_type__empty",
+			name: "builtin type  empty",
 			args: args{
 				builtinType: "",
 			},
@@ -52,14 +52,14 @@ func Test_getComplexTypeTitle(t *testing.T) {
 		want string
 	}{
 		{
-			name: "empty_string",
+			name: "empty string",
 			args: args{
 				complexType: "",
 			},
 			want: "",
 		},
 		{
-			name: "to_title",
+			name: "to title",
 			args: args{
 				complexType: "string",
 			},
@@ -80,7 +80,7 @@ func Test_getComplexTypeTitle(t *testing.T) {
 			want: "StringSlice",
 		},
 		{
-			name: "slice_of_pointers",
+			name: "slice of pointers",
 			args: args{
 				complexType: "[]*string",
 			},
@@ -106,7 +106,7 @@ func Test_getTypes(t *testing.T) {
 		want []*Type
 	}{
 		{
-			name: "for_empty_interface_type",
+			name: "for empty interface type",
 			args: args{
 				builtinTypes: []string{
 					"interface{}",
@@ -120,7 +120,7 @@ func Test_getTypes(t *testing.T) {
 			},
 		},
 		{
-			name: "for_any_other_type",
+			name: "for any other type",
 			args: args{
 				builtinTypes: []string{
 					"string",
