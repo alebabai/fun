@@ -1,0 +1,211 @@
+package fun
+
+import (
+	"errors"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
+
+var (
+	resTestSupplier interface{}
+	errTestSupplier = errors.New("error")
+)
+
+func testSupplier() (interface{}, error) {
+	return resTestSupplier, nil
+}
+
+func testSupplierWithError() (interface{}, error) {
+	return resTestSupplier, errTestSupplier
+}
+
+func TestSupplier(t *testing.T) {
+	tests := []struct {
+		name    string
+		s       Supplier
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			s:    testSupplier,
+		},
+		{
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			v, err := tt.s()
+			if tt.wantErr {
+				r.EqualError(err, errTestSupplier.Error())
+				r.Empty(v)
+			} else {
+				r.Equal(resTestSupplier, v)
+			}
+		})
+	}
+}
+
+func TestSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name    string
+		s       Supplier
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			s:    testSupplier,
+		},
+		{
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			ss := tt.s.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.wantErr {
+				r.Empty(v)
+			} else {
+				r.Equal(resTestSupplier, v)
+			}
+		})
+	}
+}
+
+func TestSupplier_ToMustSupplier(t *testing.T) {
+	tests := []struct {
+		name    string
+		s       Supplier
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			s:    testSupplier,
+		},
+		{
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			ms := tt.s.ToMustSupplier()
+			r.NotNil(ms)
+
+			if tt.wantErr {
+				r.PanicsWithError(errTestSupplier.Error(), func() {
+					v := ms()
+					r.Empty(v)
+				})
+			} else {
+				v := ms()
+				r.Equal(resTestSupplier, v)
+			}
+		})
+	}
+}
+
+func TestSilentSupplier(t *testing.T) {
+	var ss SilentSupplier = func() interface{} {
+		return resTestSupplier
+	}
+	v := ss()
+	require.Equal(t, resTestSupplier, v)
+}
+
+func TestMustSupplier(t *testing.T) {
+	var ms MustSupplier = func() interface{} {
+		return resTestSupplier
+	}
+
+	v := ms()
+	require.Equal(t, resTestSupplier, v)
+}
+
+func TestMustSupplier_ToSilentSupplier(t *testing.T) {
+	tests := []struct {
+		name    string
+		s       Supplier
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			s:    testSupplier,
+		},
+		{
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			ms := tt.s.ToMustSupplier()
+			r.NotNil(ms)
+
+			ss := ms.ToSilentSupplier()
+			r.NotNil(ss)
+
+			v := ss()
+			if tt.wantErr {
+				r.Empty(v)
+			} else {
+				r.Equal(resTestSupplier, v)
+			}
+		})
+	}
+}
+
+func TestMustSupplier_ToSupplier(t *testing.T) {
+	tests := []struct {
+		name    string
+		s       Supplier
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			s:    testSupplier,
+		},
+		{
+			name:    "with error",
+			s:       testSupplierWithError,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
+
+			ms := tt.s.ToMustSupplier()
+			r.NotNil(ms)
+
+			s := ms.ToSupplier()
+			r.NotNil(s)
+
+			v, err := s()
+			if tt.wantErr {
+				r.EqualError(err, errTestSupplier.Error())
+				r.Empty(v)
+			} else {
+				r.Equal(resTestSupplier, v)
+			}
+		})
+	}
+}
