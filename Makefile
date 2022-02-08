@@ -1,38 +1,43 @@
-PACKAGES				:= ./...
-GO_COVER_PROFILE		:= coverage.out
-GOLANGCI_LINT_VERSION	:= v1.28.0
+GO							?= @go
+
+PACKAGES					?= ./...
+TEST_PACKAGES				?= $(PACKAGES)
+COVER_PACKAGES				?= $(shell echo $(TEST_PACKAGES) | tr " " ",")
+COVER_PROFILE				?= coverage.out
+
+GOLANGCI_LINT				?= @golangci-lint
 
 .PHONY: all
-all: install test
-
-.PNONY: generate
-generate:
-	go generate -v $(PACKAGES)
+all: build test
 
 .PNONY: fmt
 fmt:
-	go fmt $(PACKAGES)
+	$(GO) fmt $(PACKAGES)
 
-.PHONY: deps
-deps:
-	go mod tidy -v
+.PHONY: mod/download
+mod/download:
+	$(GO) mod download
 
 .PHONY: prepare
-prepare: deps generate fmt
+prepare: mod/download fmt
+
+.PHONY: build
+build: prepare
+	$(GO) build -v $(PACKAGES)
 
 .PHONY: install
 install: prepare
-	go install -v $(PACKAGES)
+	$(GO) install -v $(PACKAGES)
 
 .PHONY: test
 test: prepare
-	go test -v -race -coverprofile=$(GO_COVER_PROFILE) $(PACKAGES)
+	$(GO) test -v -race -coverpkg $(COVER_PACKAGES) -coverprofile $(COVER_PROFILE) $(TEST_PACKAGES)
 
 .PHONY: coverage
 coverage: test
-	go tool cover -func=$(GO_COVER_PROFILE) -o coverage.txt
-	go tool cover -html=$(GO_COVER_PROFILE) -o coverage.html
+	$(GO) tool cover -func $(COVER_PROFILE) -o coverage.txt
+	$(GO) tool cover -html $(COVER_PROFILE) -o coverage.html
 
 .PHONY: lint
 lint: prepare
-	docker run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:${GOLANGCI_LINT_VERSION} golangci-lint run -v
+	$(GOLANGCI_LINT) run -v
