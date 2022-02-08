@@ -8,16 +8,16 @@ import (
 )
 
 var (
-	testSupplierValue interface{} = struct{}{}
-	testSupplierError             = errors.New("error")
+	valTestSupplier interface{} = struct{}{}
+	errTestSupplier             = errors.New("error")
 )
 
 func testSupplier() (interface{}, error) {
-	return testSupplierValue, nil
+	return valTestSupplier, nil
 }
 
 func testSupplierWithError() (interface{}, error) {
-	return testSupplierValue, testSupplierError
+	return valTestSupplier, errTestSupplier
 }
 
 func TestSupplier(t *testing.T) {
@@ -42,10 +42,10 @@ func TestSupplier(t *testing.T) {
 
 			v, err := tt.s()
 			if tt.wantErr {
-				r.EqualError(err, testSupplierError.Error())
+				r.EqualError(err, errTestSupplier.Error())
 				r.Empty(v)
 			} else {
-				r.Equal(testSupplierValue, v)
+				r.Equal(valTestSupplier, v)
 			}
 		})
 	}
@@ -78,7 +78,7 @@ func TestSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.wantErr {
 				r.Empty(v)
 			} else {
-				r.Equal(testSupplierValue, v)
+				r.Equal(valTestSupplier, v)
 			}
 		})
 	}
@@ -108,13 +108,13 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 			r.NotNil(ms)
 
 			if tt.wantErr {
-				r.PanicsWithError(testSupplierError.Error(), func() {
+				r.PanicsWithError(errTestSupplier.Error(), func() {
 					v := ms()
 					r.Empty(v)
 				})
 			} else {
 				v := ms()
-				r.Equal(testSupplierValue, v)
+				r.Equal(valTestSupplier, v)
 			}
 		})
 	}
@@ -122,19 +122,19 @@ func TestSupplier_ToMustSupplier(t *testing.T) {
 
 func TestSilentSupplier(t *testing.T) {
 	var ss SilentSupplier = func() interface{} {
-		return testSupplierValue
+		return valTestSupplier
 	}
 	v := ss()
-	require.Equal(t, testSupplierValue, v)
+	require.Equal(t, valTestSupplier, v)
 }
 
 func TestMustSupplier(t *testing.T) {
 	var ms MustSupplier = func() interface{} {
-		return testSupplierValue
+		return valTestSupplier
 	}
 
 	v := ms()
-	require.Equal(t, testSupplierValue, v)
+	require.Equal(t, valTestSupplier, v)
 }
 
 func TestMustSupplier_ToSilentSupplier(t *testing.T) {
@@ -167,7 +167,7 @@ func TestMustSupplier_ToSilentSupplier(t *testing.T) {
 			if tt.wantErr {
 				r.Empty(v)
 			} else {
-				r.Equal(testSupplierValue, v)
+				r.Equal(valTestSupplier, v)
 			}
 		})
 	}
@@ -201,10 +201,10 @@ func TestMustSupplier_ToSupplier(t *testing.T) {
 
 			v, err := s()
 			if tt.wantErr {
-				r.EqualError(err, testSupplierError.Error())
+				r.EqualError(err, errTestSupplier.Error())
 				r.Empty(v)
 			} else {
-				r.Equal(testSupplierValue, v)
+				r.Equal(valTestSupplier, v)
 			}
 		})
 	}

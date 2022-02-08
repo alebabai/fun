@@ -26,7 +26,6 @@ type SilentConsumer func(v interface{})
 func (c Consumer) ToSilentConsumer() SilentConsumer {
 	return func(v interface{}) {
 		_ = c(v)
-		return
 	}
 }
 
@@ -53,7 +52,6 @@ func (c Consumer) ToMustConsumer() MustConsumer {
 		if err != nil {
 			panic(err)
 		}
-		return
 	}
 }
 
