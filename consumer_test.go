@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	valTestConsumer interface{}
-	errTestConsumer = errors.New("error")
+	testConsumerValue interface{} = struct{}{}
+	testConsumerError             = errors.New("error")
 )
 
 type testConsumerFactory func(t *testing.T) Consumer
@@ -24,7 +24,7 @@ func TestConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					return nil
 				}
 			},
@@ -33,8 +33,8 @@ func TestConsumer(t *testing.T) {
 			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
-					return errTestConsumer
+					require.Equal(t, testConsumerValue, v)
+					return testConsumerError
 				}
 			},
 			wantErr: true,
@@ -45,9 +45,9 @@ func TestConsumer(t *testing.T) {
 			r := require.New(t)
 
 			c := tt.cf(t)
-			err := c(valTestConsumer)
+			err := c(testConsumerValue)
 			if tt.wantErr {
-				r.EqualError(err, errTestConsumer.Error())
+				r.EqualError(err, testConsumerError.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -69,7 +69,7 @@ func TestConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -77,7 +77,7 @@ func TestConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -89,15 +89,15 @@ func TestConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return errTestConsumer
+					return testConsumerError
 				}
 			},
 			cf2: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -110,7 +110,7 @@ func TestConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -132,9 +132,9 @@ func TestConsumer_AndThen(t *testing.T) {
 			r.NotNil(cc)
 
 			calls = 0
-			err := cc(valTestConsumer)
+			err := cc(testConsumerValue)
 			if tt.wantErr {
-				r.EqualError(err, errTestConsumer.Error())
+				r.EqualError(err, testConsumerError.Error())
 			} else {
 				r.NoError(err)
 			}
@@ -152,7 +152,7 @@ func TestConsumer_ToSilentConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					return nil
 				}
 			},
@@ -161,8 +161,8 @@ func TestConsumer_ToSilentConsumer(t *testing.T) {
 			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
-					return errTestConsumer
+					require.Equal(t, testConsumerValue, v)
+					return testConsumerError
 				}
 			},
 		},
@@ -175,7 +175,7 @@ func TestConsumer_ToSilentConsumer(t *testing.T) {
 			sc := c.ToSilentConsumer()
 			r.NotNil(sc)
 
-			sc(valTestConsumer)
+			sc(testConsumerValue)
 		})
 	}
 }
@@ -190,7 +190,7 @@ func TestConsumer_ToMustConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					return nil
 				}
 			},
@@ -199,8 +199,8 @@ func TestConsumer_ToMustConsumer(t *testing.T) {
 			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
-					return errTestConsumer
+					require.Equal(t, testConsumerValue, v)
+					return testConsumerError
 				}
 			},
 			err: true,
@@ -215,11 +215,11 @@ func TestConsumer_ToMustConsumer(t *testing.T) {
 			r.NotNil(mc)
 
 			if tt.err {
-				r.PanicsWithError(errTestConsumer.Error(), func() {
-					mc(valTestConsumer)
+				r.PanicsWithError(testConsumerError.Error(), func() {
+					mc(testConsumerValue)
 				})
 			} else {
-				mc(valTestConsumer)
+				mc(testConsumerValue)
 			}
 		})
 	}
@@ -227,10 +227,10 @@ func TestConsumer_ToMustConsumer(t *testing.T) {
 
 func TestSilentConsumer(t *testing.T) {
 	var sc SilentConsumer = func(v interface{}) {
-		require.Equal(t, valTestConsumer, v)
+		require.Equal(t, testConsumerValue, v)
 		return
 	}
-	sc(valTestConsumer)
+	sc(testConsumerValue)
 }
 
 func TestSilentConsumer_AndThen(t *testing.T) {
@@ -246,7 +246,7 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -254,7 +254,7 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -266,15 +266,15 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return errTestConsumer
+					return testConsumerError
 				}
 			},
 			cf2: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -286,7 +286,7 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -316,7 +316,7 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 			r.NotNil(csc)
 
 			calls = 0
-			csc(valTestConsumer)
+			csc(testConsumerValue)
 			r.Equal(tt.calls, calls)
 		})
 	}
@@ -324,10 +324,10 @@ func TestSilentConsumer_AndThen(t *testing.T) {
 
 func TestMustConsumer(t *testing.T) {
 	var mc MustConsumer = func(v interface{}) {
-		require.Equal(t, valTestConsumer, v)
+		require.Equal(t, testConsumerValue, v)
 		return
 	}
-	mc(valTestConsumer)
+	mc(testConsumerValue)
 }
 
 func TestMustConsumer_AndThen(t *testing.T) {
@@ -344,7 +344,7 @@ func TestMustConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -352,7 +352,7 @@ func TestMustConsumer_AndThen(t *testing.T) {
 			cf2: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -364,15 +364,15 @@ func TestMustConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
-					return errTestConsumer
+					return testConsumerError
 				}
 			},
 			cf2: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 2, "should be called second and only once")
 					return nil
 				}
@@ -385,7 +385,7 @@ func TestMustConsumer_AndThen(t *testing.T) {
 			cf1: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
 					calls++
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					require.Equal(t, calls, 1, "should be called first and only once")
 					return nil
 				}
@@ -416,11 +416,11 @@ func TestMustConsumer_AndThen(t *testing.T) {
 
 			calls = 0
 			if tt.wantErr {
-				r.PanicsWithError(errTestConsumer.Error(), func() {
-					cmc(valTestConsumer)
+				r.PanicsWithError(testConsumerError.Error(), func() {
+					cmc(testConsumerValue)
 				})
 			} else {
-				cmc(valTestConsumer)
+				cmc(testConsumerValue)
 			}
 			r.Equal(tt.calls, calls)
 		})
@@ -436,7 +436,7 @@ func TestMustConsumer_ToSilentConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					return nil
 				}
 			},
@@ -445,8 +445,8 @@ func TestMustConsumer_ToSilentConsumer(t *testing.T) {
 			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
-					return errTestConsumer
+					require.Equal(t, testConsumerValue, v)
+					return testConsumerError
 				}
 			},
 		},
@@ -463,7 +463,7 @@ func TestMustConsumer_ToSilentConsumer(t *testing.T) {
 			sc := mc.ToSilentConsumer()
 			r.NotNil(sc)
 
-			sc(valTestConsumer)
+			sc(testConsumerValue)
 		})
 	}
 }
@@ -478,7 +478,7 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 			name: "ok",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
+					require.Equal(t, testConsumerValue, v)
 					return nil
 				}
 			},
@@ -487,8 +487,8 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 			name: "with error",
 			cf: func(t *testing.T) Consumer {
 				return func(v interface{}) error {
-					require.Equal(t, valTestConsumer, v)
-					return errTestConsumer
+					require.Equal(t, testConsumerValue, v)
+					return testConsumerError
 				}
 			},
 			wantErr: true,
@@ -506,9 +506,9 @@ func TestMustConsumer_ToConsumer(t *testing.T) {
 			c = mc.ToConsumer()
 			r.NotNil(c)
 
-			err := c(valTestConsumer)
+			err := c(testConsumerValue)
 			if tt.wantErr {
-				r.EqualError(err, errTestConsumer.Error())
+				r.EqualError(err, testConsumerError.Error())
 			}
 		})
 	}
