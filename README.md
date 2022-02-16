@@ -3,7 +3,7 @@
 > Functional types for Golang
 
 [![build](https://img.shields.io/github/workflow/status/alebabai/fun/CI)](https://github.com/alebabai/fun/actions?query=workflow%3ACI)
-[![version](https://img.shields.io/github/go-mod/go-version/alebabai/fun)](https://golang.org/)
+[![version](https://img.shields.io/github/go-mod/go-version/alebabai/fun)](https://go.dev/)
 [![report](https://goreportcard.com/badge/github.com/alebabai/fun)](https://goreportcard.com/report/github.com/alebabai/fun)
 [![coverage](https://img.shields.io/codecov/c/github/alebabai/fun)](https://codecov.io/github/alebabai/fun)
 [![tag](https://img.shields.io/github/tag/alebabai/fun.svg)](https://github.com/alebabai/fun/tags)
